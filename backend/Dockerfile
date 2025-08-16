@@ -1,16 +1,15 @@
-FROM python:3.11 as requirements-stage
+FROM node:alpine
 
-WORKDIR /tmp
-RUN pip install poetry==1.5.0
-COPY ./pyproject.toml ./poetry.lock* /tmp/
-RUN poetry export -f requirements.txt --output requirements.txt --without-hashes --with=dev
+RUN mkdir -p /usr/src/node-app && chown -R node:node /usr/src/node-app
 
+WORKDIR /usr/src/node-app
 
-FROM python:3.11
+COPY package.json yarn.lock ./
 
-WORKDIR /code
-COPY --from=requirements-stage /tmp/requirements.txt .
-RUN pip install --no-cache-dir --upgrade -r ./requirements.txt
-COPY . .
+USER node
 
-ENTRYPOINT ["sh", "./scripts/launch_prod.sh"]
+RUN yarn install --pure-lockfile
+
+COPY --chown=node:node . .
+
+EXPOSE 3000

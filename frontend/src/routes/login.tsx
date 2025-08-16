@@ -66,14 +66,7 @@ function Login() {
         gap={4}
         centerContent
       >
-        <Image
-          src={Logo}
-          alt="FastAPI logo"
-          height="auto"
-          maxW="2xs"
-          alignSelf="center"
-          mb={4}
-        />
+        <Logo/>
         <Field
           invalid={!!errors.username}
           errorText={errors.username?.message || !!error}

@@ -1,5 +1,5 @@
-import { Box, Button, Center, Input, Stack } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { Box, Button, Center, Input, Stack } from "@chakra-ui/react";
 import Logo from "../../components/Logo/Logo";
 
 const LoginPage = () => {

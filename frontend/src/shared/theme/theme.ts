@@ -1,12 +1,12 @@
-import { createSystem, defaultConfig } from "@chakra-ui/react"
+import { createSystem, defaultConfig } from "@chakra-ui/react";
 
 export const system = createSystem(defaultConfig, {
-    theme: {
+  theme: {
     tokens: {
-        fonts: {
-            heading: { value: `'Figtree', sans-serif` },
-            body: { value: `'Figtree', sans-serif` },
-        },
+      fonts: {
+        heading: { value: `'Roboto', sans-serif` },
+        body: { value: `'Roboto', sans-serif` },
+      },
     },
-    },
-})
+  },
+});

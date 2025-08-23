@@ -29,7 +29,7 @@ const routes: RouteObject[] = [
         Component: ReportsPage,
       },
       {
-        path: "/reports",
+        path: "/admin",
         Component: AdminPage,
       },
     ],

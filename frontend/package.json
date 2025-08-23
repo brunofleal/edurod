@@ -12,6 +12,7 @@
   "dependencies": {
     "@chakra-ui/react": "^3.24.2",
     "@emotion/react": "^11.14.0",
+    "ag-grid-react": "^34.1.2",
     "axios": "^1.11.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",

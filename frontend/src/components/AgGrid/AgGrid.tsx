@@ -1,18 +1,47 @@
-import { Box, Text } from "@chakra-ui/react";
+import React, { type JSX } from "react";
+import { Box, HStack, Text } from "@chakra-ui/react";
 import { AgGridReact, type AgGridReactProps } from "ag-grid-react";
-import React from "react";
+import {
+  AllCommunityModule,
+  ModuleRegistry,
+  themeAlpine,
+} from "ag-grid-community";
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 interface Props extends AgGridReactProps {
   title?: string;
+  height?: number | string;
+  width?: number | string;
+  gridButtons?: JSX.Element;
 }
-const AgGrid = ({ title, ...agGridProps }: Props) => {
-  const defaultAgGridProps: AgGridReactProps = {};
+const AgGrid = ({
+  title,
+  gridButtons,
+  height = "60vh",
+  width = "100%",
+  ...agGridProps
+}: Props) => {
+  const defaultAgGridProps: AgGridReactProps = {
+    containerStyle: { width: "100%", height: "90%", color: "white" },
+    theme: themeAlpine,
+  };
 
   return (
-    <Box bgColor="red.100" borderRadius="20px" p={4}>
-      <Text fontSize={32} fontWeight="bold">
-        {title}
-      </Text>
+    <Box
+      bgColor="gray.200"
+      borderRadius="20px"
+      p={8}
+      width={width}
+      height={height}
+    >
+      <HStack justifyContent="space-between">
+        <Text fontSize={32} fontWeight="bold">
+          {title}
+        </Text>
+        {gridButtons}
+      </HStack>
+
       <AgGridReact {...defaultAgGridProps} {...agGridProps} />
     </Box>
   );

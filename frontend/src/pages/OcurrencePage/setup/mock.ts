@@ -5,6 +5,7 @@ export const occurrencesMock: OccurrenceRegistry[] = [
     occurrence: {
       name: "Atraso na partida",
       type: "Atraso",
+      points: -10,
     },
     driver: {
       name: "João da Silva",
@@ -21,6 +22,7 @@ export const occurrencesMock: OccurrenceRegistry[] = [
     occurrence: {
       name: "Veículo quebrou",
       type: "Quebra de veículo",
+      points: -20,
     },
     driver: {
       name: "Maria Oliveira",
@@ -37,6 +39,7 @@ export const occurrencesMock: OccurrenceRegistry[] = [
     occurrence: {
       name: "Pneu furado",
       type: "Manutenção",
+      points: -10,
     },
     driver: {
       name: "José Santos",
@@ -48,5 +51,22 @@ export const occurrencesMock: OccurrenceRegistry[] = [
     },
     createdAt: new Date(2025, 7, 24, 12, 15, 0).toISOString(),
     isResolved: false,
+  },
+  {
+    occurrence: {
+      name: "Pneu furado",
+      type: "Manutenção",
+      points: -10,
+    },
+    driver: {
+      name: "José Santos",
+      code: "67890",
+    },
+    line: {
+      name: "Caucaia x Pecém",
+      code: "1003",
+    },
+    createdAt: new Date(2025, 7, 23, 12, 15, 0).toISOString(),
+    isResolved: true,
   },
 ];

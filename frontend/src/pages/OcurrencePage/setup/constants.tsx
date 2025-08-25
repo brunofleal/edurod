@@ -3,11 +3,20 @@ import { formatDateToLocalTime } from "../../../shared/utils/formatDate";
 import type { CustomCellRendererProps } from "ag-grid-react";
 import { Badge, ButtonGroup, Button, Icon } from "@chakra-ui/react";
 import { BsArchive, BsPencil, BsTrash } from "react-icons/bs";
+import type { OccurrenceRegistry } from "../../../interfaces/occurrenceRegistry";
 
 export const colDefs: ColDef[] = [
   {
     headerName: "Ocorrência",
     field: "occurrence.name",
+  },
+  {
+    headerName: "Pontos",
+    field: "occurrence.points",
+    width: 100,
+    cellRenderer: ({ data }: CustomCellRendererProps<OccurrenceRegistry>) => {
+      return <Badge variant="solid">{data?.occurrence.points}</Badge>;
+    },
   },
   {
     headerName: "Motorista",
@@ -21,7 +30,8 @@ export const colDefs: ColDef[] = [
     headerName: "Data",
     field: "createdAt",
     width: 200,
-    valueGetter: ({ data }) => formatDateToLocalTime(data["createdAt"]),
+    valueGetter: ({ data }) =>
+      formatDateToLocalTime(data["createdAt"], { onlyDate: false }),
   },
   {
     headerName: "Status",
@@ -41,12 +51,13 @@ export const colDefs: ColDef[] = [
   {
     headerName: "Ações",
     field: "actions",
+    pinned: "right",
     filter: false,
     width: 280,
-    cellRenderer: () => {
+    cellRenderer: ({ data }: CustomCellRendererProps<OccurrenceRegistry>) => {
       return (
         <ButtonGroup>
-          <Button size="xs">
+          <Button size="xs" display={data?.isResolved ? "none" : "flex"}>
             <Icon>
               <BsArchive />
             </Icon>

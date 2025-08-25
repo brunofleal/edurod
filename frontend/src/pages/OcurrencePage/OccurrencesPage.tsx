@@ -15,7 +15,7 @@ const OccurrencesPages = () => {
             <NewOccurrencePage />
           </HStack>
         }
-        title="Ocorrencias"
+        title="Ocorrências"
         width={"100vw"}
         rowData={occurrencesMock}
         columnDefs={colDefs}

@@ -30,33 +30,6 @@ const NewOccurrencePage = () => {
             </Dialog.Header>
             <Dialog.Body>
               <form>
-                <Combobox.Root
-                  collection={collection}
-                  onInputValueChange={(e) => filter(e.inputValue)}
-                  width="320px"
-                >
-                  <Combobox.Label>Select framework</Combobox.Label>
-                  <Combobox.Control>
-                    <Combobox.Input placeholder="Type to search" />
-                    <Combobox.IndicatorGroup>
-                      <Combobox.ClearTrigger />
-                      <Combobox.Trigger />
-                    </Combobox.IndicatorGroup>
-                  </Combobox.Control>
-                  <Portal>
-                    <Combobox.Positioner>
-                      <Combobox.Content>
-                        <Combobox.Empty>No items found</Combobox.Empty>
-                        {collection.items.map((item) => (
-                          <Combobox.Item item={item} key={item.value}>
-                            {item.label}
-                            <Combobox.ItemIndicator />
-                          </Combobox.Item>
-                        ))}
-                      </Combobox.Content>
-                    </Combobox.Positioner>
-                  </Portal>
-                </Combobox.Root>
                 <Input />
                 <Input />
                 <Input />

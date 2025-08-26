@@ -1,10 +1,8 @@
 import type { ColDef } from "ag-grid-community";
-import { formatDateToLocalTime } from "../../../shared/utils/formatDate";
+import { formatDateToLocalTime } from "../../../../../shared/utils/formatDate";
 import type { CustomCellRendererProps } from "ag-grid-react";
-import { Badge, ButtonGroup, Button, Icon } from "@chakra-ui/react";
-import { BsArchive, BsPencil, BsTrash } from "react-icons/bs";
-import type { OccurrenceRegistry } from "../../../interfaces/occurrenceRegistry";
-
+import { Badge } from "@chakra-ui/react";
+import type { OccurrenceRegistry } from "../../../../../interfaces/occurrenceRegistry";
 export const colDefs: ColDef[] = [
   {
     headerName: "Ocorrência",
@@ -17,10 +15,6 @@ export const colDefs: ColDef[] = [
     cellRenderer: ({ data }: CustomCellRendererProps<OccurrenceRegistry>) => {
       return <Badge variant="solid">{data?.occurrence.points}</Badge>;
     },
-  },
-  {
-    headerName: "Motorista",
-    field: "driver.name",
   },
   {
     headerName: "Linha",
@@ -46,37 +40,6 @@ export const colDefs: ColDef[] = [
           </Badge>
         );
       }
-    },
-  },
-  {
-    headerName: "Ações",
-    field: "actions",
-    pinned: "right",
-    filter: false,
-    width: 280,
-    cellRenderer: ({ data }: CustomCellRendererProps<OccurrenceRegistry>) => {
-      return (
-        <ButtonGroup>
-          <Button size="xs" disabled={data?.isResolved}>
-            <Icon>
-              <BsArchive />
-            </Icon>
-            Fechar
-          </Button>
-          <Button size="xs" variant="outline">
-            <Icon>
-              <BsPencil />
-            </Icon>
-            Editar
-          </Button>
-          <Button size="xs" variant="outline" bgColor="red" color="white">
-            <Icon>
-              <BsTrash />
-            </Icon>
-            Deletar
-          </Button>
-        </ButtonGroup>
-      );
     },
   },
 ];

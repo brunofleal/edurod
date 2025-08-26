@@ -36,7 +36,7 @@ const AgGrid = ({
       height={height}
     >
       <HStack justifyContent="space-between">
-        <Text fontSize={32} fontWeight="bold">
+        <Text fontSize={24} fontWeight="bold" mb={4}>
           {title}
         </Text>
         {gridButtons}

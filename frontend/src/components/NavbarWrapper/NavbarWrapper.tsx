@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, Box, Button, HStack } from "@chakra-ui/react";
+import { Avatar, Box, HStack } from "@chakra-ui/react";
 import { Outlet, useLocation, useNavigate } from "react-router";
 import Logo from "../Logo/Logo";
 import NavLink from "../NavLink/NavLink";
@@ -13,7 +13,7 @@ const NavbarWrapper = () => {
     <Box h="100vh">
       <HStack
         p={6}
-        bgColor="green.600"
+        bgColor="gray.600"
         w="100vw"
         position="static"
         justifyContent="space-between"

@@ -1,4 +1,5 @@
 import type { ColDef } from "ag-grid-community";
+import DriverDetailCellRenderer from "./DriverDetailCellRenderer/DriverDetailCellRenderer";
 
 export const colDefs: ColDef[] = [
   {
@@ -30,6 +31,11 @@ export const colDefs: ColDef[] = [
   {
     headerName: "Principal Fonte de ocorrência",
     field: "occurrenceSource",
+  },
+  {
+    headerName: "Detalhes",
+    field: "detail",
+    cellRenderer: DriverDetailCellRenderer,
   },
 ];
 

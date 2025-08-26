@@ -13,9 +13,9 @@ import {
 import {
   formatDateToLocalTime,
   getCurrentMonthRange,
-} from "../../../shared/utils/formatDate";
+} from "../../../../shared/utils/formatDate";
 import { BsArrowRight } from "react-icons/bs";
-import { getMockedChartData } from "./mock";
+import { getMockedChartData } from "../../PointsPerDriverChart/mock";
 import moment from "moment";
 
 function formatXAxis(tickItem: any) {
@@ -24,16 +24,19 @@ function formatXAxis(tickItem: any) {
   });
 }
 
-const PointsPerDriverChart = () => {
+interface Props {
+  driverName: string;
+}
+const PointsPerDriverChart = ({ driverName }: Props) => {
   const [startDate, endDate] = getCurrentMonthRange();
-  const mockedDriverName = "João da Silva";
-  const title = `Pontos de ${mockedDriverName} no período:`;
   const data = getMockedChartData();
+  const lastData = data[data.length - 1];
+  const title = `${driverName} possui ${lastData.pontos} pontos restantes para o período:`;
   return (
     <Box w="100%" h="60vh" p={4} bgColor="gray.200" borderRadius="20px">
       <HStack>
         <Highlight
-          query={mockedDriverName}
+          query={[driverName, lastData.pontos.toString()]}
           styles={{
             px: "1",
             bg: "green.700",

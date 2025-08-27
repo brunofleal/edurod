@@ -1,14 +1,16 @@
 import React from "react";
-import { Grid, GridItem } from "@chakra-ui/react";
 import AgGrid from "../../components/AgGrid/AgGrid";
-import PointsPerDriverChart from "./setup/DriverDetailCellRenderer/PointsPerDriverChart";
 import { colDefs, defaultColumnDef } from "./setup/constants";
 import { mockedDriverReports } from "./setup/mock";
+import TimePeriod from "./setup/DriverDetailCellRenderer/setup/TimePeriod";
 
 const ReportsPage = () => {
+  const date = "";
+  const title = `Pontuação por Motorista (${date})`;
   return (
     <AgGrid
-      title="Pontuação por Motorista"
+      title={title}
+      children={<TimePeriod />}
       rowData={mockedDriverReports}
       height="85vh"
       columnDefs={colDefs}

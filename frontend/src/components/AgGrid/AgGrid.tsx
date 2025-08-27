@@ -11,12 +11,14 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 
 interface Props extends AgGridReactProps {
   title?: string;
+  children?: JSX.Element;
   height?: number | string;
   width?: number | string;
   gridButtons?: JSX.Element;
 }
 const AgGrid = ({
   title,
+  children,
   gridButtons,
   height = "60vh",
   width = "100%",
@@ -39,6 +41,7 @@ const AgGrid = ({
         <Text fontSize={24} fontWeight="bold" mb={4}>
           {title}
         </Text>
+        {children}
         {gridButtons}
       </HStack>
 

@@ -17,6 +17,7 @@ import {
 import { BsArrowRight } from "react-icons/bs";
 import { getMockedChartData } from "../../PointsPerDriverChart/mock";
 import moment from "moment";
+import TimePeriod from "./setup/TimePeriod";
 
 function formatXAxis(tickItem: any) {
   return formatDateToLocalTime(moment(tickItem).toISOString(), {
@@ -28,34 +29,15 @@ interface Props {
   driverName: string;
 }
 const PointsPerDriverChart = ({ driverName }: Props) => {
-  const [startDate, endDate] = getCurrentMonthRange();
   const data = getMockedChartData();
   const lastData = data[data.length - 1];
-  const title = `${driverName} possui ${lastData.pontos} pontos restantes para o período:`;
   return (
     <Box w="100%" h="60vh" p={4} bgColor="gray.200" borderRadius="20px">
-      <HStack>
-        <Highlight
-          query={[driverName, lastData.pontos.toString()]}
-          styles={{
-            px: "1",
-            bg: "green.700",
-            color: "white",
-            borderRadius: "20px",
-          }}
-        >
-          {title}
-        </Highlight>
-        <Text fontWeight="bold" bgColor="white" borderRadius="20px" p={1}>
-          {formatDateToLocalTime(startDate.toISOString(), { onlyDate: true })}
-        </Text>
-        <Icon>
-          <BsArrowRight />
-        </Icon>
-        <Text fontWeight="bold" bgColor="white" borderRadius="20px" p={1}>
-          {formatDateToLocalTime(endDate.toISOString(), { onlyDate: true })}
-        </Text>
-      </HStack>
+      <TimePeriod
+        children={
+          <Title driverName={driverName} driverPoints={lastData.pontos} />
+        }
+      />
 
       <ResponsiveContainer
         style={{ backgroundColor: "white", marginTop: "10px" }}
@@ -79,6 +61,28 @@ const PointsPerDriverChart = ({ driverName }: Props) => {
         </LineChart>
       </ResponsiveContainer>
     </Box>
+  );
+};
+
+interface TitleProps {
+  driverName: string;
+  driverPoints: number;
+}
+const Title = ({ driverName, driverPoints }: TitleProps) => {
+  const title = `${driverName} possui ${driverPoints} pontos restantes para o período:`;
+
+  return (
+    <Highlight
+      query={[driverName, driverPoints.toString()]}
+      styles={{
+        px: "1",
+        bg: "green.700",
+        color: "white",
+        borderRadius: "20px",
+      }}
+    >
+      {title}
+    </Highlight>
   );
 };
 

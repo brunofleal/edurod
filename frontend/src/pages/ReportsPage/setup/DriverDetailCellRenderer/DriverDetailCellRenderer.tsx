@@ -15,6 +15,7 @@ import PointsPerDriverChart from "./PointsPerDriverChart";
 import AgGrid from "../../../../components/AgGrid/AgGrid";
 import { occurrencesMock } from "../../../OcurrencePage/setup/mock";
 import { colDefs } from "./setup/colDefs";
+import TimePeriod from "./setup/TimePeriod";
 
 const DriverDetailCellRenderer = ({
   data,
@@ -41,6 +42,7 @@ const DriverDetailCellRenderer = ({
                 <GridItem colSpan={2}>
                   <AgGrid
                     title="Ocorrências no Período"
+                    children={<TimePeriod />}
                     rowData={occurrencesMock}
                     columnDefs={colDefs}
                   />

@@ -1,7 +1,8 @@
 import moment from "moment";
 
 interface OptionalParams {
-  onlyDate: boolean;
+  onlyDate?: boolean;
+  onlyMonth?: boolean;
 }
 export const formatDateToLocalTime = (
   isoDate: string,
@@ -20,7 +21,8 @@ export const formatDateToLocalTime = (
 };
 
 export const getCurrentMonthRange = () => {
+  moment.locale("pt-Br");
   const startOfMonth = moment().startOf("month");
-  const endOfMonth = moment().endOf("month").subtract("hour", 1);
+  const endOfMonth = moment().endOf("month");
   return [startOfMonth, endOfMonth];
 };

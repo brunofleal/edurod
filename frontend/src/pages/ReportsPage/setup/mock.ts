@@ -4,7 +4,7 @@ export const mockedDriverReports: DriverReport[] = [
   {
     name: "João da Silva",
     points: 85,
-    bonus: 500,
+    bonus: 250,
     totalOccurrences: 5,
     totalUnresolvedOccurrences: 1,
     topOccurrence: "Atraso na linha",
@@ -13,7 +13,7 @@ export const mockedDriverReports: DriverReport[] = [
   {
     name: "Carlos de Souza",
     points: 92,
-    bonus: 750,
+    bonus: 280,
     totalOccurrences: 2,
     totalUnresolvedOccurrences: 0,
     topOccurrence: "Congestionamento",
@@ -31,7 +31,7 @@ export const mockedDriverReports: DriverReport[] = [
   {
     name: "Lucas Martins",
     points: 98,
-    bonus: 1000,
+    bonus: 295,
     totalOccurrences: 1,
     totalUnresolvedOccurrences: 0,
     topOccurrence: "Pneu furado",
@@ -49,7 +49,7 @@ export const mockedDriverReports: DriverReport[] = [
   {
     name: "Gabriel Alves",
     points: 78,
-    bonus: 400,
+    bonus: 220,
     totalOccurrences: 7,
     totalUnresolvedOccurrences: 2,
     topOccurrence: "Assalto no ônibus",

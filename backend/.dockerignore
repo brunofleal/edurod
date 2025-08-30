@@ -1,4 +1,3 @@
-Dockerfile*
-docker-compose.yml
+.venv
+.git
 .gitignore
-*.md

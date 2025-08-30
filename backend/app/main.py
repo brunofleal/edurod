@@ -1,23 +1,41 @@
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException
 from starlette.middleware.cors import CORSMiddleware
-
-from app.auth.router import router as auth_router
-from app.config import client, env, fastapi_config
-
-app = FastAPI(**fastapi_config)
-
-
-@app.on_event("shutdown")
-def shutdown_db_client():
-    client.close()
+from core.exceptions import http_error_handler
+from core.exceptions import http422_error_handler
+from api.routes import router as api_router
+from core.config import ALLOWED_HOSTS, DEBUG, PROJECT_NAME, VERSION
+from core.database import create_start_app_handler, create_stop_app_handler
 
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=env.CORS_ORIGINS,
-    allow_methods=env.CORS_METHODS,
-    allow_headers=env.CORS_HEADERS,
-    allow_credentials=True,
-)
 
-app.include_router(auth_router, prefix="/auth", tags=["Auth"])
+def get_application() -> FastAPI:
+
+    application = FastAPI(title= PROJECT_NAME , debug= DEBUG , version= VERSION)
+    
+    # Set up event handlers for startup and shutdown
+    application.add_event_handler('startup', create_start_app_handler(application))
+    application.add_event_handler('shutdown', create_stop_app_handler(application))
+    
+    # Register custom exception handlers
+    application.add_exception_handler(HTTPException, http_error_handler)
+    application.add_exception_handler(RequestValidationError, http422_error_handler)
+    
+    # Include the API router
+    application.include_router(api_router)
+    
+    # Set up CORS middleware
+    application.add_middleware(
+        CORSMiddleware,
+        allow_origins=ALLOWED_HOSTS or ['*'],
+        allow_credentials=True,
+        allow_methods=['*'],
+        allow_headers=['*'],
+    )
+    return application
+
+
+app = get_application()
+
+

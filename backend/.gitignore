@@ -139,3 +139,6 @@ backup.dump.gz
 .vscode
 
 requirements.txt
+
+# Environment variables
+.env

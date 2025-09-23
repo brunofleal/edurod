@@ -1,64 +1,79 @@
-# FastAPI + MongoDB Boilerplate
+# ExpressJS REST API Boilerplate
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/WleFVe?referralCode=UBd_g_)
+<a href="https://expressjs.com/"><img src="https://img.shields.io/badge/Express.js-404D59?style=for-the-badge" /></a> <a href="https://www.mongodb.com/"><img src="https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white" /></a> <a href="https://jwt.io/"><img src="https://img.shields.io/badge/JWT-FB015B?style=for-the-badge" /></a>
 
-This is a FastAPI boilerplate, which includes includes:
+A cookiecutter template to create REST API with ExpressJS and MongoDB, with JWT authentication.
 
-- MongoDB as database
-- Bcrypt for password hashing
-- JWT for user token management and verification
-- Dockerfile and docker-compose files for easy deployment
-- CORS Middleware configuration
+## Boilerplate Features:
+- Registration
+- Login
+- JWT authentication
+- Private routes example
+- Schema Validation check (email validation, minimum characters, etc.)
+- Password Encryption
+- MongoDB Database
+- API rate limit
 
-## 📚 Features
+## Setup
+1. Clone the project
+```
+git clone https://github.com/udz-codes/express-rest-boilerplate.git
+```
+2. Install packages
+```
+npm install
+```
+3. Setup environment variables: Create .env file in root of the project and set 3 enviroment variables
+```
+PORT = ""
 
-1. User registration.
-2. User authentication and token creation.
-3. User verification and token validation.
-4. Encrypted password management.
+DB_URL = ""
 
-## 🚀 Quick Start
+JWT_SECRET = ""
+```
+  > **PORT:** Port number for local host <br/>
+  > **DB_URL:** MongoDB URL, You can use [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) as database <br/>
+  > **JWT_SECRET:** A random string that will be used for JWT encoding and authentication <br/>
 
-You'll need Docker and Docker Compose to run this application.
-
-1. Build the project
-
-```bash
-docker-compose build
+4. Run the project
+```
+node app.js
+```
+OR, if you have [nodemon](https://www.npmjs.com/package/nodemon) installed
+```
+npm start
 ```
 
-2. Start the project
+## API endpoints
 
-```bash
-docker-compose up -d
-```
+| **Endpoint** | **Purpose** | **Features** |
+| :------------- | :---------- | :----------- |
+| / | Homepage  | None |
+| /api/user/register | Registration route that saves information of a new user on the database  | Duplicate user check, password hashing |
+| /api/user/login | Login route that returns token on successful login  | User existance check, Password match check, JWT Creation |
+| /api/private | Example private route that can't be accessed without a token  | "auth-token" header is required, which means user must be logged in to access this route |
+| **Examples** | | |
+| **Endpoint** | **Purpose** | **Link** |
+| /api/examples/pagination/products?limit=100&page=3 | Demonstrating Pagination | [paginationExample.js](https://github.com/udz-codes/express-jwt-boilerplate/blob/master/routes/examples/paginationExample.js) |
 
-3. Watch logs
 
-```bash
-docker-compose logs -f app
-```
+## Production dependencies
+| **Package** | **Version** | **Purpose** |
+| :------------- | :---------- | :----------- |
+| [express](https://expressjs.com/) | ^4.18.2 | Creating the REST API |
+| [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)  | ^9.0.2 | Generating JWT and Authenticating it |
+| [mongoose](https://www.npmjs.com/package/mongoose) | ^6.12.0 | Connecting to MongoDB |
+| [bcryptjs](https://www.npmjs.com/package/bcryptjs) | ^2.4.3 | Hashing the password  |
+| [@hapi/joi](https://www.npmjs.com/package/joi) | ^17.1.1 | Schema validation check |
+| [joi](https://www.npmjs.com/package/joi) | ^17.10.2 | Schema validation check |
+| [dotenv](https://www.npmjs.com/package/dotenv) | ^10.0.0 | Loads environment variables |
+| [cors](https://www.npmjs.com/package/cors) | ^2.8.5| enable CORS |
+| [express-rate-limit](https://www.npmjs.com/package/express-rate-limit) | ^7.1.0| Rate limiting for Users |
 
-This command will start the FastAPI server on port 8000, the MongoDB service on port 27017 and Mongo admin panel on port 8081.
-You can navigate to `http://localhost:8000/docs` in your browser to access the automatically generated API documentation.
+## Contributions <a href="https://github.com/udz-codes/express-jwt-boilerplate/blob/master/LICENSE"><img src="https://img.shields.io/github/license/udz-codes/express-jwt-boilerplate" /></a> <a href="https://github.com/udz-codes/express-jwt-boilerplate/issues"><img src="https://img.shields.io/github/issues/udz-codes/express-jwt-boilerplate" /></a>
+Contributions are welcomed, to learn more about it, please check [Contributing.md](https://github.com/udz-codes/express-rest-boilerplate/blob/master/Contributing.md).
 
-## 📚 Project Structure
-
-The main sections of the project are:
-
-- `app/main.py`: This is the entry point of the application.
-- `app/config.py`: This file contains the global configuration of the application.
-- `app/auth`: This folder contains the logic related to the authentication system.
-- `app/auth/service.py`: Contains the service layer logic for the authentication system.
-- `app/auth/repository`: Contains the logic for interacting with the MongoDB database.
-- `app/auth/router`: Contains the routing logic for the authentication API.
-- `app/auth/adapters`: Contains the JWT management logic.
-- `app/auth/utils`: Contains utility functions, such as password hashing.
-
-## ⚙️ Local Development
-
-```
-poetry install
-poetry shell
-sh ./scripts/launch.sh
-```
+#### Current Contributors
+<a href="https://github.com/udz-codes/express-rest-boilerplate/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=udz-codes/express-rest-boilerplate" />
+</a>

@@ -5,11 +5,17 @@ import NavbarWrapper from "../../components/NavbarWrapper/NavbarWrapper";
 import OccurrencePage from "../../pages/OcurrencePage/OccurrencesPage";
 import ReportsPage from "../../pages/ReportsPage/ReportsPage";
 import AdminPage from "../../pages/AdminPage/AdminPage";
+import RegisterPage from "../../pages/RegisterPage/RegisterPage";
 
 const routes: RouteObject[] = [
   {
     path: "/login",
     Component: LoginPage,
+    //loader: loadRootData, //TODO Add
+  },
+  {
+    path: "/register",
+    Component: RegisterPage,
     //loader: loadRootData, //TODO Add
   },
   {

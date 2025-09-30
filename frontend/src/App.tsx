@@ -6,12 +6,11 @@ import { system } from "./shared/theme/theme";
 import AuthChecker from "./components/AuthChecker/AuthChecker";
 
 function App() {
-  return (
-    <ChakraProvider value={system}>
-      <AuthChecker />
-      <RouterProvider router={router} />
-    </ChakraProvider>
-  );
+    return (
+        <ChakraProvider value={system}>
+            <RouterProvider router={router} />
+        </ChakraProvider>
+    );
 }
 
 export default App;

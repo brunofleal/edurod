@@ -1,8 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router";
+import { getToken } from "../../shared/token";
 
 const AuthChecker = () => {
-    //TODO: Implement -> check if jwt is valid
-    return <></>   
-}
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const checkAuth = () => {
+        const token = getToken();
+        if (!token) {
+            navigate("/login");
+        }
+    };
+
+    useEffect(() => {
+        checkAuth();
+    }, [location]);
+
+    return <></>;
+};
 
 export default AuthChecker;

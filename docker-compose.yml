@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+    mongodb:
+        build: ./database
+        container_name: mongolocal
+        ports:
+            - "27017:27017"
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: adminedurod
+            MONGO_INITDB_ROOT_PASSWORD: edurodpassword2025
+        volumes:
+            - mongodb_data:/data/db
+        restart: unless-stopped
+
+volumes:
+    mongodb_data:

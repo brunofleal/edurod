@@ -22,8 +22,6 @@ const UserSchema = new mongoose.Schema({
         type: [String],
         default: [],
     },
-
-    // Add more fields here
 });
 
 module.exports = mongoose.model("User", UserSchema);

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Avatar, Box, HStack, Text } from "@chakra-ui/react";
-import { Outlet, useNavigate } from "react-router";
+import { Outlet, useLocation, useNavigate } from "react-router";
 import Logo from "../Logo/Logo";
 import NavLink from "../NavLink/NavLink";
 import NavbarMenu from "./NavbarMenu";
@@ -8,20 +8,33 @@ import AuthChecker from "../AuthChecker/AuthChecker";
 import { axiosApi } from "../../shared/axiosApi";
 import { capitalizeName } from "../../shared/utils/stringUtils";
 import { AppProvider, useAppContext } from "../../contexts/AppContext";
+import { deleteToken } from "../../shared/token";
 
 const NavbarContent = () => {
+    const location = useLocation();
     const navigate = useNavigate();
     const { userInfo, setUserInfo } = useAppContext();
 
     useEffect(() => {
         //Retrieve user info
-        axiosApi.get("/api/user/me").then((response) => {
-            if (response) {
-                const userData = response.data;
-                setUserInfo(userData);
-            }
-        });
-    }, []);
+        axiosApi
+            .get("/api/user/me")
+            .then((response) => {
+                if (response) {
+                    const userData = response.data;
+                    setUserInfo(userData);
+                }
+                if (!response || (response && response.status !== 200)) {
+                    deleteToken();
+                    navigate("/login");
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                deleteToken();
+                navigate("/login");
+            });
+    }, [location.pathname]);
 
     return (
         <Box h="100vh">

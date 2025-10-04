@@ -8,6 +8,7 @@ import AdminPage from "../../pages/AdminPage/AdminPage";
 import RegisterPage from "../../pages/RegisterPage/RegisterPage";
 import NoAccessPermissionPage from "../../pages/NoAccessPermissionPage/NoAccessPermissionPage";
 import NotFoundPage from "../../pages/NotFoundPage/NotFoundPage";
+import OnboardPage from "../../pages/OnboardPage/OnboardPage";
 
 const routes: RouteObject[] = [
     {
@@ -31,6 +32,10 @@ const routes: RouteObject[] = [
             {
                 path: "/no-access-permission",
                 Component: NoAccessPermissionPage,
+            },
+            {
+                path: "/onboard",
+                Component: OnboardPage,
             },
             {
                 path: "/occurrences",

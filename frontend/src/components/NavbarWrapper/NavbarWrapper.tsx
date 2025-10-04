@@ -24,6 +24,9 @@ const NavbarContent = () => {
                 if (response) {
                     const userData = response.data;
                     setUserInfo(userData);
+                    if (userData.roles.length === 0) {
+                        navigate("/onboard");
+                    }
                 }
                 if (!response || (response && response.status !== 200)) {
                     deleteToken();

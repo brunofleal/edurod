@@ -9,6 +9,7 @@ import { axiosApi } from "../../shared/axiosApi";
 import { capitalizeName } from "../../shared/utils/stringUtils";
 import { AppProvider, useAppContext } from "../../contexts/AppContext";
 import { deleteToken } from "../../shared/token";
+import { ToastContainer } from "react-toastify";
 
 const NavbarContent = () => {
     const location = useLocation();
@@ -38,6 +39,7 @@ const NavbarContent = () => {
 
     return (
         <Box h="100vh">
+            <ToastContainer />
             <AuthChecker />
             <HStack
                 p={6}

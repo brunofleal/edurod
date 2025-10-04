@@ -6,40 +6,50 @@ import OccurrencePage from "../../pages/OcurrencePage/OccurrencesPage";
 import ReportsPage from "../../pages/ReportsPage/ReportsPage";
 import AdminPage from "../../pages/AdminPage/AdminPage";
 import RegisterPage from "../../pages/RegisterPage/RegisterPage";
+import NoAccessPermissionPage from "../../pages/NoAccessPermissionPage/NoAccessPermissionPage";
+import NotFoundPage from "../../pages/NotFoundPage/NotFoundPage";
 
 const routes: RouteObject[] = [
-  {
-    path: "/login",
-    Component: LoginPage,
-    //loader: loadRootData, //TODO Add
-  },
-  {
-    path: "/register",
-    Component: RegisterPage,
-    //loader: loadRootData, //TODO Add
-  },
-  {
-    path: "/",
-    Component: NavbarWrapper,
-    children: [
-      {
+    {
+        path: "/login",
+        Component: LoginPage,
+        //loader: loadRootData, //TODO Add
+    },
+    {
+        path: "/register",
+        Component: RegisterPage,
+        //loader: loadRootData, //TODO Add
+    },
+    {
         path: "/",
-        Component: HomePage,
-      },
-      {
-        path: "/occurrences",
-        Component: OccurrencePage,
-      },
-      {
-        path: "/reports",
-        Component: ReportsPage,
-      },
-      {
-        path: "/admin",
-        Component: AdminPage,
-      },
-    ],
-  },
+        Component: NavbarWrapper,
+        children: [
+            {
+                path: "/",
+                Component: HomePage,
+            },
+            {
+                path: "/no-access-permission",
+                Component: NoAccessPermissionPage,
+            },
+            {
+                path: "/occurrences",
+                Component: OccurrencePage,
+            },
+            {
+                path: "/reports",
+                Component: ReportsPage,
+            },
+            {
+                path: "/admin",
+                Component: AdminPage,
+            },
+            {
+                path: "*",
+                Component: NotFoundPage,
+            },
+        ],
+    },
 ];
 
 export const router = createBrowserRouter(routes);

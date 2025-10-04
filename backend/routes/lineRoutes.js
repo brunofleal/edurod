@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const Driver = require("../models/DriverModel");
+const Line = require("../models/LineModel");
 const authenticateUser = require("./verifyToken");
 
 router.get("/", authenticateUser, async (req, res) => {
@@ -9,8 +9,8 @@ router.get("/", authenticateUser, async (req, res) => {
 
         const skip = (page - 1) * limit;
 
-        const returnDrivers = await Driver.find().limit(limit).skip(skip);
-        res.status(200).json({ page: page, limit: limit, returnDrivers });
+        const returnLines = await Line.find().limit(limit).skip(skip);
+        res.status(200).json({ page: page, limit: limit, returnLines });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "An error occurred ", err: err });
@@ -23,12 +23,12 @@ router.post("/", authenticateUser, async (req, res) => {
             return res.status(400).json({ message: "Request body is empty" });
         }
 
-        const newDriver = new Driver({ ...req.body });
+        const newLine = new Line({ ...req.body });
 
-        const addDriver = await newDriver.save();
+        const addLine = await newLine.save();
         res.status(201).json({
-            message: "Driver Added Successfully",
-            addedDriver: addDriver,
+            message: "Line Added Successfully",
+            addedLine: addLine,
         });
     } catch (err) {
         console.error(err);
@@ -40,19 +40,17 @@ router.put("/:id", authenticateUser, async (req, res) => {
     try {
         const productId = req.params.id;
 
-        const updatedDriver = await Driver.findByIdAndUpdate(
-            productId,
-            req.body,
-            { new: true }
-        );
+        const updatedLine = await Line.findByIdAndUpdate(productId, req.body, {
+            new: true,
+        });
 
-        if (!updatedDriver) {
-            return res.status(404).json({ message: "Driver not found" });
+        if (!updatedLine) {
+            return res.status(404).json({ message: "Line not found" });
         }
 
         res.json({
-            message: "Driver updated successfully",
-            updatedDriver,
+            message: "Line updated successfully",
+            updatedLine,
         });
     } catch (err) {
         console.error(err);
@@ -63,15 +61,15 @@ router.put("/:id", authenticateUser, async (req, res) => {
 router.delete("/:id", authenticateUser, async (req, res) => {
     try {
         const productId = req.params.id;
-        const deletedDriver = await Driver.findByIdAndDelete(productId);
+        const deletedLine = await Line.findByIdAndDelete(productId);
 
-        if (!deletedDriver) {
-            return res.status(404).json({ message: "Driver not found" });
+        if (!deletedLine) {
+            return res.status(404).json({ message: "Line not found" });
         }
 
         res.json({
-            message: "Driver deleted successfully",
-            deletedDriver,
+            message: "Line deleted successfully",
+            deletedLine,
         });
     } catch (err) {
         console.error(err);

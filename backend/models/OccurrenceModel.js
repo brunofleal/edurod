@@ -1,13 +1,29 @@
 const mongoose = require("mongoose");
 
 const OccurrenceSchema = new mongoose.Schema({
-    name: {
+    description: {
         type: String,
     },
+    occurrenceType: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "OccurrenceType",
+    },
     driver: {
-        type: Number,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Driver",
+    },
+    line: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Line",
+    },
+    isResolved: {
+        type: Boolean,
+        default: false,
     },
     occurrenceDate: {
+        type: Date,
+    },
+    resolvedDate: {
         type: Date,
     },
     creationDate: {
@@ -16,4 +32,4 @@ const OccurrenceSchema = new mongoose.Schema({
     },
 });
 
-module.exports = mongoose.model("Driver", OccurrenceSchema);
+module.exports = mongoose.model("Occurrence", OccurrenceSchema);

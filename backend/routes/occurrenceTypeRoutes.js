@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const Driver = require("../models/DriverModel");
+const OccurrenceType = require("../models/OccurrenceTypeModel");
 const authenticateUser = require("./verifyToken");
 
 router.get("/", authenticateUser, async (req, res) => {
@@ -9,8 +9,14 @@ router.get("/", authenticateUser, async (req, res) => {
 
         const skip = (page - 1) * limit;
 
-        const returnDrivers = await Driver.find().limit(limit).skip(skip);
-        res.status(200).json({ page: page, limit: limit, returnDrivers });
+        const returnOccurrenceTypes = await OccurrenceType.find()
+            .limit(limit)
+            .skip(skip);
+        res.status(200).json({
+            page: page,
+            limit: limit,
+            returnOccurrenceTypes,
+        });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "An error occurred ", err: err });
@@ -23,12 +29,12 @@ router.post("/", authenticateUser, async (req, res) => {
             return res.status(400).json({ message: "Request body is empty" });
         }
 
-        const newDriver = new Driver({ ...req.body });
+        const newOccurrenceType = new OccurrenceType({ ...req.body });
 
-        const addDriver = await newDriver.save();
+        const addOccurrenceType = await newOccurrenceType.save();
         res.status(201).json({
-            message: "Driver Added Successfully",
-            addedDriver: addDriver,
+            message: "OccurrenceType Added Successfully",
+            addedOccurrenceType: addOccurrenceType,
         });
     } catch (err) {
         console.error(err);
@@ -40,19 +46,21 @@ router.put("/:id", authenticateUser, async (req, res) => {
     try {
         const productId = req.params.id;
 
-        const updatedDriver = await Driver.findByIdAndUpdate(
+        const updatedOccurrenceType = await OccurrenceType.findByIdAndUpdate(
             productId,
             req.body,
             { new: true }
         );
 
-        if (!updatedDriver) {
-            return res.status(404).json({ message: "Driver not found" });
+        if (!updatedOccurrenceType) {
+            return res
+                .status(404)
+                .json({ message: "OccurrenceType not found" });
         }
 
         res.json({
-            message: "Driver updated successfully",
-            updatedDriver,
+            message: "OccurrenceType updated successfully",
+            updatedOccurrenceType,
         });
     } catch (err) {
         console.error(err);
@@ -63,15 +71,19 @@ router.put("/:id", authenticateUser, async (req, res) => {
 router.delete("/:id", authenticateUser, async (req, res) => {
     try {
         const productId = req.params.id;
-        const deletedDriver = await Driver.findByIdAndDelete(productId);
+        const deletedOccurrenceType = await OccurrenceType.findByIdAndDelete(
+            productId
+        );
 
-        if (!deletedDriver) {
-            return res.status(404).json({ message: "Driver not found" });
+        if (!deletedOccurrenceType) {
+            return res
+                .status(404)
+                .json({ message: "OccurrenceType not found" });
         }
 
         res.json({
-            message: "Driver deleted successfully",
-            deletedDriver,
+            message: "OccurrenceType deleted successfully",
+            deletedOccurrenceType,
         });
     } catch (err) {
         console.error(err);

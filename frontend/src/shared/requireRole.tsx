@@ -7,7 +7,7 @@ const useHasRequiredRole = (roles: string[]) => {
 
     const hasRole = () => {
         for (const role of roles) {
-            if (role && !userInfo.roles.includes(role)) {
+            if (role && userInfo && !userInfo.roles.includes(role)) {
                 return true;
             }
         }

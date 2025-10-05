@@ -24,7 +24,7 @@ const NavbarContent = () => {
                 if (response) {
                     const userData = response.data;
                     setUserInfo(userData);
-                    if (userData.roles.length === 0) {
+                    if (!userData || userData.roles.length === 0) {
                         navigate("/onboard");
                     }
                 }

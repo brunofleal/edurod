@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { axiosApi } from "../axiosApi";
 
 interface PaginatedResponseData<T> {
-    returnLines: T[];
+    data: T;
 }
 
 interface UseFetchState<T> {

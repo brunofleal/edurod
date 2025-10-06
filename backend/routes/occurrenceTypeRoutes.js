@@ -1,21 +1,20 @@
 const router = require("express").Router();
 const OccurrenceType = require("../models/OccurrenceTypeModel");
-const authenticateUser = require("./verifyToken");
+const authenticateUser = require("../middlewares/verifyToken");
+const authenticateUserWithAdminRole = require("../middlewares/verifyAdminRole");
 
 router.get("/", authenticateUser, async (req, res) => {
     try {
-        const limit = req.query.limit || 200;
+        const limit = req.query.limit || 100000;
         const page = parseInt(req.query.page) || 1;
 
         const skip = (page - 1) * limit;
 
-        const returnOccurrenceTypes = await OccurrenceType.find()
-            .limit(limit)
-            .skip(skip);
+        const data = await OccurrenceType.find().limit(limit).skip(skip);
         res.status(200).json({
             page: page,
             limit: limit,
-            returnOccurrenceTypes,
+            data,
         });
     } catch (err) {
         console.error(err);
@@ -23,7 +22,7 @@ router.get("/", authenticateUser, async (req, res) => {
     }
 });
 
-router.post("/", authenticateUser, async (req, res) => {
+router.post("/", authenticateUserWithAdminRole, async (req, res) => {
     try {
         if (!req.body || Object.keys(req.body).length === 0) {
             return res.status(400).json({ message: "Request body is empty" });
@@ -31,10 +30,10 @@ router.post("/", authenticateUser, async (req, res) => {
 
         const newOccurrenceType = new OccurrenceType({ ...req.body });
 
-        const addOccurrenceType = await newOccurrenceType.save();
+        const data = await newOccurrenceType.save();
         res.status(201).json({
             message: "OccurrenceType Added Successfully",
-            addedOccurrenceType: addOccurrenceType,
+            data,
         });
     } catch (err) {
         console.error(err);
@@ -42,17 +41,17 @@ router.post("/", authenticateUser, async (req, res) => {
     }
 });
 
-router.put("/:id", authenticateUser, async (req, res) => {
+router.put("/:id", authenticateUserWithAdminRole, async (req, res) => {
     try {
         const productId = req.params.id;
 
-        const updatedOccurrenceType = await OccurrenceType.findByIdAndUpdate(
+        const data = await OccurrenceType.findByIdAndUpdate(
             productId,
             req.body,
             { new: true }
         );
 
-        if (!updatedOccurrenceType) {
+        if (!data) {
             return res
                 .status(404)
                 .json({ message: "OccurrenceType not found" });
@@ -60,7 +59,7 @@ router.put("/:id", authenticateUser, async (req, res) => {
 
         res.json({
             message: "OccurrenceType updated successfully",
-            updatedOccurrenceType,
+            data,
         });
     } catch (err) {
         console.error(err);
@@ -68,14 +67,12 @@ router.put("/:id", authenticateUser, async (req, res) => {
     }
 });
 
-router.delete("/:id", authenticateUser, async (req, res) => {
+router.delete("/:id", authenticateUserWithAdminRole, async (req, res) => {
     try {
         const productId = req.params.id;
-        const deletedOccurrenceType = await OccurrenceType.findByIdAndDelete(
-            productId
-        );
+        const data = await OccurrenceType.findByIdAndDelete(productId);
 
-        if (!deletedOccurrenceType) {
+        if (!data) {
             return res
                 .status(404)
                 .json({ message: "OccurrenceType not found" });
@@ -83,7 +80,7 @@ router.delete("/:id", authenticateUser, async (req, res) => {
 
         res.json({
             message: "OccurrenceType deleted successfully",
-            deletedOccurrenceType,
+            data,
         });
     } catch (err) {
         console.error(err);

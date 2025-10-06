@@ -14,7 +14,6 @@ const occurrenceTypesRoutes = require("./routes/occurrenceTypeRoutes");
 const driverRoutes = require("./routes/driverRoutes");
 const lineRoutes = require("./routes/lineRoutes");
 
-const privateRoutes = require("./routes/privateRoutes");
 const limiter = require("./middlewares/rateLimiter");
 
 // Constants
@@ -25,7 +24,6 @@ app.use(express.json());
 app.use(limiter);
 // -> Route Middlewares
 app.use("/", homeRoutes);
-app.use("/api/private", privateRoutes);
 app.use("/api/user", authRoutes);
 
 app.use("/api/occurrences", occurrenceRoutes);

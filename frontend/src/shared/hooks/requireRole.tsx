@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
-import { useAppContext } from "../contexts/AppContext";
+import { useAppContext } from "../../contexts/AppContext";
 
 const useHasRequiredRole = (roles: string[]) => {
     const { userInfo } = useAppContext();

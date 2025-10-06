@@ -3,7 +3,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { registerValidation, loginValidation } = require("../validations.js");
 const User = require("../models/UserModel");
-const authenticateUser = require("./verifyToken");
+const authenticateUser = require("../middlewares/verifyToken");
+const authenticateUserWithAdminRole = require("../middlewares/verifyAdminRole");
 
 // Routers
 router.post("/register", async (req, res) => {
@@ -56,6 +57,15 @@ router.post("/login", async (req, res) => {
     // Create and assign JWT
     const token = jwt.sign({ _id: registeredUser._id }, process.env.JWT_SECRET);
     res.header("auth-token", token).send(token);
+});
+
+router.get("", authenticateUserWithAdminRole, async (req, res) => {
+    try {
+        const users = await User.find();
+        res.status(200).json({ data: users });
+    } catch (error) {
+        res.status(500).send({ message: error.message });
+    }
 });
 
 router.get("/me", authenticateUser, async (req, res) => {

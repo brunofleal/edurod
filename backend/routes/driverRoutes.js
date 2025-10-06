@@ -1,23 +1,24 @@
 const router = require("express").Router();
 const Driver = require("../models/DriverModel");
-const authenticateUser = require("./verifyToken");
+const authenticateUser = require("../middlewares/verifyToken");
+const authenticateUserWithAdminRole = require("../middlewares/verifyAdminRole");
 
 router.get("/", authenticateUser, async (req, res) => {
     try {
-        const limit = req.query.limit || 200;
+        const limit = req.query.limit || 100000;
         const page = parseInt(req.query.page) || 1;
 
         const skip = (page - 1) * limit;
 
-        const returnDrivers = await Driver.find().limit(limit).skip(skip);
-        res.status(200).json({ page: page, limit: limit, returnDrivers });
+        const data = await Driver.find().limit(limit).skip(skip);
+        res.status(200).json({ page: page, limit: limit, data });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "An error occurred ", err: err });
     }
 });
 
-router.post("/", authenticateUser, async (req, res) => {
+router.post("/", authenticateUserWithAdminRole, async (req, res) => {
     try {
         if (!req.body || Object.keys(req.body).length === 0) {
             return res.status(400).json({ message: "Request body is empty" });
@@ -36,7 +37,7 @@ router.post("/", authenticateUser, async (req, res) => {
     }
 });
 
-router.put("/:id", authenticateUser, async (req, res) => {
+router.put("/:id", authenticateUserWithAdminRole, async (req, res) => {
     try {
         const productId = req.params.id;
 
@@ -60,7 +61,7 @@ router.put("/:id", authenticateUser, async (req, res) => {
     }
 });
 
-router.delete("/:id", authenticateUser, async (req, res) => {
+router.delete("/:id", authenticateUserWithAdminRole, async (req, res) => {
     try {
         const productId = req.params.id;
         const deletedDriver = await Driver.findByIdAndDelete(productId);

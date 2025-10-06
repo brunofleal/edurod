@@ -7,7 +7,7 @@ const AdminPage = () => {
     useRequireRoleAndRedirect(["admin"], "/no-access-permission");
 
     return (
-        <Box p={4}>
+        <Box p={4} w="100vw">
             <VStack>
                 <Tabs.Root lazyMount unmountOnExit defaultValue="tab-1">
                     <Tabs.List>

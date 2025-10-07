@@ -7,7 +7,7 @@ export const createColDefsFromData = (data: any) => {
     }
     const colDefs: ColDef[] = [];
     const defaultColDef: ColDef = {
-        minWidth: 100,
+        minWidth: 150,
         flex: 1,
         resizable: true,
         sortable: true,

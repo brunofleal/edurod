@@ -10,7 +10,12 @@ router.get("/", authenticateUser, async (req, res) => {
 
         const skip = (page - 1) * limit;
 
-        const data = await Occurrence.find().limit(limit).skip(skip);
+        const data = await Occurrence.find()
+            .limit(limit)
+            .skip(skip)
+            .populate("occurrenceType")
+            .populate("driver")
+            .populate("line");
         res.status(200).json({ page: page, limit: limit, data });
     } catch (err) {
         console.error(err);

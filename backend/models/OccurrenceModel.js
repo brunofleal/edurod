@@ -4,6 +4,9 @@ const OccurrenceSchema = new mongoose.Schema({
     description: {
         type: String,
     },
+    commentary: {
+        type: String,
+    },
     occurrenceType: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "OccurrenceType",

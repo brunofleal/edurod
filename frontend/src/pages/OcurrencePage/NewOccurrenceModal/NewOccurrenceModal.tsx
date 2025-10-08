@@ -22,9 +22,13 @@ import { fromDataArrayToOption } from "./utils";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+import { toast } from "react-toastify";
+
 import { registerLocale, setDefaultLocale } from "react-datepicker";
-import { pt } from "date-fns/locale/pt";
-registerLocale("pt", pt);
+import { ptBR } from "date-fns/locale";
+import { axiosApi } from "../../../shared/axiosApi";
+registerLocale("pt-BR", ptBR);
+setDefaultLocale("pt-BR");
 
 const DEFAULT_PLACEHOLDER = "Selecione uma opção";
 
@@ -52,6 +56,7 @@ const NewOccurrencePage = () => {
         : [];
 
     // States
+    const [loadingSave, setLoadingSave] = useState(false);
     const [driver, setDriver] = useState();
     const [occurrenceType, setOccurrenceType] = useState();
     const [line, setLine] = useState();
@@ -59,20 +64,32 @@ const NewOccurrencePage = () => {
     const [date, setDate] = useState<Date | null>(new Date());
     const [description, setDescription] = useState("");
 
-    const isSaveDisabled =
-        !driver || !occurrenceType || !line || !source || date;
-
     const handleSave = () => {
         const payload = {
             driver,
             occurrenceType,
             line,
             source,
-            date,
+            occurrenceDate: date?.toISOString(),
             description,
         };
-        console.log(payload);
+        setLoadingSave(true);
+        axiosApi
+            .post("/api/occurrences", payload)
+            .then((response) => {
+                toast.success("Ocorrência registrada com sucesso!");
+            })
+            .catch((error) => {
+                toast.error("Falha no registro de ocorrência.");
+                console.error(error);
+            })
+            .finally(() => {
+                setLoadingSave(false);
+            });
     };
+
+    const isSaveDisabled =
+        !driver || !occurrenceType || !line || !source || !date;
 
     return (
         <Dialog.Root size={"full"} closeOnInteractOutside={false}>
@@ -191,7 +208,13 @@ const NewOccurrencePage = () => {
                             <Dialog.ActionTrigger asChild>
                                 <Button variant="outline">Cancelar</Button>
                             </Dialog.ActionTrigger>
-                            <Button onClick={handleSave}>Salvar</Button>
+                            <Button
+                                onClick={handleSave}
+                                loading={loadingSave}
+                                disabled={loadingSave || isSaveDisabled}
+                            >
+                                Salvar
+                            </Button>
                         </Dialog.Footer>
 
                         <Dialog.CloseTrigger asChild>

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const LineSchema = new mongoose.Schema({
-    name: {
+    description: {
         type: String,
     },
     code: {

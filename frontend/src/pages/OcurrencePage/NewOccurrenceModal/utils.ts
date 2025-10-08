@@ -24,5 +24,5 @@ export const fromDataArrayToOption = (
     for (const dataElement of data) {
         optionArray.push(fromDataToOption(dataElement, labelKeys, valueKey));
     }
-    return optionArray;
+    return optionArray.sort((a, b) => (a.label > b.value ? 1 : -1));
 };

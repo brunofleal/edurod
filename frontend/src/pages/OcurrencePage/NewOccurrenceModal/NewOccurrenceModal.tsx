@@ -9,28 +9,43 @@ import {
     Portal,
     Text,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import { BsPlusCircle } from "react-icons/bs";
 import ComboBox from "../../../components/ComboBox/ComboBox";
 import { MenuLabels } from "./constants";
-import {
-    mockedDriverOptions,
-    mockedLineOptions,
-    mockedOccurrenceOptions,
-    mockedSource,
-} from "./mock";
+import { mockedSource } from "./mock";
 import { useFetch } from "../../../shared/hooks/useFetch";
 import { fromDataArrayToOption } from "./utils";
 
+const DEFAULT_PLACEHOLDER = "Selecione uma opção";
+
 const NewOccurrencePage = () => {
-    const defaultPlaceholder = "Selecione uma opção";
+    // Options
     const { data: dataDrivers, loading: loadingDrivers } =
         useFetch("/api/drivers");
     const driverOptions = dataDrivers
         ? fromDataArrayToOption(dataDrivers.data, ["matricula", "name"], "_id")
         : [];
+
+    const { data: dataOccurrenceTypes, loading: loadingOccurrenceType } =
+        useFetch("/api/occurrenceTypes");
+    const occurrenceTypeOptions = dataOccurrenceTypes
+        ? fromDataArrayToOption(
+              dataOccurrenceTypes.data,
+              ["description"],
+              "_id"
+          )
+        : [];
+
+    const { data: dataLines, loading: loadingLines } = useFetch("/api/lines");
+    const lineOptions = dataLines
+        ? fromDataArrayToOption(dataLines.data, ["code", "description"], "_id")
+        : [];
+
+    // States
+
     return (
-        <Dialog.Root size={"lg"}>
+        <Dialog.Root size={"full"} closeOnInteractOutside={false}>
             <Dialog.Trigger asChild>
                 <Button variant="solid">
                     <Icon>
@@ -42,7 +57,7 @@ const NewOccurrencePage = () => {
             <Portal>
                 <Dialog.Backdrop />
                 <Dialog.Positioner>
-                    <Dialog.Content>
+                    <Dialog.Content bgColor={"gray.100"}>
                         <Dialog.Header>
                             <Dialog.Title>
                                 Registro de nova Ocorrência
@@ -54,7 +69,7 @@ const NewOccurrencePage = () => {
                                     <GridItem>
                                         <ComboBox
                                             label={MenuLabels.Driver}
-                                            placeholder={defaultPlaceholder}
+                                            placeholder={DEFAULT_PLACEHOLDER}
                                             options={driverOptions}
                                             loading={loadingDrivers}
                                         />
@@ -62,22 +77,24 @@ const NewOccurrencePage = () => {
                                     <GridItem>
                                         <ComboBox
                                             label={MenuLabels.Occurrence}
-                                            placeholder={defaultPlaceholder}
-                                            options={mockedOccurrenceOptions}
+                                            placeholder={DEFAULT_PLACEHOLDER}
+                                            options={occurrenceTypeOptions}
+                                            loading={loadingOccurrenceType}
                                         />
                                     </GridItem>
 
                                     <GridItem>
                                         <ComboBox
                                             label={MenuLabels.Line}
-                                            placeholder={defaultPlaceholder}
-                                            options={mockedLineOptions}
+                                            placeholder={DEFAULT_PLACEHOLDER}
+                                            options={lineOptions}
+                                            loading={loadingLines}
                                         />
                                     </GridItem>
                                     <GridItem>
                                         <ComboBox
                                             label={MenuLabels.Source}
-                                            placeholder={defaultPlaceholder}
+                                            placeholder={DEFAULT_PLACEHOLDER}
                                             options={mockedSource}
                                         />
                                     </GridItem>
@@ -90,9 +107,9 @@ const NewOccurrencePage = () => {
                         </Dialog.Body>
                         <Dialog.Footer>
                             <Dialog.ActionTrigger asChild>
-                                <Button variant="outline">Cancel</Button>
+                                <Button variant="outline">Cancelar</Button>
                             </Dialog.ActionTrigger>
-                            <Button>Save</Button>
+                            <Button>Salvar</Button>
                         </Dialog.Footer>
                         <Dialog.CloseTrigger asChild>
                             <CloseButton size="sm" />

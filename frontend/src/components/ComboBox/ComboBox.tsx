@@ -13,6 +13,7 @@ interface Props {
     label: string;
     placeholder: string;
     options: Option[];
+    setValue: Function;
     loading?: boolean;
     styleProps?: BoxProps;
 }
@@ -20,6 +21,7 @@ const ComboBox = ({
     placeholder,
     label,
     options,
+    setValue,
     loading,
     ...styleProps
 }: Props) => {
@@ -33,6 +35,7 @@ const ComboBox = ({
         <ChakraComboBox.Root
             collection={collection}
             onInputValueChange={(e) => filter(e.inputValue)}
+            onValueChange={(e) => setValue(e.value[0])}
             positioning={{ strategy: "fixed", hideWhenDetached: true }}
             {...styleProps}
         >

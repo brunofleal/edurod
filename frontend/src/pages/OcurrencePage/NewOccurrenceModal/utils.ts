@@ -3,7 +3,7 @@ export const fromDataToOption = (
     labelKeys: string[],
     valueKey: string
 ) => {
-    const SEPARATOR = " - ";
+    const SEPARATOR = " | ";
     let label = "";
     for (const labelKey of labelKeys) {
         if (label === "") {
@@ -24,5 +24,5 @@ export const fromDataArrayToOption = (
     for (const dataElement of data) {
         optionArray.push(fromDataToOption(dataElement, labelKeys, valueKey));
     }
-    return optionArray.sort((a, b) => (a.label > b.value ? 1 : -1));
+    return optionArray.sort((a, b) => (a.label > b.label ? 1 : -1));
 };

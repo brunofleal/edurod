@@ -29,27 +29,41 @@ export const colDefs: ColDef[] = [
         headerName: "Motorista",
         valueGetter: ({ data }) =>
             `${data.driver.matricula} | ${data.driver.name}`,
-        width: 250,
+        width: 270,
     },
     {
         headerName: "Linha",
         valueGetter: ({ data }) =>
             `${data.line.code} | ${data.line.description}`,
-        width: 200,
+        width: 270,
     },
     {
         headerName: "Data da Ocorrência",
         field: "occurrenceDate",
+        filter: false,
         width: 200,
         valueGetter: ({ data }) =>
-            formatDateToLocalTime(data["occurrenceDate"], { onlyDate: false }),
+            formatDateToLocalTime(data["occurrenceDate"], { onlyDate: true }),
     },
     {
         headerName: "Data de Registro",
         field: "creationDate",
+        filter: false,
         width: 150,
         valueGetter: ({ data }) =>
-            formatDateToLocalTime(data["creationDate"], { onlyDate: false }),
+            formatDateToLocalTime(data["creationDate"], { onlyDate: true }),
+    },
+    {
+        headerName: "Data de Fechamento",
+        field: "resolvedDate",
+        filter: false,
+        width: 190,
+        valueGetter: ({ data }) =>
+            data["resolvedDate"]
+                ? formatDateToLocalTime(data["resolvedDate"], {
+                      onlyDate: true,
+                  })
+                : "-",
     },
     {
         headerName: "Status",

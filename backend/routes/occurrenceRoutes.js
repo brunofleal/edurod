@@ -15,7 +15,8 @@ router.get("/", authenticateUser, async (req, res) => {
             .skip(skip)
             .populate("occurrenceType")
             .populate("driver")
-            .populate("line");
+            .populate("line")
+            .sort({ occurrenceDate: -1 });
         res.status(200).json({ page: page, limit: limit, data });
     } catch (err) {
         console.error(err);

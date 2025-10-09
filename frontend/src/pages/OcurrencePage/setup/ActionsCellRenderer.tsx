@@ -15,7 +15,7 @@ const ActionsCellRenderer = ({
     data,
 }: CustomCellRendererProps<OccurrenceRegistry>) => {
     const { refetch } = useOccurrenceContext();
-    const [closeDescription, setCloseDescription] = useState("");
+    const [closingCommentary, setClosingCommentary] = useState("");
 
     const canViewClose = useHasRequiredRole([Role.CLOSER])();
     const canViewEdit = useHasRequiredRole([Role.ADMIN, Role.OPENER])();
@@ -29,6 +29,7 @@ const ActionsCellRenderer = ({
         const payload = {
             isResolved: true,
             resolvedDate: Date.now(),
+            closingCommentary,
         };
         axiosApi
             .patch(`/api/occurrences/${data._id}`, payload)
@@ -80,7 +81,7 @@ const ActionsCellRenderer = ({
                 description={"Tem certeza que deseja fechar essa ocorrência?"}
                 saveLabel={"Confirmar"}
                 onConfirm={handleCloseOccurrence}
-                isConfirmDisabled={closeDescription.length < 3}
+                isConfirmDisabled={closingCommentary.length < 3}
                 isHidden={!canViewClose || data?.isResolved}
                 extraField={
                     <Field.Root>
@@ -88,7 +89,7 @@ const ActionsCellRenderer = ({
                         <Textarea
                             placeholder="Descreva a ação tomada para encerramento da ocorrência"
                             onChange={(e) =>
-                                setCloseDescription(e.target.value)
+                                setClosingCommentary(e.target.value)
                             }
                         />
                     </Field.Root>

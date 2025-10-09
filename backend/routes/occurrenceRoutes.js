@@ -3,8 +3,10 @@ const Occurrence = require("../models/OccurrenceModel");
 const authenticateUser = require("../middlewares/verifyToken");
 const {
     authenticateUserWithAdminRole,
+    authenticateUserWithOpenerRole,
     authenticateUserWithCloserOpenerRole,
 } = require("../middlewares/verifyAdminRole");
+const { getRequestAuthor } = require("../utils/requestAuthor");
 
 router.get("/", authenticateUser, async (req, res) => {
     try {
@@ -19,6 +21,8 @@ router.get("/", authenticateUser, async (req, res) => {
             .populate("occurrenceType")
             .populate("driver")
             .populate("line")
+            .populate("createdBy", "-password")
+            .populate("modifiedBy", "-password")
             .sort({ occurrenceDate: -1 });
         res.status(200).json({ page: page, limit: limit, data });
     } catch (err) {
@@ -27,13 +31,14 @@ router.get("/", authenticateUser, async (req, res) => {
     }
 });
 
-router.post("/", authenticateUserWithAdminRole, async (req, res) => {
+router.post("/", authenticateUserWithOpenerRole, async (req, res) => {
     try {
         if (!req.body || Object.keys(req.body).length === 0) {
             return res.status(400).json({ message: "Request body is empty" });
         }
+        let user = await getRequestAuthor(req);
 
-        const newOccurrence = new Occurrence({ ...req.body });
+        const newOccurrence = new Occurrence({ ...req.body, createdBy: user });
 
         const data = await newOccurrence.save();
         res.status(201).json({
@@ -46,7 +51,7 @@ router.post("/", authenticateUserWithAdminRole, async (req, res) => {
     }
 });
 
-router.put("/:id", authenticateUserWithAdminRole, async (req, res) => {
+router.put("/:id", authenticateUserWithCloserOpenerRole, async (req, res) => {
     try {
         const productId = req.params.id;
 
@@ -68,7 +73,7 @@ router.put("/:id", authenticateUserWithAdminRole, async (req, res) => {
     }
 });
 
-router.patch("/:id", authenticateUserWithAdminRole, async (req, res) => {
+router.patch("/:id", authenticateUserWithCloserOpenerRole, async (req, res) => {
     try {
         const productId = req.params.id;
         const newData = req.body;
@@ -77,8 +82,12 @@ router.patch("/:id", authenticateUserWithAdminRole, async (req, res) => {
         if (!oldData) {
             return res.status(404).json({ message: "Occurrence not found" });
         }
-
-        const updatedData = { ...oldData.toObject(), ...newData };
+        let user = await getRequestAuthor(req);
+        const updatedData = {
+            ...oldData.toObject(),
+            ...newData,
+            modifiedBy: user,
+        };
 
         const data = await Occurrence.findByIdAndUpdate(
             productId,

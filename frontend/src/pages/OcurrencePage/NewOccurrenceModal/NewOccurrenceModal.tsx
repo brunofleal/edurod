@@ -105,6 +105,8 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
             source,
             occurrenceDate: date?.toISOString(),
             description,
+            isResolved: false,
+            resolvedDate: undefined,
         };
         setLoadingSave(true);
         axiosApi

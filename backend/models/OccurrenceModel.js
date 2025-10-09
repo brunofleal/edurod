@@ -34,6 +34,14 @@ const OccurrenceSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+    },
+    modifiedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+    },
 });
 
 module.exports = mongoose.model("Occurrence", OccurrenceSchema);

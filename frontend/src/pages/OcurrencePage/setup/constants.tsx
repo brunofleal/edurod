@@ -9,7 +9,7 @@ export const colDefs: ColDef[] = [
     {
         headerName: "Ocorrência",
         field: "occurrenceType.description",
-        width: 250,
+        width: 220,
     },
     {
         headerName: "Pontos",
@@ -29,19 +29,19 @@ export const colDefs: ColDef[] = [
         headerName: "Motorista",
         valueGetter: ({ data }) =>
             `${data.driver.matricula} | ${data.driver.name}`,
-        width: 270,
+        width: 250,
     },
     {
         headerName: "Linha",
         valueGetter: ({ data }) =>
             `${data.line.code} | ${data.line.description}`,
-        width: 270,
+        width: 220,
     },
     {
         headerName: "Data da Ocorrência",
         field: "occurrenceDate",
         filter: false,
-        width: 200,
+        width: 170,
         valueGetter: ({ data }) =>
             formatDateToLocalTime(data["occurrenceDate"], { onlyDate: true }),
     },
@@ -57,13 +57,37 @@ export const colDefs: ColDef[] = [
         headerName: "Data de Fechamento",
         field: "resolvedDate",
         filter: false,
-        width: 190,
+        width: 170,
         valueGetter: ({ data }) =>
-            data["resolvedDate"]
+            data["resolvedDate"] && data["isResolved"]
                 ? formatDateToLocalTime(data["resolvedDate"], {
                       onlyDate: true,
                   })
                 : "-",
+    },
+    {
+        headerName: "Descrição de Abertura",
+        field: "description",
+        width: 400,
+        wrapText: true,
+        autoHeight: true,
+    },
+    {
+        headerName: "Comentário de Fechamento",
+        field: "closingCommentary",
+        width: 400,
+        wrapText: true,
+        autoHeight: true,
+    },
+    {
+        headerName: "Criador",
+        field: "createdBy.name",
+        width: 200,
+    },
+    {
+        headerName: "Último Modicador",
+        field: "modifiedBy.name",
+        width: 200,
     },
     {
         headerName: "Status",

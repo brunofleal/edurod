@@ -1,4 +1,5 @@
 export default interface Line {
-  name: string;
-  code: string;
+    _id: string;
+    name: string;
+    code: string;
 }

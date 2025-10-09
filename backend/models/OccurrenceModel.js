@@ -4,7 +4,7 @@ const OccurrenceSchema = new mongoose.Schema({
     description: {
         type: String,
     },
-    commentary: {
+    closingCommentary: {
         type: String,
     },
     occurrenceType: {

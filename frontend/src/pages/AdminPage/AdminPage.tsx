@@ -2,9 +2,10 @@ import { Box, Tabs, VStack } from "@chakra-ui/react";
 import React from "react";
 import useRequireRoleAndRedirect from "../../shared/hooks/requireRole";
 import PanelGrid from "./PanelGrid";
+import { Role } from "../../interfaces/roles";
 
 const AdminPage = () => {
-    useRequireRoleAndRedirect(["admin"], "/no-access-permission");
+    useRequireRoleAndRedirect([Role.ADMIN], "/no-access-permission");
 
     return (
         <Box p={4} w="100vw">

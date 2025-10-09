@@ -2,31 +2,34 @@ import { HStack } from "@chakra-ui/react";
 import React from "react";
 import AgGrid from "../../components/AgGrid/AgGrid";
 import { colDefs, defaultColumnDef } from "./setup/constants";
-import NewOccurrencePage from "./NewOccurrenceModal/NewOccurrenceModal";
+import NewOccurrenceModal from "./NewOccurrenceModal/NewOccurrenceModal";
 import { useFetch } from "../../shared/hooks/useFetch";
+import { OccurrenceProvider } from "./OccurrenceContext";
 
 const OccurrencesPages = () => {
-    const { data, loading } = useFetch("/api/occurrences");
+    const { data, loading, refetch } = useFetch("/api/occurrences");
 
     const rowData = data ? data.data : [];
-    console.log({ rowData });
 
     return (
-        <HStack>
-            <AgGrid
-                gridButtons={
-                    <HStack>
-                        <NewOccurrencePage />
-                    </HStack>
-                }
-                title="Ocorrências"
-                width={"100vw"}
-                rowData={rowData}
-                columnDefs={colDefs}
-                defaultColDef={defaultColumnDef}
-                loading={loading}
-            />
-        </HStack>
+        <OccurrenceProvider refetch={refetch}>
+            <HStack>
+                <AgGrid
+                    gridButtons={
+                        <HStack>
+                            <NewOccurrenceModal mode="create" />
+                        </HStack>
+                    }
+                    title="Ocorrências"
+                    width={"100vw"}
+                    height={"85vh"}
+                    rowData={rowData}
+                    columnDefs={colDefs}
+                    defaultColDef={defaultColumnDef}
+                    loading={loading}
+                />
+            </HStack>
+        </OccurrenceProvider>
     );
 };
 

@@ -13,6 +13,7 @@ interface Props {
     label: string;
     placeholder: string;
     options: Option[];
+    value: any;
     setValue: Function;
     loading?: boolean;
     styleProps?: BoxProps;
@@ -21,6 +22,7 @@ const ComboBox = ({
     placeholder,
     label,
     options,
+    value,
     setValue,
     loading,
     ...styleProps
@@ -35,13 +37,20 @@ const ComboBox = ({
         <ChakraComboBox.Root
             collection={collection}
             onInputValueChange={(e) => filter(e.inputValue)}
-            onValueChange={(e) => setValue(e.value[0])}
+            value={value ? [value] : []}
+            onValueChange={(e) => setValue(e.value?.[0] || "")}
             positioning={{ strategy: "fixed", hideWhenDetached: true }}
+            openOnClick
             {...styleProps}
         >
             <ChakraComboBox.Label>{label}</ChakraComboBox.Label>
             <ChakraComboBox.Control>
-                <ChakraComboBox.Input placeholder={placeholder} />
+                <ChakraComboBox.Input
+                    placeholder={placeholder}
+                    onFocus={() => {
+                        // This will trigger the dropdown to open when input is focused
+                    }}
+                />
                 <ChakraComboBox.IndicatorGroup>
                     <ChakraComboBox.ClearTrigger />
                     <ChakraComboBox.Trigger />

@@ -1,7 +1,9 @@
 const router = require("express").Router();
 const OccurrenceType = require("../models/OccurrenceTypeModel");
 const authenticateUser = require("../middlewares/verifyToken");
-const authenticateUserWithAdminRole = require("../middlewares/verifyAdminRole");
+const {
+    authenticateUserWithAdminRole,
+} = require("../middlewares/verifyAdminRole");
 
 router.get("/", authenticateUser, async (req, res) => {
     try {

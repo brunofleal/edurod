@@ -1,7 +1,10 @@
 const router = require("express").Router();
 const Occurrence = require("../models/OccurrenceModel");
 const authenticateUser = require("../middlewares/verifyToken");
-const authenticateUserWithAdminRole = require("../middlewares/verifyAdminRole");
+const {
+    authenticateUserWithAdminRole,
+    authenticateUserWithCloserOpenerRole,
+} = require("../middlewares/verifyAdminRole");
 
 router.get("/", authenticateUser, async (req, res) => {
     try {
@@ -54,6 +57,36 @@ router.put("/:id", authenticateUserWithAdminRole, async (req, res) => {
         if (!data) {
             return res.status(404).json({ message: "Occurrence not found" });
         }
+
+        res.json({
+            message: "Occurrence updated successfully",
+            data,
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "An error occurred ", err: err });
+    }
+});
+
+router.patch("/:id", authenticateUserWithAdminRole, async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const newData = req.body;
+        const oldData = await Occurrence.findById(productId);
+
+        if (!oldData) {
+            return res.status(404).json({ message: "Occurrence not found" });
+        }
+
+        const updatedData = { ...oldData.toObject(), ...newData };
+
+        const data = await Occurrence.findByIdAndUpdate(
+            productId,
+            updatedData,
+            {
+                new: true,
+            }
+        );
 
         res.json({
             message: "Occurrence updated successfully",

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
     Box,
@@ -15,10 +15,9 @@ import {
 } from "@chakra-ui/react";
 import { BsPlusCircle } from "react-icons/bs";
 import ComboBox from "../../../components/ComboBox/ComboBox";
-import { MenuLabels } from "./constants";
-import { mockedSource } from "./mock";
+import { MenuLabels, sourceOptions } from "./constants";
 import { useFetch } from "../../../shared/hooks/useFetch";
-import { fromDataArrayToOption } from "./utils";
+import { fromDataArrayToOption, getOptionFromValue } from "./utils";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -27,12 +26,18 @@ import { toast } from "react-toastify";
 import { registerLocale, setDefaultLocale } from "react-datepicker";
 import { ptBR } from "date-fns/locale";
 import { axiosApi } from "../../../shared/axiosApi";
+import type { OccurrenceRegistry } from "../../../interfaces/occurrenceRegistry";
+
 registerLocale("pt-BR", ptBR);
 setDefaultLocale("pt-BR");
 
 const DEFAULT_PLACEHOLDER = "Selecione uma opção";
 
-const NewOccurrencePage = () => {
+interface Props {
+    mode: "create" | "edit";
+    editData?: OccurrenceRegistry;
+}
+const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
     // Options
     const { data: dataDrivers, loading: loadingDrivers } =
         useFetch("/api/drivers");
@@ -57,14 +62,14 @@ const NewOccurrencePage = () => {
 
     // States
     const [loadingSave, setLoadingSave] = useState(false);
-    const [driver, setDriver] = useState();
-    const [occurrenceType, setOccurrenceType] = useState();
-    const [line, setLine] = useState();
-    const [source, setSource] = useState();
+    const [driver, setDriver] = useState<string>();
+    const [occurrenceType, setOccurrenceType] = useState<string>();
+    const [line, setLine] = useState<string>();
+    const [source, setSource] = useState<string>();
     const [date, setDate] = useState<Date | null>(new Date());
     const [description, setDescription] = useState("");
 
-    const handleSave = () => {
+    const handleSaveNew = () => {
         const payload = {
             driver,
             occurrenceType,
@@ -88,26 +93,65 @@ const NewOccurrencePage = () => {
             });
     };
 
+    const handleEdit = () => {
+        const payload = {
+            driver,
+            occurrenceType,
+            line,
+            source,
+            occurrenceDate: date?.toISOString(),
+            description,
+        };
+        setLoadingSave(true);
+        axiosApi
+            .patch(`/api/occurrences/${editData?._id}`, payload)
+            .then((response) => {
+                toast.success("Ocorrência editada com sucesso!");
+            })
+            .catch((error) => {
+                toast.error("Falha na edição da ocorrência");
+                console.error(error);
+            })
+            .finally(() => {
+                setLoadingSave(false);
+            });
+    };
+
+    useEffect(() => {
+        if (editData) {
+            setDriver(editData.driver?._id);
+            setOccurrenceType(editData.occurrenceType?._id || "");
+            setLine(editData.line?._id || "");
+            setSource(editData.source || "");
+
+            setDate(new Date(editData.occurrenceDate));
+            setDescription(editData.description || "");
+        }
+    }, [editData]);
+
     const isSaveDisabled =
         !driver || !occurrenceType || !line || !source || !date;
 
     return (
         <Dialog.Root size={"full"} closeOnInteractOutside={false}>
             <Dialog.Trigger asChild>
-                <Button variant="solid">
+                <Button variant="solid" size={mode == "create" ? "md" : "xs"}>
                     <Icon>
                         <BsPlusCircle />
                     </Icon>
-                    Adicionar Ocorrência
+                    {mode == "create" ? "Criar nova Ocorrência" : "Editar"}
                 </Button>
             </Dialog.Trigger>
             <Portal>
                 <Dialog.Backdrop />
                 <Dialog.Positioner>
-                    <Dialog.Content bgColor={"gray.100"}>
+                    <Dialog.Content>
                         <Dialog.Header>
                             <Dialog.Title>
-                                Registro de nova Ocorrência
+                                {mode == "create"
+                                    ? "Registro de nova "
+                                    : "Editar "}
+                                Ocorrência
                             </Dialog.Title>
                             {isSaveDisabled ? (
                                 <Text p={2} color="red">
@@ -125,6 +169,10 @@ const NewOccurrencePage = () => {
                                             label={MenuLabels.Driver}
                                             placeholder={DEFAULT_PLACEHOLDER}
                                             options={driverOptions}
+                                            value={getOptionFromValue(
+                                                driverOptions,
+                                                driver
+                                            )}
                                             setValue={setDriver}
                                             loading={loadingDrivers}
                                         />
@@ -134,6 +182,10 @@ const NewOccurrencePage = () => {
                                             label={MenuLabels.Occurrence}
                                             placeholder={DEFAULT_PLACEHOLDER}
                                             options={occurrenceTypeOptions}
+                                            value={getOptionFromValue(
+                                                occurrenceTypeOptions,
+                                                occurrenceType
+                                            )}
                                             setValue={setOccurrenceType}
                                             loading={loadingOccurrenceType}
                                         />
@@ -144,6 +196,10 @@ const NewOccurrencePage = () => {
                                             label={MenuLabels.Line}
                                             placeholder={DEFAULT_PLACEHOLDER}
                                             options={lineOptions}
+                                            value={getOptionFromValue(
+                                                lineOptions,
+                                                line
+                                            )}
                                             setValue={setLine}
                                             loading={loadingLines}
                                         />
@@ -152,8 +208,12 @@ const NewOccurrencePage = () => {
                                         <ComboBox
                                             label={MenuLabels.Source}
                                             placeholder={DEFAULT_PLACEHOLDER}
+                                            value={getOptionFromValue(
+                                                lineOptions,
+                                                source
+                                            )}
                                             setValue={setSource}
-                                            options={mockedSource}
+                                            options={sourceOptions}
                                         />
                                     </GridItem>
                                     <GridItem>
@@ -165,6 +225,11 @@ const NewOccurrencePage = () => {
                                                 <DatePicker
                                                     selected={date}
                                                     maxDate={new Date()}
+                                                    value={
+                                                        date
+                                                            ? date.toISOString()
+                                                            : undefined
+                                                    }
                                                     onChange={(date) =>
                                                         setDate(date)
                                                     }
@@ -193,6 +258,7 @@ const NewOccurrencePage = () => {
                                             </Field.Label>
                                             <Textarea
                                                 placeholder="Insira descrição(opcional)"
+                                                value={description}
                                                 onChange={(e) =>
                                                     setDescription(
                                                         e.target.value
@@ -208,13 +274,19 @@ const NewOccurrencePage = () => {
                             <Dialog.ActionTrigger asChild>
                                 <Button variant="outline">Cancelar</Button>
                             </Dialog.ActionTrigger>
-                            <Button
-                                onClick={handleSave}
-                                loading={loadingSave}
-                                disabled={loadingSave || isSaveDisabled}
-                            >
-                                Salvar
-                            </Button>
+                            <Dialog.ActionTrigger asChild>
+                                <Button
+                                    onClick={() =>
+                                        mode == "create"
+                                            ? handleSaveNew()
+                                            : handleEdit()
+                                    }
+                                    loading={loadingSave}
+                                    disabled={loadingSave || isSaveDisabled}
+                                >
+                                    Salvar
+                                </Button>
+                            </Dialog.ActionTrigger>
                         </Dialog.Footer>
 
                         <Dialog.CloseTrigger asChild>
@@ -227,4 +299,4 @@ const NewOccurrencePage = () => {
     );
 };
 
-export default NewOccurrencePage;
+export default NewOccurrenceModal;

@@ -1,9 +1,9 @@
 import type { ColDef } from "ag-grid-community";
 import { formatDateToLocalTime } from "../../../shared/utils/formatDate";
 import type { CustomCellRendererProps } from "ag-grid-react";
-import { Badge, ButtonGroup, Button, Icon } from "@chakra-ui/react";
-import { BsArchive, BsPencil, BsTrash } from "react-icons/bs";
+import { Badge } from "@chakra-ui/react";
 import type { OccurrenceRegistry } from "../../../interfaces/occurrenceRegistry";
+import ActionsCellRenderer from "./ActionsCellRenderer";
 
 export const colDefs: ColDef[] = [
     {
@@ -90,37 +90,7 @@ export const colDefs: ColDef[] = [
         pinned: "right",
         filter: false,
         width: 280,
-        cellRenderer: ({
-            data,
-        }: CustomCellRendererProps<OccurrenceRegistry>) => {
-            return (
-                <ButtonGroup>
-                    <Button size="xs" disabled={data?.isResolved}>
-                        <Icon>
-                            <BsArchive />
-                        </Icon>
-                        Fechar
-                    </Button>
-                    <Button size="xs" variant="outline">
-                        <Icon>
-                            <BsPencil />
-                        </Icon>
-                        Editar
-                    </Button>
-                    <Button
-                        size="xs"
-                        variant="outline"
-                        bgColor="red"
-                        color="white"
-                    >
-                        <Icon>
-                            <BsTrash />
-                        </Icon>
-                        Deletar
-                    </Button>
-                </ButtonGroup>
-            );
-        },
+        cellRenderer: ActionsCellRenderer,
     },
 ];
 export const defaultColumnDef: ColDef = {

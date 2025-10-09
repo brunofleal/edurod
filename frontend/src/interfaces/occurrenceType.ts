@@ -1,5 +1,5 @@
 export interface OccurrenceType {
+    _id: string;
     name: string;
-    type: string;
     points: number;
 }

@@ -4,7 +4,9 @@ const jwt = require("jsonwebtoken");
 const { registerValidation, loginValidation } = require("../validations.js");
 const User = require("../models/UserModel");
 const authenticateUser = require("../middlewares/verifyToken");
-const authenticateUserWithAdminRole = require("../middlewares/verifyAdminRole");
+const {
+    authenticateUserWithAdminRole,
+} = require("../middlewares/verifyAdminRole");
 
 // Routers
 router.post("/register", async (req, res) => {

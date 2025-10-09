@@ -128,31 +128,11 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
             setOccurrenceType(editData.occurrenceType._id);
             setLine(editData.line._id);
             setSource(editData.source || "");
-            console.log("Setting source:", editData.source);
-            console.log("Available sourceOptions:", sourceOptions);
 
             setDate(new Date(editData.occurrenceDate));
             setDescription(editData.description || "");
         }
-    }, [editData, sourceOptions]);
-
-    // Additional effect to ensure source is set correctly
-    useEffect(() => {
-        if (editData?.source && sourceOptions.length > 0) {
-            const sourceExists = sourceOptions.find(
-                (option) => option.value === editData.source
-            );
-            if (sourceExists) {
-                setSource(editData.source);
-                console.log("Source set successfully:", editData.source);
-            } else {
-                console.warn(
-                    "Source value not found in options:",
-                    editData.source
-                );
-            }
-        }
-    }, [editData?.source, sourceOptions]);
+    }, [editData]);
 
     const isSaveDisabled =
         !driver || !occurrenceType || !line || !source || !date;

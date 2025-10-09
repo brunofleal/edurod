@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect } from "react";
 import {
     Box,
     Combobox as ChakraComboBox,
@@ -29,15 +29,25 @@ const ComboBox = ({
 }: Props) => {
     const { contains } = useFilter({ sensitivity: "base" });
 
-    const { collection, filter } = useListCollection({
+    const { collection, filter } = useListCollection<Option>({
         initialItems: options,
         filter: contains,
     });
+
+    // Update collection when options change
+    useEffect(() => {
+        collection.setItems(options);
+    }, [options, collection]);
+
+    // Find the selected option object based on the value
+    const selectedOption = options.find((option) => option.value === value);
+    const selectedValue = selectedOption ? [selectedOption.value] : [];
+
     return !loading ? (
         <ChakraComboBox.Root
             collection={collection}
             onInputValueChange={(e) => filter(e.inputValue)}
-            value={value ? [value] : []}
+            defaultValue={selectedValue}
             onValueChange={(e) => setValue(e.value?.[0] || "")}
             positioning={{ strategy: "fixed", hideWhenDetached: true }}
             openOnClick

@@ -42,7 +42,7 @@ const NavbarContent = () => {
 
     return (
         <Box h="100vh">
-            <ToastContainer />
+            <ToastContainer position="top-center" />
             <AuthChecker />
             <HStack
                 p={6}

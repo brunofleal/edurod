@@ -13,11 +13,11 @@ import {
     Text,
     Textarea,
 } from "@chakra-ui/react";
-import { BsPlusCircle } from "react-icons/bs";
+import { BsPen, BsPlusCircle } from "react-icons/bs";
 import ComboBox from "../../../components/ComboBox/ComboBox";
 import { MenuLabels, sourceOptions } from "./constants";
 import { useFetch } from "../../../shared/hooks/useFetch";
-import { fromDataArrayToOption, getOptionFromValue } from "./utils";
+import { fromDataArrayToOption } from "./utils";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -27,6 +27,7 @@ import { registerLocale, setDefaultLocale } from "react-datepicker";
 import { ptBR } from "date-fns/locale";
 import { axiosApi } from "../../../shared/axiosApi";
 import type { OccurrenceRegistry } from "../../../interfaces/occurrenceRegistry";
+import { useOccurrenceContext } from "../OccurrenceContext";
 
 registerLocale("pt-BR", ptBR);
 setDefaultLocale("pt-BR");
@@ -38,6 +39,8 @@ interface Props {
     editData?: OccurrenceRegistry;
 }
 const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
+    const { refetch } = useOccurrenceContext();
+
     // Options
     const { data: dataDrivers, loading: loadingDrivers } =
         useFetch("/api/drivers");
@@ -90,6 +93,7 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
             })
             .finally(() => {
                 setLoadingSave(false);
+                refetch();
             });
     };
 
@@ -114,20 +118,41 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
             })
             .finally(() => {
                 setLoadingSave(false);
+                refetch();
             });
     };
 
     useEffect(() => {
         if (editData) {
-            setDriver(editData.driver?._id);
-            setOccurrenceType(editData.occurrenceType?._id || "");
-            setLine(editData.line?._id || "");
+            setDriver(editData.driver._id);
+            setOccurrenceType(editData.occurrenceType._id);
+            setLine(editData.line._id);
             setSource(editData.source || "");
+            console.log("Setting source:", editData.source);
+            console.log("Available sourceOptions:", sourceOptions);
 
             setDate(new Date(editData.occurrenceDate));
             setDescription(editData.description || "");
         }
-    }, [editData]);
+    }, [editData, sourceOptions]);
+
+    // Additional effect to ensure source is set correctly
+    useEffect(() => {
+        if (editData?.source && sourceOptions.length > 0) {
+            const sourceExists = sourceOptions.find(
+                (option) => option.value === editData.source
+            );
+            if (sourceExists) {
+                setSource(editData.source);
+                console.log("Source set successfully:", editData.source);
+            } else {
+                console.warn(
+                    "Source value not found in options:",
+                    editData.source
+                );
+            }
+        }
+    }, [editData?.source, sourceOptions]);
 
     const isSaveDisabled =
         !driver || !occurrenceType || !line || !source || !date;
@@ -137,7 +162,7 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
             <Dialog.Trigger asChild>
                 <Button variant="solid" size={mode == "create" ? "md" : "xs"}>
                     <Icon>
-                        <BsPlusCircle />
+                        {mode == "create" ? <BsPlusCircle /> : <BsPen />}
                     </Icon>
                     {mode == "create" ? "Criar nova Ocorrência" : "Editar"}
                 </Button>
@@ -169,10 +194,7 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
                                             label={MenuLabels.Driver}
                                             placeholder={DEFAULT_PLACEHOLDER}
                                             options={driverOptions}
-                                            value={getOptionFromValue(
-                                                driverOptions,
-                                                driver
-                                            )}
+                                            value={driver}
                                             setValue={setDriver}
                                             loading={loadingDrivers}
                                         />
@@ -182,10 +204,7 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
                                             label={MenuLabels.Occurrence}
                                             placeholder={DEFAULT_PLACEHOLDER}
                                             options={occurrenceTypeOptions}
-                                            value={getOptionFromValue(
-                                                occurrenceTypeOptions,
-                                                occurrenceType
-                                            )}
+                                            value={occurrenceType}
                                             setValue={setOccurrenceType}
                                             loading={loadingOccurrenceType}
                                         />
@@ -196,10 +215,7 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
                                             label={MenuLabels.Line}
                                             placeholder={DEFAULT_PLACEHOLDER}
                                             options={lineOptions}
-                                            value={getOptionFromValue(
-                                                lineOptions,
-                                                line
-                                            )}
+                                            value={line}
                                             setValue={setLine}
                                             loading={loadingLines}
                                         />
@@ -208,12 +224,10 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
                                         <ComboBox
                                             label={MenuLabels.Source}
                                             placeholder={DEFAULT_PLACEHOLDER}
-                                            value={getOptionFromValue(
-                                                lineOptions,
-                                                source
-                                            )}
-                                            setValue={setSource}
                                             options={sourceOptions}
+                                            value={source}
+                                            setValue={setSource}
+                                            loading={false}
                                         />
                                     </GridItem>
                                     <GridItem>
@@ -225,11 +239,6 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
                                                 <DatePicker
                                                     selected={date}
                                                     maxDate={new Date()}
-                                                    value={
-                                                        date
-                                                            ? date.toISOString()
-                                                            : undefined
-                                                    }
                                                     onChange={(date) =>
                                                         setDate(date)
                                                     }

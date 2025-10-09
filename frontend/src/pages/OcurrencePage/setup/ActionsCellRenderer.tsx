@@ -1,14 +1,7 @@
 import type { CustomCellRendererProps } from "ag-grid-react";
 import type { OccurrenceRegistry } from "../../../interfaces/occurrenceRegistry";
-import {
-    ButtonGroup,
-    Button,
-    Icon,
-    HStack,
-    Textarea,
-    Field,
-} from "@chakra-ui/react";
-import { BsArchive, BsPencil, BsTrash } from "react-icons/bs";
+import { ButtonGroup, Icon, Textarea, Field } from "@chakra-ui/react";
+import { BsArchive, BsTrash } from "react-icons/bs";
 import { ConfirmDialog } from "../../../components/ConfirmDialog/ConfirmDialog";
 import { useState } from "react";
 import { axiosApi } from "../../../shared/axiosApi";
@@ -106,7 +99,11 @@ const ActionsCellRenderer = ({
                     </Icon>
                 }
             />
-            <NewOccurrenceModal mode="edit" editData={data} />
+            {canViewEdit ? (
+                <NewOccurrenceModal mode="edit" editData={data} />
+            ) : (
+                <></>
+            )}
 
             <ConfirmDialog
                 openButton={{

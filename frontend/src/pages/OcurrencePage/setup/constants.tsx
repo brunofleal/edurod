@@ -51,7 +51,7 @@ export const colDefs: ColDef[] = [
         filter: false,
         width: 150,
         valueGetter: ({ data }) =>
-            formatDateToLocalTime(data["creationDate"], { onlyDate: true }),
+            formatDateToLocalTime(data["creationDate"], { onlyDate: false }),
     },
     {
         headerName: "Data de Fechamento",
@@ -61,7 +61,7 @@ export const colDefs: ColDef[] = [
         valueGetter: ({ data }) =>
             data["resolvedDate"] && data["isResolved"]
                 ? formatDateToLocalTime(data["resolvedDate"], {
-                      onlyDate: true,
+                      onlyDate: false,
                   })
                 : "-",
     },

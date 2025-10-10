@@ -16,6 +16,7 @@ export const formatDateToLocalTime = (
     }
     return date.toLocaleString("pt-Br", {
         dateStyle: "short",
+        timeStyle: "short",
     });
 };
 

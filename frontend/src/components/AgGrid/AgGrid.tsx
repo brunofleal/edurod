@@ -48,8 +48,11 @@ const AgGrid = ({
             <AgGridReact
                 {...defaultAgGridProps}
                 {...agGridProps}
-                onGridReady={({ api }) => {
-                    api.autoSizeAllColumns();
+                onGridReady={(event) => {
+                    //event.api.autoSizeAllColumns();
+                    if (agGridProps.onGridReady) {
+                        agGridProps.onGridReady(event);
+                    }
                 }}
             />
         </Box>

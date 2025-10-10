@@ -10,12 +10,27 @@ const { getRequestAuthor } = require("../utils/requestAuthor");
 
 router.get("/", authenticateUser, async (req, res) => {
     try {
+        const startDate = req.query.startDate;
+        const endDate = req.query.endDate;
+
         const limit = req.query.limit || 100000;
         const page = parseInt(req.query.page) || 1;
-
         const skip = (page - 1) * limit;
 
-        const data = await Occurrence.find()
+        // Build date filter
+        let dateFilter = {};
+        if (startDate && endDate) {
+            dateFilter.creationDate = {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate),
+            };
+        } else if (startDate) {
+            dateFilter.creationDate = { $gte: new Date(startDate) };
+        } else if (endDate) {
+            dateFilter.creationDate = { $lte: new Date(endDate) };
+        }
+
+        const data = await Occurrence.find(dateFilter)
             .limit(limit)
             .skip(skip)
             .populate("occurrenceType")

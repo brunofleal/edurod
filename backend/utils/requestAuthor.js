@@ -9,8 +9,8 @@ const getRequestAuthor = async (req) => {
 
     try {
         const verified = jwt.verify(token, process.env.JWT_SECRET);
-        if (!token) {
-            return res.status(401).send("Access denied");
+        if (!verified) {
+            return null;
         }
         const user = await UserModel.findById(verified._id).all();
         return user;

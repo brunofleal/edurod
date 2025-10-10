@@ -12,6 +12,7 @@ const authRoutes = require("./routes/auth");
 const occurrenceRoutes = require("./routes/occurrenceRoutes");
 const occurrenceTypesRoutes = require("./routes/occurrenceTypeRoutes");
 const driverRoutes = require("./routes/driverRoutes");
+const driverReportRoutes = require("./routes/driverReportRoute");
 const lineRoutes = require("./routes/lineRoutes");
 
 const limiter = require("./middlewares/rateLimiter");
@@ -29,6 +30,7 @@ app.use("/api/user", authRoutes);
 app.use("/api/occurrences", occurrenceRoutes);
 app.use("/api/occurrenceTypes", occurrenceTypesRoutes);
 app.use("/api/drivers", driverRoutes);
+app.use("/api/drivers-report", driverReportRoutes);
 app.use("/api/lines", lineRoutes);
 
 // Connect to Database

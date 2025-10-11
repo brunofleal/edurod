@@ -27,7 +27,7 @@ const ExportXLSX = ({
     const exportToXLSX = async () => {
         if (!gridApi) return;
 
-        // Get filtered and visible columns
+        // Get filtered and visible columns (include all visible columns)
         const visibleColumns =
             gridApi.getColumns()?.filter((col) => col.isVisible()) || [];
 
@@ -132,10 +132,45 @@ const ExportXLSX = ({
         // Add data rows
         let rowIndex = 0;
         gridApi.forEachNodeAfterFilterAndSort((node) => {
+            // Skip if this is a header row or invalid data
+            if (!node.data || node.rowPinned) {
+                return;
+            }
+
             const rowData = visibleColumns.map((col) => {
                 const colId = col.getColId();
                 const colDef = col.getColDef();
                 const cellValue = node.data[colId];
+
+                // For columns with cell renderers, try to get the underlying value
+                if (colDef.cellRenderer) {
+                    // If it's a detail/action column, skip it
+                    if (
+                        colId === "detail" ||
+                        colDef.headerName === "Detalhes"
+                    ) {
+                        return "";
+                    }
+                    // For other cell renderer columns, return the raw value
+                    return cellValue || "";
+                }
+
+                // Apply value getter first (this handles computed values like driver info)
+                if (
+                    colDef.valueGetter &&
+                    typeof colDef.valueGetter === "function"
+                ) {
+                    const getterValue = colDef.valueGetter({
+                        data: node.data,
+                        node: node,
+                        colDef: colDef,
+                        column: col,
+                        api: gridApi,
+                        context: undefined,
+                        getValue: (field: string) => node.data[field],
+                    });
+                    return getterValue || "";
+                }
 
                 // Apply value formatter if it exists and is a function
                 if (
@@ -152,23 +187,6 @@ const ExportXLSX = ({
                         context: undefined,
                     });
                     return formattedValue || "";
-                }
-
-                // Apply value getter if it exists and is a function
-                if (
-                    colDef.valueGetter &&
-                    typeof colDef.valueGetter === "function"
-                ) {
-                    const getterValue = colDef.valueGetter({
-                        data: node.data,
-                        node: node,
-                        colDef: colDef,
-                        column: col,
-                        api: gridApi,
-                        context: undefined,
-                        getValue: (field: string) => node.data[field],
-                    });
-                    return getterValue || "";
                 }
 
                 return cellValue || "";
@@ -208,8 +226,16 @@ const ExportXLSX = ({
             to: { row: headerRowNumber, column: visibleColumns.length },
         };
 
-        // Freeze the header rows
-        worksheet.views = [{ state: "frozen", ySplit: headerRowNumber }];
+        // Set freeze panes using the worksheet views property
+        worksheet.views = [
+            {
+                state: "frozen",
+                ySplit: headerRowNumber,
+                xSplit: 1,
+                topLeftCell: `B${headerRowNumber + 1}`,
+                activeCell: `B${headerRowNumber + 1}`,
+            },
+        ];
 
         // Save file
         const finalFileName =

@@ -41,7 +41,7 @@ const ReportsPage = () => {
 
     return (
         <AgGrid
-            title={"Pontuação por Motorista"}
+            title={"Ocorrências acumaladas por Motorista"}
             children={
                 <HStack>
                     <DateScroller value={period} setValue={setPeriod} />

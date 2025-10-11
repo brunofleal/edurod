@@ -7,6 +7,14 @@ import ActionsCellRenderer from "./ActionsCellRenderer";
 
 export const colDefs: ColDef[] = [
     {
+        headerName: "Motorista",
+        field: "driver",
+        valueGetter: ({ data }) =>
+            `${data.driver.matricula} | ${data.driver.name}`,
+        width: 350,
+        pinned: "left",
+    },
+    {
         headerName: "Ocorrência",
         field: "occurrenceType.description",
         width: 220,
@@ -24,13 +32,6 @@ export const colDefs: ColDef[] = [
                 </Badge>
             );
         },
-    },
-    {
-        headerName: "Motorista",
-        field: "driver",
-        valueGetter: ({ data }) =>
-            `${data.driver.matricula} | ${data.driver.name}`,
-        width: 250,
     },
     {
         headerName: "Linha",

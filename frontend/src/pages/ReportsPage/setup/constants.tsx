@@ -11,7 +11,8 @@ export const colDefs: ColDef[] = [
         field: "driver",
         valueGetter: ({ data }) =>
             `${data.driver.matricula} | ${data.driver.name}`,
-        width: 280,
+        width: 350,
+        pinned: "left",
     },
     {
         headerName: "Pontos",

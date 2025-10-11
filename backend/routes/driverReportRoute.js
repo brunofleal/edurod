@@ -39,12 +39,14 @@ router.get("/", authenticateUser, async (req, res) => {
                 systemVariables && systemVariables[0]
                     ? systemVariables[0].pointsPerDriver
                     : 100;
-            const points =
+            const points = Math.max(
                 pointsPerDriver +
-                occurrencesForDriver.reduce(
-                    (acc, curr) => acc + curr.occurrenceType.points,
-                    0
-                );
+                    occurrencesForDriver.reduce(
+                        (acc, curr) => acc + curr.occurrenceType.points,
+                        0
+                    ),
+                0
+            );
             const maxPayAmoutPerDriver =
                 systemVariables && systemVariables[0]
                     ? systemVariables[0].maxPayAmoutPerDriver

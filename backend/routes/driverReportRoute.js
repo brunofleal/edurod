@@ -1,9 +1,9 @@
 const router = require("express").Router();
 const Driver = require("../models/DriverModel");
 const Occurrence = require("../models/OccurrenceModel");
-const authenticateUser = require("../middlewares/verifyToken");
+const SystemVariables = require("../models/SystemVariablesModel");
 
-const INITIAL_POINTS = 100;
+const authenticateUser = require("../middlewares/verifyToken");
 
 router.get("/", authenticateUser, async (req, res) => {
     try {
@@ -34,12 +34,26 @@ router.get("/", authenticateUser, async (req, res) => {
                 a.occurrenceType.points > b.occurrenceType.points ? 1 : -1
             )[0];
 
+            const systemVariables = await SystemVariables.find();
+            const pointsPerDriver =
+                systemVariables && systemVariables[0]
+                    ? systemVariables[0].pointsPerDriver
+                    : 100;
             const points =
-                INITIAL_POINTS +
+                pointsPerDriver +
                 occurrencesForDriver.reduce(
                     (acc, curr) => acc + curr.occurrenceType.points,
                     0
                 );
+            const maxPayAmoutPerDriver =
+                systemVariables && systemVariables[0]
+                    ? systemVariables[0].maxPayAmoutPerDriver
+                    : 300;
+
+            const bonus = Math.min(
+                maxPayAmoutPerDriver,
+                (points / pointsPerDriver) * maxPayAmoutPerDriver
+            );
 
             const driverReport = {
                 driver,
@@ -51,10 +65,16 @@ router.get("/", authenticateUser, async (req, res) => {
                     ? topOccurrence.occurrenceType
                     : null,
                 points,
+                bonus,
             };
             data.push(driverReport);
         }
-        data.sort((a, b) => (a.points > b.points ? 1 : -1));
+        data.sort((a, b) => {
+            if (a.points === b.points) {
+                return a.driver.name.localeCompare(b.driver.name);
+            }
+            return a.points > b.points ? 1 : -1;
+        });
         res.status(200).json({ data });
     } catch (err) {
         console.error(err);

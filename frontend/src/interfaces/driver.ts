@@ -5,7 +5,7 @@ export interface Driver {
 }
 
 export interface DriverReport {
-    name: string;
+    driver: Driver;
     points: number;
     bonus: number;
     totalOccurrences: number;

@@ -8,6 +8,7 @@ import { BsCash } from "react-icons/bs";
 export const colDefs: ColDef[] = [
     {
         headerName: "Motorista",
+        field: "driver",
         valueGetter: ({ data }) =>
             `${data.driver.matricula} | ${data.driver.name}`,
         width: 280,

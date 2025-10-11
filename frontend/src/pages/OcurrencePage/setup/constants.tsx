@@ -27,12 +27,14 @@ export const colDefs: ColDef[] = [
     },
     {
         headerName: "Motorista",
+        field: "driver",
         valueGetter: ({ data }) =>
             `${data.driver.matricula} | ${data.driver.name}`,
         width: 250,
     },
     {
         headerName: "Linha",
+        field: "line",
         valueGetter: ({ data }) =>
             `${data.line.code} | ${data.line.description}`,
         width: 220,

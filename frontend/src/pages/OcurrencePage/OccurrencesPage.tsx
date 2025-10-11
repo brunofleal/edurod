@@ -16,6 +16,7 @@ const OccurrencesPages = () => {
     const [searchParams] = useSearchParams();
     const startDate = searchParams.get("startDate");
     const endDate = searchParams.get("endDate");
+    const driver = searchParams.get("driver");
 
     const [gridApi, setGridApi] = useState<GridApi | null>(null);
     const [period, setPeriod] = useState<Period>();
@@ -61,6 +62,21 @@ const OccurrencesPages = () => {
             );
         }
     }, [period?.start, period?.end]);
+
+    useEffect(() => {
+        if (driver && gridApi) {
+            const currentFilter = gridApi.getFilterModel();
+            const driverName = {
+                filterType: "text",
+                type: "contains",
+                filter: driver,
+            };
+            gridApi.setFilterModel({
+                ...currentFilter,
+                driver: driverName,
+            });
+        }
+    }, [driver, gridApi]);
 
     return (
         <OccurrenceProvider refetch={refetch}>

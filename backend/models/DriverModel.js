@@ -1,12 +1,15 @@
 const mongoose = require("mongoose");
 
-const DriverSchema = new mongoose.Schema({
-    name: {
-        type: String,
+const DriverSchema = new mongoose.Schema(
+    {
+        name: {
+            type: String,
+        },
+        matricula: {
+            type: Number,
+        },
     },
-    matricula: {
-        type: Number,
-    },
-});
+    { timestamps: true }
+);
 
 module.exports = mongoose.model("Driver", DriverSchema);

@@ -16,7 +16,7 @@ const ReportsPage = () => {
 
     const [period, setPeriod] = useState<Period>();
     const { data, loading } = useFetch(
-        `/api/drivers-report?startDate=${startDate ?? ""}&endDate=${endDate ?? ""}`
+        `/api/driversReport?startDate=${startDate ?? ""}&endDate=${endDate ?? ""}`
     );
     const rowData = data ? data.data : [];
 

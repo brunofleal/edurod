@@ -1,13 +1,16 @@
 const mongoose = require("mongoose");
 
-const OccurrenceSchema = new mongoose.Schema({
-    description: {
-        type: String,
+const OccurrenceSchema = new mongoose.Schema(
+    {
+        description: {
+            type: String,
+        },
+        points: {
+            type: Number,
+            default: 0,
+        },
     },
-    points: {
-        type: Number,
-        default: 0,
-    },
-});
+    { timestamps: true }
+);
 
 module.exports = mongoose.model("OccurrenceType", OccurrenceSchema);

@@ -14,6 +14,7 @@ const occurrenceTypesRoutes = require("./routes/occurrenceTypeRoutes");
 const driverRoutes = require("./routes/driverRoutes");
 const driverReportRoutes = require("./routes/driverReportRoute");
 const lineRoutes = require("./routes/lineRoutes");
+const systemVariablesRoutes = require("./routes/systemVariablesRoute");
 
 const limiter = require("./middlewares/rateLimiter");
 
@@ -30,8 +31,10 @@ app.use("/api/user", authRoutes);
 app.use("/api/occurrences", occurrenceRoutes);
 app.use("/api/occurrenceTypes", occurrenceTypesRoutes);
 app.use("/api/drivers", driverRoutes);
-app.use("/api/drivers-report", driverReportRoutes);
+app.use("/api/driversReport", driverReportRoutes);
 app.use("/api/lines", lineRoutes);
+
+app.use("/api/systemVariables", systemVariablesRoutes);
 
 // Connect to Database
 mongoose.connect(process.env.DB_URL, () => {

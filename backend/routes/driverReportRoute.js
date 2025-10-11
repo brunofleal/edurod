@@ -3,12 +3,13 @@ const Driver = require("../models/DriverModel");
 const Occurrence = require("../models/OccurrenceModel");
 const authenticateUser = require("../middlewares/verifyToken");
 
+const INITIAL_POINTS = 100;
+
 router.get("/", authenticateUser, async (req, res) => {
     try {
         const startDate = req.query.startDate;
         const endDate = req.query.endDate;
 
-        // Build date filter
         let dateFilter = {};
         if (startDate && endDate) {
             dateFilter.creationDate = {
@@ -32,6 +33,14 @@ router.get("/", authenticateUser, async (req, res) => {
             const topOccurrence = occurrencesForDriver.sort((a, b) =>
                 a.occurrenceType.points > b.occurrenceType.points ? 1 : -1
             )[0];
+
+            const points =
+                INITIAL_POINTS +
+                occurrencesForDriver.reduce(
+                    (acc, curr) => acc + curr.occurrenceType.points,
+                    0
+                );
+
             const driverReport = {
                 driver,
                 totalOccurrences: occurrencesForDriver.length,
@@ -41,10 +50,11 @@ router.get("/", authenticateUser, async (req, res) => {
                 topOccurrence: topOccurrence
                     ? topOccurrence.occurrenceType
                     : null,
+                points,
             };
             data.push(driverReport);
         }
-        data.sort((a, b) => (a.totalOccurrences < b.totalOccurrences ? 1 : -1));
+        data.sort((a, b) => (a.points > b.points ? 1 : -1));
         res.status(200).json({ data });
     } catch (err) {
         console.error(err);

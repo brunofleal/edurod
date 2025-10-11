@@ -10,6 +10,7 @@ import DateScroller, {
     type Period,
 } from "../../components/DateScroller/DateScroller";
 import { useNavigate, useSearchParams } from "react-router";
+import ExportXLSX from "../../components/ExportXLSX/ExportXLSX";
 
 const OccurrencesPages = () => {
     const navigate = useNavigate();
@@ -42,6 +43,7 @@ const OccurrencesPages = () => {
             ...currentFilter,
             isResolved,
         });
+        console.log(currentFilter);
     };
 
     useEffect(() => {
@@ -58,7 +60,7 @@ const OccurrencesPages = () => {
             period?.end
         ) {
             navigate(
-                `/occurrences?startDate=${period?.start}&endDate=${period?.end}`
+                `/occurrences?startDate=${period?.start}&endDate=${period?.end}&driver=${driver ?? ""}`
             );
         }
     }, [period?.start, period?.end]);
@@ -73,7 +75,7 @@ const OccurrencesPages = () => {
             };
             gridApi.setFilterModel({
                 ...currentFilter,
-                driver: driverName,
+                "driver.name": driverName,
             });
         }
     }, [driver, gridApi]);
@@ -91,6 +93,13 @@ const OccurrencesPages = () => {
                             >
                                 Aberto / Fechado
                             </Button>
+                            <ExportXLSX
+                                gridApi={gridApi}
+                                period={period}
+                                fileName={`Relatório_${period?.start}-${period?.end}_${driver ?? ""}.xlsx`}
+                                title={`Relatório de Ocorrências`}
+                                subtitle={driver ? `Motorista: ${driver}` : ""}
+                            />
                             <NewOccurrenceModal mode="create" />
                         </HStack>
                     }

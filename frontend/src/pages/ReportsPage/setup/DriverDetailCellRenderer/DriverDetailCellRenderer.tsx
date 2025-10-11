@@ -8,13 +8,13 @@ import { useNavigate, useSearchParams } from "react-router";
 const DriverDetailCellRenderer = ({
     data,
 }: CustomCellRendererProps<DriverReport>) => {
-    console.log({ data });
     const [searchParams] = useSearchParams();
     const startDate = searchParams.get("startDate");
     const endDate = searchParams.get("endDate");
     const navigate = useNavigate();
     const handleDetail = () => {
-        const url = `/occurrences?startDate=${startDate}&endDate=${endDate}&driver=${data?.driver.name}`;
+        const encodedDriverName = encodeURIComponent(data?.driver.name || "");
+        const url = `/occurrences?startDate=${startDate}&endDate=${endDate}&driver=${encodedDriverName}`;
         navigate(url);
     };
     return (

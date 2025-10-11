@@ -1,0 +1,244 @@
+import ExcelJS from "exceljs";
+import { Button, Icon } from "@chakra-ui/react";
+import type { GridApi } from "ag-grid-community";
+import { BsFileEarmarkArrowDown } from "react-icons/bs";
+import { formatDateToLocalTime } from "../../shared/utils/formatDate";
+
+interface Period {
+    start: string;
+    end: string;
+}
+
+interface ExportXLSXProps {
+    gridApi: GridApi | null;
+    period?: Period;
+    title?: string;
+    subtitle?: string;
+    fileName?: string;
+}
+
+const ExportXLSX = ({
+    gridApi,
+    period,
+    title = "Relatório de Ocorrências",
+    subtitle = "",
+    fileName,
+}: ExportXLSXProps) => {
+    const exportToXLSX = async () => {
+        if (!gridApi) return;
+
+        // Get filtered and visible columns
+        const visibleColumns =
+            gridApi.getColumns()?.filter((col) => col.isVisible()) || [];
+
+        // Prepare table headers
+        const headers = visibleColumns.map(
+            (col) => col.getColDef().headerName || col.getColId()
+        );
+
+        // Create workbook and worksheet
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet("Ocorrências");
+
+        // Set column widths
+        worksheet.columns = visibleColumns.map((col, index) => ({
+            key: col.getColId(),
+            header: headers[index],
+            width: index === 0 ? 40 : 25,
+        }));
+
+        // Add title row
+        const titleRow = worksheet.addRow([title]);
+        worksheet.mergeCells(
+            `A1:${String.fromCharCode(64 + visibleColumns.length)}1`
+        );
+        titleRow.height = 30;
+        titleRow.getCell(1).style = {
+            font: { bold: true, size: 16, color: { argb: "FFFFFFFF" } },
+            fill: {
+                type: "pattern",
+                pattern: "solid",
+                fgColor: { argb: "FF366B69" },
+            },
+            alignment: { horizontal: "center", vertical: "middle" },
+            border: {
+                top: { style: "thick", color: { argb: "FF000000" } },
+                left: { style: "thick", color: { argb: "FF000000" } },
+                bottom: { style: "thick", color: { argb: "FF000000" } },
+                right: { style: "thick", color: { argb: "FF000000" } },
+            },
+        };
+
+        // Add subtitle row if subtitle exists
+        let currentRowIndex = 2;
+        if (subtitle) {
+            const subtitleRow = worksheet.addRow([subtitle]);
+            worksheet.mergeCells(
+                `A2:${String.fromCharCode(64 + visibleColumns.length)}2`
+            );
+            subtitleRow.height = 25;
+            subtitleRow.getCell(1).style = {
+                font: { bold: true, size: 14, color: { argb: "FF2D3748" } },
+                alignment: { horizontal: "center", vertical: "middle" },
+                border: {
+                    bottom: { style: "thin", color: { argb: "FFE2E8F0" } },
+                },
+            };
+            currentRowIndex = 3;
+        }
+
+        // Add date range row
+        const dateRange =
+            period?.start && period?.end
+                ? `Período: ${formatDateToLocalTime(period.start, { onlyDate: true })} até ${formatDateToLocalTime(period.end, { onlyDate: true })}`
+                : "Período: Todos os registros";
+        const dateRow = worksheet.addRow([dateRange]);
+        worksheet.mergeCells(
+            `A${currentRowIndex}:${String.fromCharCode(64 + visibleColumns.length)}${currentRowIndex}`
+        );
+        dateRow.height = 25;
+        dateRow.getCell(1).style = {
+            font: { bold: true, size: 12, color: { argb: "FF2D3748" } },
+            alignment: { horizontal: "center", vertical: "middle" },
+            border: {
+                bottom: { style: "medium", color: { argb: "FFE2E8F0" } },
+            },
+        };
+
+        // Add empty row
+        worksheet.addRow([]);
+
+        // Add header row
+        const headerRow = worksheet.addRow(headers);
+        headerRow.height = 25;
+        headerRow.eachCell((cell, colNumber) => {
+            cell.style = {
+                font: { bold: true, size: 11, color: { argb: "FFFFFFFF" } },
+                fill: {
+                    type: "pattern",
+                    pattern: "solid",
+                    fgColor: { argb: "FF408582" },
+                },
+                alignment: { horizontal: "center", vertical: "middle" },
+                border: {
+                    top: { style: "medium", color: { argb: "FF2D3748" } },
+                    left: { style: "thin", color: { argb: "FFFFFFFF" } },
+                    bottom: { style: "medium", color: { argb: "FF2D3748" } },
+                    right: { style: "thin", color: { argb: "FFFFFFFF" } },
+                },
+            };
+        });
+
+        // Add data rows
+        let rowIndex = 0;
+        gridApi.forEachNodeAfterFilterAndSort((node) => {
+            const rowData = visibleColumns.map((col) => {
+                const colId = col.getColId();
+                const colDef = col.getColDef();
+                const cellValue = node.data[colId];
+
+                // Apply value formatter if it exists and is a function
+                if (
+                    colDef.valueFormatter &&
+                    typeof colDef.valueFormatter === "function"
+                ) {
+                    const formattedValue = colDef.valueFormatter({
+                        value: cellValue,
+                        data: node.data,
+                        node: node,
+                        colDef: colDef,
+                        column: col,
+                        api: gridApi,
+                        context: undefined,
+                    });
+                    return formattedValue || "";
+                }
+
+                // Apply value getter if it exists and is a function
+                if (
+                    colDef.valueGetter &&
+                    typeof colDef.valueGetter === "function"
+                ) {
+                    const getterValue = colDef.valueGetter({
+                        data: node.data,
+                        node: node,
+                        colDef: colDef,
+                        column: col,
+                        api: gridApi,
+                        context: undefined,
+                        getValue: (field: string) => node.data[field],
+                    });
+                    return getterValue || "";
+                }
+
+                return cellValue || "";
+            });
+
+            const dataRow = worksheet.addRow(rowData);
+            dataRow.height = 20;
+
+            // Apply alternating row colors
+            const isEvenRow = rowIndex % 2 === 0;
+            const bgColor = isEvenRow ? "FFF7FAFC" : "FFFFFFFF";
+
+            dataRow.eachCell((cell) => {
+                cell.style = {
+                    font: { size: 10, color: { argb: "FF2D3748" } },
+                    fill: {
+                        type: "pattern",
+                        pattern: "solid",
+                        fgColor: { argb: bgColor },
+                    },
+                    alignment: { horizontal: "left", vertical: "middle" },
+                    border: {
+                        top: { style: "hair", color: { argb: "FFE2E8F0" } },
+                        left: { style: "hair", color: { argb: "FFE2E8F0" } },
+                        bottom: { style: "hair", color: { argb: "FFE2E8F0" } },
+                        right: { style: "hair", color: { argb: "FFE2E8F0" } },
+                    },
+                };
+            });
+            rowIndex++;
+        });
+
+        // Add autofilter to header row
+        const headerRowNumber = subtitle ? 5 : 4;
+        worksheet.autoFilter = {
+            from: { row: headerRowNumber, column: 1 },
+            to: { row: headerRowNumber, column: visibleColumns.length },
+        };
+
+        // Freeze the header rows
+        worksheet.views = [{ state: "frozen", ySplit: headerRowNumber }];
+
+        // Save file
+        const finalFileName =
+            fileName ||
+            `ocorrencias_${
+                period?.start || "todos"
+            }_${period?.end || "registros"}.xlsx`;
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = finalFileName;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    };
+
+    return (
+        <Button variant={"outline"} onClick={exportToXLSX} disabled={!gridApi}>
+            <Icon mr={2}>
+                <BsFileEarmarkArrowDown />
+            </Icon>
+            Exportar
+        </Button>
+    );
+};
+
+export default ExportXLSX;

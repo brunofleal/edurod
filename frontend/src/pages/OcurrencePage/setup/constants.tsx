@@ -8,7 +8,7 @@ import ActionsCellRenderer from "./ActionsCellRenderer";
 export const colDefs: ColDef[] = [
     {
         headerName: "Motorista",
-        field: "driver",
+        field: "driver.name",
         valueGetter: ({ data }) =>
             `${data.driver.matricula} | ${data.driver.name}`,
         width: 350,
@@ -17,12 +17,14 @@ export const colDefs: ColDef[] = [
     {
         headerName: "Ocorrência",
         field: "occurrenceType.description",
+        valueGetter: ({ data }) => data.occurrenceType.description,
         width: 220,
     },
     {
         headerName: "Pontos",
-        field: "occurrence.points",
+        field: "occurrenceType.points",
         width: 80,
+        valueGetter: ({ data }) => data.occurrenceType.points,
         cellRenderer: ({
             data,
         }: CustomCellRendererProps<OccurrenceRegistry>) => {
@@ -95,6 +97,8 @@ export const colDefs: ColDef[] = [
     {
         headerName: "Status",
         field: "isResolved",
+        valueGetter: ({ data }) =>
+            data.occurrenceType.isResolved ? "Fechado" : "Em Aberto",
         pinned: "right",
         width: 150,
         cellRenderer: ({ data }: CustomCellRendererProps) => {

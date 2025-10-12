@@ -10,6 +10,15 @@ router.get("/", authenticateUser, async (req, res) => {
         const startDate = req.query.startDate;
         const endDate = req.query.endDate;
 
+        let monthsInPeriod = 1; // Default to 1 month
+        if (startDate && endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            monthsInPeriod =
+                (end.getFullYear() - start.getFullYear()) * 12 +
+                (end.getMonth() - start.getMonth());
+        }
+
         let dateFilter = {};
         if (startDate && endDate) {
             dateFilter.creationDate = {
@@ -40,7 +49,7 @@ router.get("/", authenticateUser, async (req, res) => {
                     ? systemVariables[0].pointsPerDriver
                     : 100;
             const points = Math.max(
-                pointsPerDriver +
+                pointsPerDriver * monthsInPeriod +
                     occurrencesForDriver.reduce(
                         (acc, curr) => acc + curr.occurrenceType.points,
                         0
@@ -48,13 +57,14 @@ router.get("/", authenticateUser, async (req, res) => {
                 0
             );
             const maxPayAmoutPerDriver =
-                systemVariables && systemVariables[0]
+                (systemVariables && systemVariables[0]
                     ? systemVariables[0].maxPayAmoutPerDriver
-                    : 300;
+                    : 300) * monthsInPeriod;
 
             const bonus = Math.min(
-                maxPayAmoutPerDriver,
-                (points / pointsPerDriver) * maxPayAmoutPerDriver
+                maxPayAmoutPerDriver * monthsInPeriod,
+                (points / (pointsPerDriver * monthsInPeriod)) *
+                    maxPayAmoutPerDriver
             );
 
             const driverReport = {

@@ -30,12 +30,7 @@ const ReportsPage = () => {
     }, [startDate, endDate]);
 
     useEffect(() => {
-        if (
-            period?.start !== startDate &&
-            period?.end !== endDate &&
-            period?.start &&
-            period?.end
-        ) {
+        if (period?.start && period?.end) {
             navigate(
                 `/reports?startDate=${period?.start}&endDate=${period?.end}`
             );

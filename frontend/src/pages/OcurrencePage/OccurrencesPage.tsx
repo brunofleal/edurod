@@ -28,24 +28,6 @@ const OccurrencesPages = () => {
 
     const rowData = data ? data.data : [];
 
-    const toggleFilterStatus = () => {
-        if (!gridApi) return;
-
-        const currentFilter = gridApi.getFilterModel();
-        const isResolved =
-            currentFilter?.isResolved?.type !== "true"
-                ? {
-                      filterType: "text",
-                      type: currentFilter?.isResolved?.type ? "true" : "false",
-                  }
-                : {};
-        gridApi.setFilterModel({
-            ...currentFilter,
-            isResolved,
-        });
-        console.log(currentFilter);
-    };
-
     useEffect(() => {
         if (startDate && endDate) {
             setPeriod({ start: startDate, end: endDate });
@@ -87,12 +69,6 @@ const OccurrencesPages = () => {
                     gridButtons={
                         <HStack>
                             <DateScroller value={period} setValue={setPeriod} />
-                            <Button
-                                variant={"outline"}
-                                onClick={() => toggleFilterStatus()}
-                            >
-                                Aberto / Fechado
-                            </Button>
                             <ExportXLSX
                                 gridApi={gridApi}
                                 period={period}

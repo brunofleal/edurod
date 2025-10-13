@@ -1,16 +1,40 @@
-version: "3.8"
-
 services:
     mongodb:
-        build: ./database
+        build:
+            context: ./database
+            args:
+                MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+                MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
         container_name: mongolocal
         ports:
             - "27017:27017"
         environment:
-            MONGO_INITDB_ROOT_USERNAME: adminedurod
-            MONGO_INITDB_ROOT_PASSWORD: edurodpassword2025
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
         volumes:
             - mongodb_data:/data/db
+        restart: unless-stopped
+
+    backend:
+        build: ./backend
+        container_name: edurod-backend
+        ports:
+            - "${BACKEND_PORT}:3001"
+        environment:
+            - NODE_ENV=${NODE_ENV}
+            - JWT_SECRET=${JWT_SECRET}
+            - MONGODB_URI=${MONGODB_URI}
+        depends_on:
+            - mongodb
+        restart: unless-stopped
+
+    frontend:
+        build: ./frontend
+        container_name: edurod-frontend
+        ports:
+            - "${FRONTEND_PORT}:80"
+        depends_on:
+            - backend
         restart: unless-stopped
 
 volumes:

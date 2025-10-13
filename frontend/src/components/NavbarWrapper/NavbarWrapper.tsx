@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Avatar, Box, HStack, Text } from "@chakra-ui/react";
 import { Outlet, useLocation, useNavigate } from "react-router";
 import Logo from "../Logo/Logo";

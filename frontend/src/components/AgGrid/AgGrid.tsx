@@ -1,4 +1,4 @@
-import React, { type JSX } from "react";
+import { type JSX } from "react";
 import { Box, HStack, Text } from "@chakra-ui/react";
 import { AgGridReact, type AgGridReactProps } from "ag-grid-react";
 import {

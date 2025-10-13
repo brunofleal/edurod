@@ -1,4 +1,3 @@
-import React from "react";
 import { Button, Menu, Portal } from "@chakra-ui/react";
 import { useNavigate } from "react-router";
 import { BsGearFill } from "react-icons/bs";

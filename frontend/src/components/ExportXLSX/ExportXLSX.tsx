@@ -111,7 +111,7 @@ const ExportXLSX = ({
         // Add header row
         const headerRow = worksheet.addRow(headers);
         headerRow.height = 25;
-        headerRow.eachCell((cell, colNumber) => {
+        headerRow.eachCell((cell) => {
             cell.style = {
                 font: { bold: true, size: 11, color: { argb: "FFFFFFFF" } },
                 fill: {

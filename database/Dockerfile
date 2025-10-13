@@ -1,8 +1,12 @@
-FROM mongo:latest
+FROM mongo:7.0
 
-# Set environment variables
-ENV MONGO_INITDB_ROOT_USERNAME=adminedurod
-ENV MONGO_INITDB_ROOT_PASSWORD=edurodpassword2025
+# Define build arguments
+ARG MONGO_INITDB_ROOT_USERNAME
+ARG MONGO_INITDB_ROOT_PASSWORD
+
+# Set environment variables from build arguments
+ENV MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+ENV MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
 
 # Expose MongoDB port
 EXPOSE 27017

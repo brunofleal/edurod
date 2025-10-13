@@ -1,6 +1,6 @@
 import { Box, Button, HStack, Text, Textarea, VStack } from "@chakra-ui/react";
 import { useFetch } from "../../shared/hooks/useFetch";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { axiosApi } from "../../shared/axiosApi";
 import { toast } from "react-toastify";
 

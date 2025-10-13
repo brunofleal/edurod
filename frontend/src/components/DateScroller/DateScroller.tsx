@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { formatDateToLocalTime } from "../../shared/utils/formatDate";
 import { BsCalendarDate, BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import { MdOutlineUpdate } from "react-icons/md";
-import { useSearchParams } from "react-router";
 
 export interface Period {
     start: string;

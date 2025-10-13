@@ -14,7 +14,7 @@ RUN npm install --production
 COPY . .
 
 # Expose port
-EXPOSE 3001
+EXPOSE 8000
 
 # Start the application
 CMD ["npm", "start"]

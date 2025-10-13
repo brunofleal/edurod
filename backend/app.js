@@ -5,6 +5,9 @@ const mongoose = require("mongoose");
 
 require("dotenv/config"); // Environment variables
 
+// Configure Mongoose
+mongoose.set("strictQuery", false);
+
 // Route imports
 const homeRoutes = require("./routes/home");
 const authRoutes = require("./routes/auth");
@@ -20,8 +23,23 @@ const limiter = require("./middlewares/rateLimiter");
 
 // Constants
 
+// Debug logging
+console.log("Environment variables:");
+console.log("PORT:", process.env.PORT);
+console.log("DB_URL:", process.env.DB_URL);
+console.log("NODE_ENV:", process.env.NODE_ENV);
+
 // Middlewares
-app.use(cors());
+app.use(
+    cors({
+        origin: [
+            "http://localhost",
+            "http://localhost:80",
+            "http://127.0.0.1:8000",
+        ],
+        credentials: true,
+    })
+);
 app.use(express.json());
 app.use(limiter);
 // -> Route Middlewares
@@ -42,6 +60,20 @@ mongoose.connect(process.env.DB_URL, () => {
 });
 
 // Starting the server
-app.listen(process.env.PORT, () => {
-    console.log(`Application running at http://localhost:${process.env.PORT}/`);
+const PORT = process.env.PORT || 3001;
+const server = app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Application running at http://0.0.0.0:${PORT}/`);
+    console.log(`Backend accessible at http://localhost:${PORT}/`);
+});
+
+server.on("error", (err) => {
+    console.error("Server error:", err);
+});
+
+// Handle graceful shutdown
+process.on("SIGTERM", () => {
+    console.log("SIGTERM received, shutting down gracefully");
+    server.close(() => {
+        console.log("Server closed");
+    });
 });

@@ -1,7 +1,8 @@
-const router = require("express").Router();
+const express = require("express");
+const router = express.Router();
 
 router.get("/", (req, res) => {
-    res.send("up");
+    res.json({ message: "Backend is running!" });
 });
 
 module.exports = router;

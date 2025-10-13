@@ -23,10 +23,10 @@ const useRequireRoleAndRedirect = (roles: string[], rerouteTo: string) => {
     const hasRole = useHasRequiredRole(roles);
 
     useEffect(() => {
-        if (!hasRole()) {
+        if (!hasRole() && userInfo) {
             navigate(rerouteTo);
         }
-    }, [userInfo]);
+    }, [roles, userInfo]);
 };
 
 export default useRequireRoleAndRedirect;

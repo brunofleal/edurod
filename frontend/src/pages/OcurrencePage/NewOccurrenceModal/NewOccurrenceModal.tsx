@@ -126,9 +126,9 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
 
     useEffect(() => {
         if (editData) {
-            setDriver(editData.driver._id);
-            setOccurrenceType(editData.occurrenceType._id);
-            setLine(editData.line._id);
+            setDriver(editData.driver?._id);
+            setOccurrenceType(editData.occurrenceType?._id);
+            setLine(editData.line?._id);
             setSource(editData.source || "");
 
             setDate(new Date(editData.occurrenceDate));

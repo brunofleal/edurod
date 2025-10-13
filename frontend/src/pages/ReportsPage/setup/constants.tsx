@@ -10,7 +10,9 @@ export const colDefs: ColDef[] = [
         headerName: "Motorista",
         field: "driver",
         valueGetter: ({ data }) =>
-            `${data.driver.matricula} | ${data.driver.name}`,
+            data.driver
+                ? `${data.driver.matricula} | ${data.driver.name}`
+                : "-",
         width: 350,
         pinned: "left",
     },

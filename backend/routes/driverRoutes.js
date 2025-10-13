@@ -4,6 +4,7 @@ const authenticateUser = require("../middlewares/verifyToken");
 const {
     authenticateUserWithAdminRole,
 } = require("../middlewares/verifyAdminRole");
+const { getRequestAuthor } = require("../utils/requestAuthor");
 
 router.get("/", authenticateUser, async (req, res) => {
     try {
@@ -56,6 +57,36 @@ router.put("/:id", authenticateUserWithAdminRole, async (req, res) => {
         res.json({
             message: "Driver updated successfully",
             updatedDriver,
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "An error occurred ", err: err });
+    }
+});
+
+router.patch("/:id", authenticateUserWithAdminRole, async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const newData = req.body;
+        const oldData = await Driver.findById(productId);
+
+        if (!oldData) {
+            return res.status(404).json({ message: "Driver not found" });
+        }
+        let user = await getRequestAuthor(req);
+        const updatedData = {
+            ...oldData.toObject(),
+            ...newData,
+            modifiedBy: user,
+        };
+
+        const data = await Driver.findByIdAndUpdate(productId, updatedData, {
+            new: true,
+        });
+
+        res.json({
+            message: "Driver updated successfully",
+            data,
         });
     } catch (err) {
         console.error(err);

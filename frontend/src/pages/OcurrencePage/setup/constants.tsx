@@ -10,21 +10,25 @@ export const colDefs: ColDef[] = [
         headerName: "Motorista",
         field: "driver.name",
         valueGetter: ({ data }) =>
-            `${data.driver.matricula} | ${data.driver.name}`,
+            data?.driver
+                ? `${data.driver.matricula} | ${data.driver.name}`
+                : "-",
         width: 350,
         pinned: "left",
     },
     {
         headerName: "Ocorrência",
         field: "occurrenceType.description",
-        valueGetter: ({ data }) => data.occurrenceType.description,
+        valueGetter: ({ data }) =>
+            data?.occurrenceType ? data.occurrenceType.description : "-",
         width: 220,
     },
     {
         headerName: "Pontos",
         field: "occurrenceType.points",
         width: 80,
-        valueGetter: ({ data }) => data.occurrenceType.points,
+        valueGetter: ({ data }) =>
+            data?.occurrenceType ? data.occurrenceType.points : "-",
         cellRenderer: ({
             data,
         }: CustomCellRendererProps<OccurrenceRegistry>) => {
@@ -39,7 +43,7 @@ export const colDefs: ColDef[] = [
         headerName: "Linha",
         field: "line",
         valueGetter: ({ data }) =>
-            `${data.line.code} | ${data.line.description}`,
+            data?.line ? `${data.line.code} | ${data.line.description}` : "-",
         width: 220,
     },
     {

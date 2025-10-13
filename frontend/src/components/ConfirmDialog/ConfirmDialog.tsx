@@ -1,4 +1,4 @@
-import { Button, CloseButton, Dialog, Portal } from "@chakra-ui/react";
+import { Button, CloseButton, Dialog, HStack, Portal } from "@chakra-ui/react";
 import type { JSX } from "react";
 
 interface Props {
@@ -35,8 +35,9 @@ export const ConfirmDialog = ({
                     size={"xs"}
                     {...actionButtonProps}
                 >
-                    {icon}
-                    {openButton.label}
+                    <HStack>
+                        {icon} {openButton.label}
+                    </HStack>
                 </Button>
             </Dialog.Trigger>
             <Portal>

@@ -61,6 +61,36 @@ router.post("/login", async (req, res) => {
     res.header("auth-token", token).send(token);
 });
 
+router.patch("/:id", async (req, res) => {
+    const productId = req.params.id;
+    const newData = req.body;
+    try {
+        const oldData = await User.findById(productId);
+
+        if (newData.password) {
+            const salt = bcrypt.genSaltSync(10);
+            const hashedPassword = bcrypt.hashSync(newData.password, salt);
+            newData.password = hashedPassword;
+        }
+
+        const updatedData = {
+            ...oldData.toObject(),
+            ...newData,
+        };
+
+        const data = await User.findByIdAndUpdate(productId, updatedData, {
+            new: true,
+        });
+        res.json({
+            message: "User updated successfully",
+            data,
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "An error occurred ", err: err });
+    }
+});
+
 router.get("", authenticateUserWithAdminRole, async (req, res) => {
     try {
         const users = await User.find();

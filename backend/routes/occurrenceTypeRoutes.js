@@ -4,6 +4,7 @@ const authenticateUser = require("../middlewares/verifyToken");
 const {
     authenticateUserWithAdminRole,
 } = require("../middlewares/verifyAdminRole");
+const { getRequestAuthor } = require("../utils/requestAuthor");
 
 router.get("/", authenticateUser, async (req, res) => {
     try {
@@ -58,6 +59,42 @@ router.put("/:id", authenticateUserWithAdminRole, async (req, res) => {
                 .status(404)
                 .json({ message: "OccurrenceType not found" });
         }
+
+        res.json({
+            message: "OccurrenceType updated successfully",
+            data,
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "An error occurred ", err: err });
+    }
+});
+
+router.patch("/:id", authenticateUserWithAdminRole, async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const newData = req.body;
+        const oldData = await OccurrenceType.findById(productId);
+
+        if (!oldData) {
+            return res
+                .status(404)
+                .json({ message: "OccurrenceType not found" });
+        }
+        let user = await getRequestAuthor(req);
+        const updatedData = {
+            ...oldData.toObject(),
+            ...newData,
+            modifiedBy: user,
+        };
+
+        const data = await OccurrenceType.findByIdAndUpdate(
+            productId,
+            updatedData,
+            {
+                new: true,
+            }
+        );
 
         res.json({
             message: "OccurrenceType updated successfully",

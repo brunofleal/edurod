@@ -224,8 +224,12 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
                                                     onChange={(date) =>
                                                         setDate(date)
                                                     }
-                                                    dateFormat="dd/MM/yyyy"
+                                                    showTimeSelect
+                                                    timeFormat="HH:mm"
+                                                    timeIntervals={15}
+                                                    dateFormat="dd/MM/yyyy HH:mm"
                                                     locale="pt-BR"
+                                                    popperPlacement="right-start"
                                                     customInput={
                                                         <input
                                                             style={{

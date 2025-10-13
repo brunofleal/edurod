@@ -48,7 +48,7 @@ export const colDefs: ColDef[] = [
         filter: false,
         width: 170,
         valueGetter: ({ data }) =>
-            formatDateToLocalTime(data["occurrenceDate"], { onlyDate: true }),
+            formatDateToLocalTime(data["occurrenceDate"], { onlyDate: false }),
     },
     {
         headerName: "Data de Registro",

@@ -17,7 +17,7 @@ const ActionsCellRenderer = ({
     const { refetch } = useOccurrenceContext();
     const [closingCommentary, setClosingCommentary] = useState("");
 
-    const canViewClose = useHasRequiredRole([Role.CLOSER])();
+    const canViewClose = useHasRequiredRole([Role.ADMIN, Role.CLOSER])();
     const canViewEdit = useHasRequiredRole([Role.ADMIN, Role.OPENER])();
     const canViewDelete = useHasRequiredRole([Role.ADMIN, Role.OPENER])();
 

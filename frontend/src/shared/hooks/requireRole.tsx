@@ -7,7 +7,7 @@ export const useHasRequiredRole = (roles: string[]) => {
 
     const hasRole = () => {
         for (const role of roles) {
-            if (role && userInfo && !userInfo.roles.includes(role)) {
+            if (role && userInfo && userInfo.roles.includes(role)) {
                 return true;
             }
         }
@@ -23,7 +23,7 @@ const useRequireRoleAndRedirect = (roles: string[], rerouteTo: string) => {
     const hasRole = useHasRequiredRole(roles);
 
     useEffect(() => {
-        if (hasRole()) {
+        if (!hasRole()) {
             navigate(rerouteTo);
         }
     }, [userInfo]);

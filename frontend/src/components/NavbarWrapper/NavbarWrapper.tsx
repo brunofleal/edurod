@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Avatar, Box, HStack, Text } from "@chakra-ui/react";
 import { Outlet, useLocation, useNavigate } from "react-router";
 import Logo from "../Logo/Logo";
@@ -10,11 +10,14 @@ import { capitalizeName } from "../../shared/utils/stringUtils";
 import { AppProvider, useAppContext } from "../../contexts/AppContext";
 import { deleteToken } from "../../shared/token";
 import { ToastContainer } from "react-toastify";
+import { Role } from "../../interfaces/roles";
+import { useHasRequiredRole } from "../../shared/hooks/requireRole";
 
 const NavbarContent = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { userInfo, setUserInfo } = useAppContext();
+    const canViewAdmin = useHasRequiredRole([Role.ADMIN])();
 
     useEffect(() => {
         //Retrieve user info
@@ -57,7 +60,11 @@ const NavbarContent = () => {
                     </Box>
                     <NavLink to="/occurrences" label="Ocorrências" />
                     <NavLink to="/reports" label="Relatórios" />
-                    <NavLink to="/admin" label="Administração" />
+                    {canViewAdmin ? (
+                        <NavLink to="/admin" label="Administração" />
+                    ) : (
+                        <></>
+                    )}
                 </HStack>
                 <HStack justifySelf="flex-end" gap={4}>
                     <HStack bgColor="white" borderRadius="md" p={1}>

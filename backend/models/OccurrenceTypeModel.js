@@ -4,6 +4,7 @@ const OccurrenceSchema = new mongoose.Schema(
     {
         description: {
             type: String,
+            unique: true,
         },
         points: {
             type: Number,

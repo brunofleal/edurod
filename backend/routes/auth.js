@@ -61,11 +61,32 @@ router.post("/login", async (req, res) => {
     res.header("auth-token", token).send(token);
 });
 
+router.post("/", async (req, res) => {
+    const newData = req.body;
+    try {
+        if (newData.password) {
+            const salt = bcrypt.genSaltSync(10);
+            const hashedPassword = bcrypt.hashSync(newData.password, salt);
+            newData.password = hashedPassword;
+        }
+        if (newData.roles && newData.roles.includes(",")) {
+            newData.roles = newData.roles.split(",");
+        }
+
+        const user = User(newData);
+        const newUser = await user.save();
+        res.send({ user: newUser._id });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "An error occurred ", err: err });
+    }
+});
+
 router.patch("/:id", async (req, res) => {
     const productId = req.params.id;
     const newData = req.body;
     try {
-        const oldData = await User.findById(productId);
+        const oldData = await User.findById(productId).select("-password");
 
         if (newData.password) {
             const salt = bcrypt.genSaltSync(10);
@@ -88,6 +109,27 @@ router.patch("/:id", async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "An error occurred ", err: err });
+    }
+});
+
+router.delete("/:id", authenticateUserWithAdminRole, async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const deletedUser = await User.findByIdAndDelete(userId).select(
+            "-password"
+        );
+
+        if (!deletedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json({
+            message: "User deleted successfully",
+            data: deletedUser,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "An error occurred", err: error });
     }
 });
 

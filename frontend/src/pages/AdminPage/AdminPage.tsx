@@ -1,9 +1,8 @@
-import { Box, Tabs, VStack } from "@chakra-ui/react";
+import { Badge, Box, Flex, Tabs, VStack } from "@chakra-ui/react";
 import React from "react";
 import useRequireRoleAndRedirect from "../../shared/hooks/requireRole";
 import PanelGrid from "./PanelGrid";
 import { Role } from "../../interfaces/roles";
-import { useFetch } from "../../shared/hooks/useFetch";
 import SystemVariablesPanel from "./SystemVariablesPanel";
 
 const AdminPage = () => {
@@ -25,16 +24,34 @@ const AdminPage = () => {
                         </Tabs.Trigger>
                     </Tabs.List>
                     <Tabs.Content value="tab-1">
-                        <PanelGrid url="/api/user" />
+                        <p>Roles disponíveis:</p>
+                        <Flex gap={2}>
+                            {Object.values(Role).map((role) => (
+                                <Badge key={role}>{role}</Badge>
+                            ))}
+                        </Flex>
+                        <PanelGrid
+                            url="/api/user"
+                            attributes={["name", "email", "password", "roles"]}
+                        />
                     </Tabs.Content>
                     <Tabs.Content value="tab-2">
-                        <PanelGrid url="/api/drivers" />
+                        <PanelGrid
+                            url="/api/drivers"
+                            attributes={["matricula", "name"]}
+                        />
                     </Tabs.Content>
                     <Tabs.Content value="tab-3">
-                        <PanelGrid url="/api/lines" />
+                        <PanelGrid
+                            url="/api/lines"
+                            attributes={["code", "description"]}
+                        />
                     </Tabs.Content>
                     <Tabs.Content value="tab-4">
-                        <PanelGrid url="/api/occurrenceTypes" />
+                        <PanelGrid
+                            url="/api/occurrenceTypes"
+                            attributes={["description", "points"]}
+                        />
                     </Tabs.Content>
                     <Tabs.Content value="tab-5">
                         <SystemVariablesPanel />

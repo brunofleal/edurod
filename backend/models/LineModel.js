@@ -4,9 +4,11 @@ const LineSchema = new mongoose.Schema(
     {
         description: {
             type: String,
+            unique: true,
         },
         code: {
             type: Number,
+            unique: true,
         },
     },
     { timestamps: true }

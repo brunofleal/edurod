@@ -60,7 +60,7 @@ mongoose.connect(process.env.DB_URL, () => {
 });
 
 // Starting the server
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 8000;
 const server = app.listen(PORT, "0.0.0.0", () => {
     console.log(`Application running at http://0.0.0.0:${PORT}/`);
     console.log(`Backend accessible at http://localhost:${PORT}/`);

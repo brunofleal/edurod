@@ -19,7 +19,7 @@ services:
         build: ./backend
         container_name: edurod-backend
         ports:
-            - "${BACKEND_PORT}:3001"
+            - "${BACKEND_PORT}:8000"
         environment:
             - NODE_ENV=${NODE_ENV}
             - JWT_SECRET=${JWT_SECRET}

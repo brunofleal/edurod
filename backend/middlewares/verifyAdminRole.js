@@ -30,7 +30,7 @@ const authenticateUserWithAdminRole = async (req, res, next) => {
             return res.status(401).send("Access denied - no required role");
         }
     } catch (error) {
-        res.status(400).send({ message: error });
+        return res.status(400).send({ message: error });
     }
 
     next();
@@ -56,7 +56,7 @@ const authenticateUserWithOpenerRole = async (req, res, next) => {
             return res.status(401).send("Access denied - no required role");
         }
     } catch (error) {
-        res.status(400).send({ message: error });
+        return res.status(400).send({ message: error });
     }
 
     next();
@@ -82,7 +82,7 @@ const authenticateUserWithCloserRole = async (req, res, next) => {
             return res.status(401).send("Access denied - no required role");
         }
     } catch (error) {
-        res.status(400).send({ message: error });
+        return res.status(400).send({ message: error });
     }
 
     next();
@@ -108,7 +108,7 @@ const authenticateUserWithCloserOpenerRole = async (req, res, next) => {
             return res.status(401).send("Access denied - no required role");
         }
     } catch (error) {
-        res.status(400).send({ message: error });
+        return res.status(400).send({ message: error });
     }
 
     next();

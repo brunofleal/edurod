@@ -10,31 +10,42 @@ const {
 
 // Routers
 router.post("/register", async (req, res) => {
-    // Validation check
-    const { error } = registerValidation(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
-
-    // Email uniqueness check
-    const emailExists = await User.findOne({ email: req.body.email });
-    if (emailExists)
-        return res.status(400).send("Email address already exists");
-
-    // Hash the password
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = bcrypt.hashSync(req.body.password, salt);
-
-    // Save user
-    const user = User({
-        email: req.body.email,
-        name: req.body.name,
-        password: hashedPassword,
-    });
-
     try {
+        // Validation check
+        const { error } = registerValidation(req.body);
+        if (error) {
+            return res.status(400).json({ message: error.details[0].message });
+        }
+
+        // Email uniqueness check
+        const emailExists = await User.findOne({ email: req.body.email });
+        if (emailExists) {
+            return res
+                .status(400)
+                .json({ message: "Email address already exists" });
+        }
+
+        // Hash the password
+        const salt = bcrypt.genSaltSync(10);
+        const hashedPassword = bcrypt.hashSync(req.body.password, salt);
+
+        // Save user
+        const user = new User({
+            email: req.body.email,
+            name: req.body.name,
+            password: hashedPassword,
+        });
+
         const newUser = await user.save();
-        res.send({ user: newUser._id });
+        return res.status(201).json({
+            message: "User registered successfully",
+            user: { id: newUser._id, email: newUser.email, name: newUser.name },
+        });
     } catch (error) {
-        res.send({ message: error });
+        console.error("Registration error:", error);
+        return res
+            .status(500)
+            .json({ message: "Registration failed", error: error.message });
     }
 });
 
@@ -61,32 +72,50 @@ router.post("/login", async (req, res) => {
     res.header("auth-token", token).send(token);
 });
 
-router.post("/", async (req, res) => {
-    const newData = req.body;
+router.post("/", authenticateUserWithAdminRole, async (req, res) => {
     try {
+        const newData = req.body;
+
+        if (!newData || Object.keys(newData).length === 0) {
+            return res
+                .status(400)
+                .json({ message: "Request body is required" });
+        }
+
         if (newData.password) {
             const salt = bcrypt.genSaltSync(10);
             const hashedPassword = bcrypt.hashSync(newData.password, salt);
             newData.password = hashedPassword;
         }
+
         if (newData.roles && newData.roles.includes(",")) {
             newData.roles = newData.roles.split(",");
         }
 
-        const user = User(newData);
+        const user = new User(newData);
         const newUser = await user.save();
-        res.send({ user: newUser._id });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "An error occurred ", err: err });
+        return res.status(201).json({
+            message: "User created successfully",
+            data: { id: newUser._id, email: newUser.email, name: newUser.name },
+        });
+    } catch (error) {
+        console.error("User creation error:", error);
+        return res
+            .status(500)
+            .json({ message: "Failed to create user", error: error.message });
     }
 });
 
-router.patch("/:id", async (req, res) => {
-    const productId = req.params.id;
-    const newData = req.body;
+router.patch("/:id", authenticateUserWithAdminRole, async (req, res) => {
     try {
+        const productId = req.params.id;
+        const newData = req.body;
+
         const oldData = await User.findById(productId).select("-password");
+
+        if (!oldData) {
+            return res.status(404).json({ message: "User not found" });
+        }
 
         if (newData.password) {
             const salt = bcrypt.genSaltSync(10);
@@ -101,14 +130,17 @@ router.patch("/:id", async (req, res) => {
 
         const data = await User.findByIdAndUpdate(productId, updatedData, {
             new: true,
-        });
-        res.json({
+        }).select("-password");
+
+        return res.status(200).json({
             message: "User updated successfully",
             data,
         });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "An error occurred ", err: err });
+        console.error("Update user error:", err);
+        return res
+            .status(500)
+            .json({ message: "An error occurred", error: err.message });
     }
 });
 
@@ -123,22 +155,24 @@ router.delete("/:id", authenticateUserWithAdminRole, async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        res.status(200).json({
+        return res.status(200).json({
             message: "User deleted successfully",
             data: deletedUser,
         });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "An error occurred", err: error });
+        console.error("Delete user error:", error);
+        return res
+            .status(500)
+            .json({ message: "An error occurred", error: error.message });
     }
 });
 
-router.get("", authenticateUserWithAdminRole, async (req, res) => {
+router.get("/", authenticateUserWithAdminRole, async (req, res) => {
     try {
         const users = await User.find();
-        res.status(200).json({ data: users });
+        return res.status(200).json({ data: users });
     } catch (error) {
-        res.status(500).send({ message: error.message });
+        return res.status(500).json({ message: error.message });
     }
 });
 
@@ -146,11 +180,11 @@ router.get("/me", authenticateUser, async (req, res) => {
     try {
         const user = await User.findById(req.user._id).select("-password");
         if (!user) {
-            return res.status(404).send("User not found");
+            return res.status(404).json({ message: "User not found" });
         }
-        res.send(user);
+        return res.status(200).json(user);
     } catch (error) {
-        res.status(500).send({ message: error.message });
+        return res.status(500).json({ message: error.message });
     }
 });
 

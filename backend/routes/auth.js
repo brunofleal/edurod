@@ -169,10 +169,59 @@ router.delete("/:id", authenticateUserWithAdminRole, async (req, res) => {
 
 router.get("/", authenticateUserWithAdminRole, async (req, res) => {
     try {
-        const users = await User.find();
+        console.log("GET /api/user - Fetching all users");
+
+        // Use aggregation to handle potential data issues
+        const users = await User.aggregate([
+            {
+                $project: {
+                    email: 1,
+                    name: 1,
+                    date: 1,
+                    roles: {
+                        $cond: {
+                            if: { $isArray: "$roles" },
+                            then: "$roles",
+                            else: {
+                                $cond: {
+                                    if: { $type: "$roles" },
+                                    then: { $split: ["$roles", ","] },
+                                    else: ["user"],
+                                },
+                            },
+                        },
+                    },
+                    createdAt: 1,
+                    updatedAt: 1,
+                },
+            },
+        ]);
+
+        console.log(`Found ${users.length} users`);
         return res.status(200).json({ data: users });
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        console.error("Error fetching users:", error);
+        console.error("Error details:", {
+            name: error.name,
+            message: error.message,
+            code: error.code,
+            codeName: error.codeName,
+        });
+
+        // Try simple find as fallback
+        try {
+            console.log("Attempting fallback query...");
+            const users = await User.find({}, { password: 0 }).lean();
+            console.log(`Fallback found ${users.length} users`);
+            return res.status(200).json({ data: users });
+        } catch (fallbackError) {
+            console.error("Fallback also failed:", fallbackError);
+            return res.status(500).json({
+                message: "Failed to fetch users",
+                error: error.message,
+                fallbackError: fallbackError.message,
+            });
+        }
     }
 });
 

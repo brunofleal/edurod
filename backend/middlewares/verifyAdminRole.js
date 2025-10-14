@@ -21,7 +21,7 @@ const authenticateUserWithAdminRole = async (req, res, next) => {
         if (!token) {
             return res.status(401).send("Access denied");
         }
-        const user = await UserModel.findById(verified._id).all();
+        const user = await UserModel.findById(verified._id);
         if (
             !user ||
             !user.roles ||
@@ -30,6 +30,7 @@ const authenticateUserWithAdminRole = async (req, res, next) => {
             return res.status(401).send("Access denied - no required role");
         }
     } catch (error) {
+        console.error(error);
         return res.status(400).send({ message: error });
     }
 
@@ -47,7 +48,7 @@ const authenticateUserWithOpenerRole = async (req, res, next) => {
         if (!token) {
             return res.status(401).send("Access denied");
         }
-        const user = await UserModel.findById(verified._id).all();
+        const user = await UserModel.findById(verified._id);
         if (
             !user ||
             !user.roles ||
@@ -56,6 +57,7 @@ const authenticateUserWithOpenerRole = async (req, res, next) => {
             return res.status(401).send("Access denied - no required role");
         }
     } catch (error) {
+        console.error(error);
         return res.status(400).send({ message: error });
     }
 
@@ -73,7 +75,7 @@ const authenticateUserWithCloserRole = async (req, res, next) => {
         if (!token) {
             return res.status(401).send("Access denied");
         }
-        const user = await UserModel.findById(verified._id).all();
+        const user = await UserModel.findById(verified._id);
         if (
             !user ||
             !user.roles ||
@@ -82,6 +84,7 @@ const authenticateUserWithCloserRole = async (req, res, next) => {
             return res.status(401).send("Access denied - no required role");
         }
     } catch (error) {
+        console.error(error);
         return res.status(400).send({ message: error });
     }
 
@@ -99,7 +102,7 @@ const authenticateUserWithCloserOpenerRole = async (req, res, next) => {
         if (!token) {
             return res.status(401).send("Access denied");
         }
-        const user = await UserModel.findById(verified._id).all();
+        const user = await UserModel.findById(verified._id);
         if (
             !user ||
             !user.roles ||
@@ -108,6 +111,7 @@ const authenticateUserWithCloserOpenerRole = async (req, res, next) => {
             return res.status(401).send("Access denied - no required role");
         }
     } catch (error) {
+        console.error(error);
         return res.status(400).send({ message: error });
     }
 

@@ -1,4 +1,4 @@
-FROM mongo:7.0
+FROM mongo:8
 
 # Define build arguments
 ARG MONGO_INITDB_ROOT_USERNAME

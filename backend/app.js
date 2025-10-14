@@ -33,14 +33,7 @@ console.log("NODE_ENV:", process.env.NODE_ENV);
 // Middlewares
 app.use(
     cors({
-        origin: [
-            "http://localhost",
-            "http://localhost:80",
-            "http://localhost:3000",
-            "http://127.0.0.1:8000",
-            "http://127.0.0.1:80",
-            "http://127.0.0.1:3000",
-        ],
+        origin: true, // Allow any origin
         credentials: true,
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization", "auth-token"],

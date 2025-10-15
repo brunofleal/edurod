@@ -9,6 +9,8 @@ const RegisterPage = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+
     const [name, setName] = useState("");
 
     const handleRegister = () => {
@@ -16,7 +18,7 @@ const RegisterPage = () => {
             .post("/api/user/register", { name, email, password })
             .then((response) => {
                 if (response && response.status) {
-                    toast.success("usuário criado com sucesso ", {
+                    toast.success("usuário criado com sucesso", {
                         position: "top-center",
                         autoClose: 15000,
                         closeOnClick: false,
@@ -93,11 +95,31 @@ const RegisterPage = () => {
                         type="password"
                         onChange={(event) => setPassword(event.target.value)}
                     />
+                    <Input
+                        placeholder="Confirmar Senha"
+                        variant="subtle"
+                        type="password"
+                        onChange={(event) =>
+                            setConfirmPassword(event.target.value)
+                        }
+                    />
+                    {confirmPassword != password ? (
+                        <p>As senhas devem ser iguais!</p>
+                    ) : (
+                        <></>
+                    )}
                     <Button
-                        disabled={!(email && password && name)}
+                        disabled={
+                            !(
+                                email &&
+                                password &&
+                                name &&
+                                confirmPassword === password
+                            )
+                        }
                         onClick={handleRegister}
                     >
-                        Login
+                        Registrar
                     </Button>
                 </Stack>
             </Center>

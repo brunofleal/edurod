@@ -10,6 +10,10 @@ const DriverSchema = new mongoose.Schema(
             type: Number,
             unique: true,
         },
+        inactive: {
+            type: Boolean,
+            default: false,
+        },
     },
     { timestamps: true }
 );

@@ -30,7 +30,7 @@ router.get("/", authenticateUser, async (req, res) => {
         } else if (endDate) {
             dateFilter.creationDate = { $lte: new Date(endDate) };
         }
-        const drivers = await Driver.find();
+        const drivers = await Driver.find({ inactive: { $ne: true } });
         const data = [];
         for (const driver of drivers) {
             const driverFilter = { driver: driver._id };

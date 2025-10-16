@@ -104,7 +104,16 @@ const RegisterPage = () => {
                         }
                     />
                     {confirmPassword != password ? (
-                        <p>As senhas devem ser iguais!</p>
+                        <Text fontSize="sx" color="red">
+                            As senhas devem ser iguais!
+                        </Text>
+                    ) : (
+                        <></>
+                    )}
+                    {password.length < 8 ? (
+                        <Text fontSize="sx" color="red">
+                            A senha deve ter no mínimo 8 caracteres
+                        </Text>
                     ) : (
                         <></>
                     )}
@@ -114,7 +123,8 @@ const RegisterPage = () => {
                                 email &&
                                 password &&
                                 name &&
-                                confirmPassword === password
+                                confirmPassword === password &&
+                                password.length > 7
                             )
                         }
                         onClick={handleRegister}

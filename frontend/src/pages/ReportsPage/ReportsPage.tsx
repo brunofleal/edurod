@@ -95,6 +95,11 @@ const ReportsPage = () => {
                         <ExportXLSX
                             gridApi={gridApi}
                             period={period}
+                            extraContent={[
+                                `Total de Bônus: ${getTotalBonus()}`,
+                                `Total de Ocorrências: ${getTotalOccurrences()}`,
+                                `Total de Ocorrências em aberto: ${getTotalOpenOccurrences()}`,
+                            ]}
                             title="Relatório de Motoristas"
                             subtitle="Ocorrências acumuladas por motorista"
                             fileName={`Relatorio_Motoristas_${period?.start}_${period?.end || "registros"}.xlsx`}

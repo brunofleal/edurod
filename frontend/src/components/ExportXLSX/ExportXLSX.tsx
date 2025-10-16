@@ -14,6 +14,7 @@ interface ExportXLSXProps {
     period?: Period;
     title?: string;
     subtitle?: string;
+    extraContent?: string[];
     fileName?: string;
 }
 
@@ -22,6 +23,7 @@ const ExportXLSX = ({
     period,
     title = "Relatório de Ocorrências",
     subtitle = "",
+    extraContent,
     fileName,
 }: ExportXLSXProps) => {
     const exportToXLSX = async () => {
@@ -43,7 +45,6 @@ const ExportXLSX = ({
         // Set column widths
         worksheet.columns = visibleColumns.map((col, index) => ({
             key: col.getColId(),
-            header: headers[index],
             width: index === 0 ? 40 : 25,
         }));
 
@@ -104,6 +105,22 @@ const ExportXLSX = ({
                 bottom: { style: "medium", color: { argb: "FFE2E8F0" } },
             },
         };
+
+        // Add extraContent row if it exists
+        if (extraContent && extraContent.length > 0) {
+            currentRowIndex++;
+            const extraRow = worksheet.addRow(extraContent);
+            extraRow.height = 25;
+            extraRow.eachCell((cell) => {
+                cell.style = {
+                    font: { bold: true, size: 11, color: { argb: "FF2D3748" } },
+                    alignment: { horizontal: "center", vertical: "middle" },
+                    border: {
+                        bottom: { style: "thin", color: { argb: "FFE2E8F0" } },
+                    },
+                };
+            });
+        }
 
         // Add empty row
         worksheet.addRow([]);
@@ -221,19 +238,23 @@ const ExportXLSX = ({
 
         // Add autofilter to header row
         const headerRowNumber = subtitle ? 5 : 4;
+        const finalHeaderRowNumber =
+            extraContent && extraContent.length > 0
+                ? headerRowNumber + 1
+                : headerRowNumber;
         worksheet.autoFilter = {
-            from: { row: headerRowNumber, column: 1 },
-            to: { row: headerRowNumber, column: visibleColumns.length },
+            from: { row: finalHeaderRowNumber, column: 1 },
+            to: { row: finalHeaderRowNumber, column: visibleColumns.length },
         };
 
         // Set freeze panes using the worksheet views property
         worksheet.views = [
             {
                 state: "frozen",
-                ySplit: headerRowNumber,
+                ySplit: finalHeaderRowNumber,
                 xSplit: 1,
-                topLeftCell: `B${headerRowNumber + 1}`,
-                activeCell: `B${headerRowNumber + 1}`,
+                topLeftCell: `B${finalHeaderRowNumber + 1}`,
+                activeCell: `B${finalHeaderRowNumber + 1}`,
             },
         ];
 

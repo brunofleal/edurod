@@ -33,6 +33,7 @@ router.get("/", authenticateUser, async (req, res) => {
         const data = await Occurrence.find(dateFilter)
             .limit(limit)
             .skip(skip)
+            .populate("vehicle")
             .populate("occurrenceType")
             .populate("driver")
             .populate("line")

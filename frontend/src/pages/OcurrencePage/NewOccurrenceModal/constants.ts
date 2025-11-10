@@ -5,6 +5,7 @@ export const MenuLabels = {
     Source: "Origem*",
     Driver: "Motorista*",
     Line: "Linha*",
+    Vehicle: "Veículo*",
 };
 
 export const sourceOptions: Option[] = [

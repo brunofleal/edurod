@@ -16,6 +16,10 @@ const OccurrenceSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Driver",
         },
+        vehicle: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Vehicle",
+        },
         line: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Line",

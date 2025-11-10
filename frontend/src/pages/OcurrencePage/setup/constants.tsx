@@ -7,6 +7,30 @@ import ActionsCellRenderer from "./ActionsCellRenderer";
 
 export const colDefs: ColDef[] = [
     {
+        headerName: "Data da Ocorrência",
+        field: "occurrenceDate",
+        filter: false,
+        width: 170,
+        valueGetter: ({ data }) =>
+            formatDateToLocalTime(data["occurrenceDate"], { onlyDate: false }),
+    },
+    {
+        headerName: "Linha",
+        field: "line",
+        valueGetter: ({ data }) =>
+            data?.line ? `${data.line.code} | ${data.line.description}` : "-",
+        width: 220,
+    },
+    {
+        headerName: "Veículo",
+        field: "vehicle",
+        valueGetter: ({ data }) =>
+            data?.vehicle
+                ? `${data.vehicle.code} | ${data.vehicle.plate}| ${data.vehicle.nChassi}`
+                : "-",
+        width: 260,
+    },
+    {
         headerName: "Motorista",
         field: "driver.name",
         valueGetter: ({ data }) =>
@@ -40,19 +64,18 @@ export const colDefs: ColDef[] = [
         },
     },
     {
-        headerName: "Linha",
-        field: "line",
-        valueGetter: ({ data }) =>
-            data?.line ? `${data.line.code} | ${data.line.description}` : "-",
-        width: 220,
+        headerName: "Descrição de Abertura",
+        field: "description",
+        width: 400,
+        wrapText: true,
+        autoHeight: true,
     },
     {
-        headerName: "Data da Ocorrência",
-        field: "occurrenceDate",
-        filter: false,
-        width: 170,
-        valueGetter: ({ data }) =>
-            formatDateToLocalTime(data["occurrenceDate"], { onlyDate: false }),
+        headerName: "Comentário de Fechamento",
+        field: "closingCommentary",
+        width: 400,
+        wrapText: true,
+        autoHeight: true,
     },
     {
         headerName: "Data de Registro",
@@ -73,20 +96,6 @@ export const colDefs: ColDef[] = [
                       onlyDate: false,
                   })
                 : "-",
-    },
-    {
-        headerName: "Descrição de Abertura",
-        field: "description",
-        width: 400,
-        wrapText: true,
-        autoHeight: true,
-    },
-    {
-        headerName: "Comentário de Fechamento",
-        field: "closingCommentary",
-        width: 400,
-        wrapText: true,
-        autoHeight: true,
     },
     {
         headerName: "Criador",

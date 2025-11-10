@@ -63,11 +63,22 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
         ? fromDataArrayToOption(dataLines.data, ["code", "description"], "_id")
         : [];
 
+    const { data: dataVehicles, loading: loadingVehicles } =
+        useFetch("/api/vehicles");
+    const vehicleOptions = dataVehicles
+        ? fromDataArrayToOption(
+              dataVehicles.data,
+              ["code", "plate", "nChassi"],
+              "_id"
+          )
+        : [];
+
     // States
     const [loadingSave, setLoadingSave] = useState(false);
     const [driver, setDriver] = useState<string>();
     const [occurrenceType, setOccurrenceType] = useState<string>();
     const [line, setLine] = useState<string>();
+    const [vehicle, setVehicle] = useState<string>();
     const [source, setSource] = useState<string>();
     const [date, setDate] = useState<Date | null>(new Date());
     const [description, setDescription] = useState("");
@@ -76,6 +87,7 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
         const payload = {
             driver,
             occurrenceType,
+            vehicle,
             line,
             source,
             occurrenceDate: date?.toISOString(),
@@ -101,6 +113,7 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
         const payload = {
             driver,
             occurrenceType,
+            vehicle,
             line,
             source,
             occurrenceDate: date?.toISOString(),
@@ -129,6 +142,7 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
             setDriver(editData.driver?._id);
             setOccurrenceType(editData.occurrenceType?._id);
             setLine(editData.line?._id);
+            setVehicle(editData.vehicle?._id);
             setSource(editData.source || "");
 
             setDate(new Date(editData.occurrenceDate));
@@ -137,7 +151,7 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
     }, [editData]);
 
     const isSaveDisabled =
-        !driver || !occurrenceType || !line || !source || !date;
+        !driver || !occurrenceType || !line || !vehicle || !source || !date;
 
     return (
         <Dialog.Root size={"full"} closeOnInteractOutside={false}>
@@ -172,47 +186,6 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
                             <form>
                                 <Grid templateColumns="repeat(2, 1fr)" gap="6">
                                     <GridItem>
-                                        <ComboBox
-                                            label={MenuLabels.Driver}
-                                            placeholder={DEFAULT_PLACEHOLDER}
-                                            options={driverOptions}
-                                            value={driver}
-                                            setValue={setDriver}
-                                            loading={loadingDrivers}
-                                        />
-                                    </GridItem>
-                                    <GridItem>
-                                        <ComboBox
-                                            label={MenuLabels.Occurrence}
-                                            placeholder={DEFAULT_PLACEHOLDER}
-                                            options={occurrenceTypeOptions}
-                                            value={occurrenceType}
-                                            setValue={setOccurrenceType}
-                                            loading={loadingOccurrenceType}
-                                        />
-                                    </GridItem>
-
-                                    <GridItem>
-                                        <ComboBox
-                                            label={MenuLabels.Line}
-                                            placeholder={DEFAULT_PLACEHOLDER}
-                                            options={lineOptions}
-                                            value={line}
-                                            setValue={setLine}
-                                            loading={loadingLines}
-                                        />
-                                    </GridItem>
-                                    <GridItem>
-                                        <ComboBox
-                                            label={MenuLabels.Source}
-                                            placeholder={DEFAULT_PLACEHOLDER}
-                                            options={sourceOptions}
-                                            value={source}
-                                            setValue={setSource}
-                                            loading={false}
-                                        />
-                                    </GridItem>
-                                    <GridItem>
                                         <Field.Root>
                                             <Field.Label>
                                                 Data da ocorrência*
@@ -246,6 +219,57 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
                                             </Box>
                                         </Field.Root>
                                     </GridItem>
+                                    <GridItem>
+                                        <ComboBox
+                                            label={MenuLabels.Line}
+                                            placeholder={DEFAULT_PLACEHOLDER}
+                                            options={lineOptions}
+                                            value={line}
+                                            setValue={setLine}
+                                            loading={loadingLines}
+                                        />
+                                    </GridItem>
+                                    <GridItem>
+                                        <ComboBox
+                                            label={MenuLabels.Vehicle}
+                                            placeholder={DEFAULT_PLACEHOLDER}
+                                            options={vehicleOptions}
+                                            value={vehicle}
+                                            setValue={setVehicle}
+                                            loading={loadingVehicles}
+                                        />
+                                    </GridItem>
+                                    <GridItem>
+                                        <ComboBox
+                                            label={MenuLabels.Driver}
+                                            placeholder={DEFAULT_PLACEHOLDER}
+                                            options={driverOptions}
+                                            value={driver}
+                                            setValue={setDriver}
+                                            loading={loadingDrivers}
+                                        />
+                                    </GridItem>
+                                    <GridItem>
+                                        <ComboBox
+                                            label={MenuLabels.Occurrence}
+                                            placeholder={DEFAULT_PLACEHOLDER}
+                                            options={occurrenceTypeOptions}
+                                            value={occurrenceType}
+                                            setValue={setOccurrenceType}
+                                            loading={loadingOccurrenceType}
+                                        />
+                                    </GridItem>
+                                    <GridItem>
+                                        <ComboBox
+                                            label={MenuLabels.Source}
+                                            placeholder={DEFAULT_PLACEHOLDER}
+                                            options={sourceOptions}
+                                            value={source}
+                                            setValue={setSource}
+                                            loading={false}
+                                        />
+                                    </GridItem>
+
                                     <GridItem>
                                         <Field.Root>
                                             <Field.Label>

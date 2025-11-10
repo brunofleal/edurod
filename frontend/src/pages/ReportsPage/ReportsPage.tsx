@@ -75,7 +75,7 @@ const ReportsPage = () => {
     };
 
     return (
-        <Box gap={2}>
+        <Box gap={2} p={2}>
             <Flex gap={2}>
                 <InfoField label="Total de Bônus:" value={getTotalBonus()} />
                 <InfoField

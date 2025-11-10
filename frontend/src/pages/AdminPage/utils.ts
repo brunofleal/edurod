@@ -12,6 +12,7 @@ export const createColDefsFromData = (data: any) => {
         flex: 1,
         resizable: true,
         sortable: true,
+        filter: true,
     };
     for (const property of Object.keys(data)) {
         if (!ignoredProperties.includes(property)) {
@@ -20,7 +21,7 @@ export const createColDefsFromData = (data: any) => {
             const colDef: ColDef = {
                 ...defaultColDef,
                 field: property,
-                ...(property.includes("Date")
+                ...(property.includes("Date") || property.includes("date")
                     ? {
                           valueGetter: ({ data }) =>
                               formatDateToLocalTime(data[property], {

@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Center, Input, Stack } from "@chakra-ui/react";
+import {
+    Box,
+    Button,
+    Center,
+    Input,
+    Stack,
+    IconButton,
+    HStack,
+} from "@chakra-ui/react";
+import { BsEye, BsEyeSlash } from "react-icons/bs";
 import Logo from "../../components/Logo/Logo";
 import { axiosApi } from "../../shared/axiosApi";
 import { toast, ToastContainer } from "react-toastify";
@@ -11,6 +20,7 @@ const LoginPage = () => {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
         if (getToken()) {
@@ -82,12 +92,26 @@ const LoginPage = () => {
                         type="email"
                         onChange={(event) => setEmail(event.target.value)}
                     />
-                    <Input
-                        placeholder="Senha"
-                        variant="subtle"
-                        type="password"
-                        onChange={(event) => setPassword(event.target.value)}
-                    />
+                    <HStack>
+                        <Input
+                            placeholder="Senha"
+                            variant="subtle"
+                            type={showPassword ? "text" : "password"}
+                            onChange={(event) =>
+                                setPassword(event.target.value)
+                            }
+                        />
+                        <IconButton
+                            aria-label={
+                                showPassword ? "Ocultar senha" : "Mostrar senha"
+                            }
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => setShowPassword((v) => !v)}
+                        >
+                            {showPassword ? <BsEyeSlash /> : <BsEye />}
+                        </IconButton>
+                    </HStack>
                     <Button
                         disabled={!(email && password)}
                         onClick={handleLogin}

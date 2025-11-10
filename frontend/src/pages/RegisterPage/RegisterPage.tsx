@@ -1,9 +1,19 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Button, Center, Input, Stack, Text } from "@chakra-ui/react";
+import {
+    Box,
+    Button,
+    Center,
+    HStack,
+    IconButton,
+    Input,
+    Stack,
+    Text,
+} from "@chakra-ui/react";
 import { axiosApi } from "../../shared/axiosApi";
 import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router";
+import { BsEye, BsEyeSlash } from "react-icons/bs";
 
 const RegisterPage = () => {
     const navigate = useNavigate();
@@ -12,6 +22,9 @@ const RegisterPage = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
 
     const [name, setName] = useState("");
+
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const handleRegister = () => {
         axiosApi
@@ -89,20 +102,48 @@ const RegisterPage = () => {
                         type="text"
                         onChange={(event) => setName(event.target.value)}
                     />
-                    <Input
-                        placeholder="Senha"
-                        variant="subtle"
-                        type="password"
-                        onChange={(event) => setPassword(event.target.value)}
-                    />
-                    <Input
-                        placeholder="Confirmar Senha"
-                        variant="subtle"
-                        type="password"
-                        onChange={(event) =>
-                            setConfirmPassword(event.target.value)
-                        }
-                    />
+                    <HStack>
+                        <Input
+                            placeholder="Senha"
+                            variant="subtle"
+                            type={showPassword ? "text" : "password"}
+                            onChange={(event) =>
+                                setPassword(event.target.value)
+                            }
+                        />
+                        <IconButton
+                            aria-label={
+                                showPassword ? "Ocultar senha" : "Mostrar senha"
+                            }
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => setShowPassword((v) => !v)}
+                        >
+                            {showPassword ? <BsEyeSlash /> : <BsEye />}
+                        </IconButton>
+                    </HStack>
+                    <HStack>
+                        <Input
+                            placeholder="Confirmar Senha"
+                            variant="subtle"
+                            type={showConfirmPassword ? "text" : "password"}
+                            onChange={(event) =>
+                                setConfirmPassword(event.target.value)
+                            }
+                        />
+                        <IconButton
+                            aria-label={
+                                showConfirmPassword
+                                    ? "Ocultar senha"
+                                    : "Mostrar senha"
+                            }
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => setShowConfirmPassword((v) => !v)}
+                        >
+                            {showConfirmPassword ? <BsEyeSlash /> : <BsEye />}
+                        </IconButton>
+                    </HStack>
                     {confirmPassword != password ? (
                         <Text fontSize="sx" color="red">
                             As senhas devem ser iguais!

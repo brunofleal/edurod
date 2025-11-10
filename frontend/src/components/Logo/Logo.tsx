@@ -17,7 +17,7 @@ const Logo = () => {
                 fontWeight="extrabold"
                 WebkitTextStroke="1px black"
             >
-                EduRod
+                SAD Goiana
             </Text>
         </HStack>
     );

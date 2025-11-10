@@ -11,6 +11,7 @@ import DateScroller, {
 } from "../../components/DateScroller/DateScroller";
 import { useNavigate, useSearchParams } from "react-router";
 import ExportXLSX from "../../components/ExportXLSX/ExportXLSX";
+import ExportPDF from "../../components/ExportPDF/ExportPdf";
 
 const OccurrencesPages = () => {
     const navigate = useNavigate();
@@ -73,6 +74,13 @@ const OccurrencesPages = () => {
                                 gridApi={gridApi}
                                 period={period}
                                 fileName={`Relatório_${period?.start}-${period?.end}_${driver ?? ""}.xlsx`}
+                                title={`Relatório de Ocorrências`}
+                                subtitle={driver ? `Motorista: ${driver}` : ""}
+                            />
+                            <ExportPDF
+                                gridApi={gridApi}
+                                period={period}
+                                fileName={`Relatório_${period?.start}-${period?.end}_${driver ?? ""}.pdf`}
                                 title={`Relatório de Ocorrências`}
                                 subtitle={driver ? `Motorista: ${driver}` : ""}
                             />

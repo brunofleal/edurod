@@ -3,6 +3,7 @@ import autoTable from "jspdf-autotable";
 import { Button } from "@chakra-ui/react";
 import type { GridApi } from "ag-grid-community";
 import { formatDateToLocalTime } from "../../shared/utils/formatDate";
+import { BsFilePdf } from "react-icons/bs";
 
 interface Period {
     start: string;
@@ -27,20 +28,24 @@ const ExportPDF = ({
     const exportToPDF = () => {
         if (!gridApi) return;
 
-        const doc = new jsPDF();
+        const doc = new jsPDF({ orientation: "landscape" });
 
         // Add title
         doc.setFontSize(16);
         doc.text(title, 14, 22);
-        doc.text(subtitle, 14, 32);
-
+        let y = 22;
+        if (subtitle) {
+            y += 10;
+            doc.text(subtitle, 14, y);
+        }
         // Add date range
         doc.setFontSize(12);
+        y += 10;
         const dateRange =
             period?.start && period?.end
                 ? `Período: ${formatDateToLocalTime(period.start, { onlyDate: true })} até ${formatDateToLocalTime(period.end, { onlyDate: true })}`
                 : "Período: Todos os registros";
-        doc.text(dateRange, 14, 32);
+        doc.text(dateRange, 14, y);
 
         // Get filtered and visible columns
         const visibleColumns =
@@ -101,10 +106,12 @@ const ExportPDF = ({
         autoTable(doc, {
             head: [tableColumns],
             body: tableRows,
-            startY: 40,
-            styles: { fontSize: 8 },
+            startY: y + 8,
+            styles: { fontSize: 6, overflow: "linebreak", cellPadding: 1 },
             headStyles: { fillColor: [64, 133, 126] },
             margin: { left: 14, right: 14 },
+            tableWidth: "auto",
+            horizontalPageBreak: true,
         });
 
         // Save PDF
@@ -118,6 +125,7 @@ const ExportPDF = ({
 
     return (
         <Button variant={"outline"} onClick={exportToPDF} disabled={!gridApi}>
+            <BsFilePdf />
             Exportar PDF
         </Button>
     );

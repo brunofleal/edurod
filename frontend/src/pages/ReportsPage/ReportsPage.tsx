@@ -8,6 +8,7 @@ import DateScroller, {
 import { useFetch } from "../../shared/hooks/useFetch";
 import { useNavigate, useSearchParams } from "react-router";
 import ExportXLSX from "../../components/ExportXLSX/ExportXLSX";
+import ExportPDF from "../../components/ExportPDF/ExportPdf";
 import type { GridApi } from "ag-grid-community";
 import { DriverReport } from "../../interfaces/driver";
 
@@ -103,6 +104,13 @@ const ReportsPage = () => {
                             title="Relatório de Motoristas"
                             subtitle="Ocorrências acumuladas por motorista"
                             fileName={`Relatorio_Motoristas_${period?.start}_${period?.end || "registros"}.xlsx`}
+                        />
+                        <ExportPDF
+                            gridApi={gridApi}
+                            period={period}
+                            fileName={`Relatorio_Motoristas_${period?.start}_${period?.end || "registros"}.pdf`}
+                            title="Relatório de Motoristas"
+                            subtitle="Ocorrências acumuladas por motorista"
                         />
                     </HStack>
                 }

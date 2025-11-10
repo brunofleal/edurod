@@ -283,7 +283,7 @@ const ExportXLSX = ({
             <Icon mr={2}>
                 <BsFileEarmarkArrowDown />
             </Icon>
-            Exportar
+            Exportar Excel
         </Button>
     );
 };

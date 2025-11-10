@@ -16,10 +16,11 @@ const AdminPage = () => {
                         <Tabs.Trigger value="tab-1">Usuários</Tabs.Trigger>
                         <Tabs.Trigger value="tab-2">Motoristas</Tabs.Trigger>
                         <Tabs.Trigger value="tab-3">Linhas</Tabs.Trigger>
-                        <Tabs.Trigger value="tab-4">
+                        <Tabs.Trigger value="tab-4">Veículos</Tabs.Trigger>
+                        <Tabs.Trigger value="tab-5">
                             Tipo de Ocorrências
                         </Tabs.Trigger>
-                        <Tabs.Trigger value="tab-5">
+                        <Tabs.Trigger value="tab-6">
                             Variáveis de Sistema
                         </Tabs.Trigger>
                     </Tabs.List>
@@ -49,11 +50,17 @@ const AdminPage = () => {
                     </Tabs.Content>
                     <Tabs.Content value="tab-4">
                         <PanelGrid
+                            url="/api/vehicles"
+                            attributes={["code", "plate", "nChassi", "date"]}
+                        />
+                    </Tabs.Content>
+                    <Tabs.Content value="tab-5">
+                        <PanelGrid
                             url="/api/occurrenceTypes"
                             attributes={["description", "points"]}
                         />
                     </Tabs.Content>
-                    <Tabs.Content value="tab-5">
+                    <Tabs.Content value="tab-6">
                         <SystemVariablesPanel />
                     </Tabs.Content>
                 </Tabs.Root>

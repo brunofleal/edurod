@@ -21,6 +21,7 @@ const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (getToken()) {
@@ -29,10 +30,11 @@ const LoginPage = () => {
     }, []);
 
     const handleLogin = () => {
+        setLoading(true);
         axiosApi
             .post("/api/user/login", { email, password })
             .then((response) => {
-                console.log({ response });
+                setLoading(false);
                 if (response && response.status) {
                     toast.success("Usuário logado com sucesso!", {
                         position: "top-center",
@@ -57,6 +59,7 @@ const LoginPage = () => {
                 }
             })
             .catch(() => {
+                setLoading(false);
                 toast.error("Falha no Login. Email ou senha incorreto", {
                     position: "top-center",
                     autoClose: 15000,
@@ -114,6 +117,7 @@ const LoginPage = () => {
                     </HStack>
                     <Button
                         disabled={!(email && password)}
+                        loading={loading}
                         onClick={handleLogin}
                     >
                         Login

@@ -13,6 +13,7 @@ const homeRoutes = require("./routes/home");
 const authRoutes = require("./routes/auth");
 
 const occurrenceRoutes = require("./routes/occurrenceRoutes");
+const occurrenceCategoryRoutes = require("./routes/occurrenceCategoryRoutes");
 const occurrenceTypesRoutes = require("./routes/occurrenceTypeRoutes");
 const driverRoutes = require("./routes/driverRoutes");
 const driverReportRoutes = require("./routes/driverReportRoute");
@@ -58,6 +59,7 @@ app.use("/", homeRoutes);
 app.use("/api/user", authRoutes);
 
 app.use("/api/occurrences", occurrenceRoutes);
+app.use("/api/occurrenceCategories", occurrenceCategoryRoutes);
 app.use("/api/occurrenceTypes", occurrenceTypesRoutes);
 app.use("/api/drivers", driverRoutes);
 app.use("/api/driversReport", driverReportRoutes);

@@ -6,9 +6,10 @@ const OccurrenceSchema = new mongoose.Schema(
             type: String,
             unique: true,
         },
-        points: {
-            type: Number,
-            default: 0,
+        occurrenceCategory: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "OccurrenceCategory",
+            required: true,
         },
     },
     { timestamps: true }

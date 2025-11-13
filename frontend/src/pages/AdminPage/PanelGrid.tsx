@@ -11,7 +11,7 @@ import { BsPlus } from "react-icons/bs";
 
 interface PanelProps {
     url: string;
-    attributes: string[];
+    attributes?: string[];
 }
 const PanelGrid = ({ url, attributes }: PanelProps) => {
     const { data, loading, refetch } = useFetch<any>(url);
@@ -19,7 +19,7 @@ const PanelGrid = ({ url, attributes }: PanelProps) => {
     const [formKey, setFormKey] = useState(0);
 
     const isButtonDisabled =
-        Object.values(payload).length !== attributes.length;
+        Object.values(payload).length !== attributes?.length;
 
     const rowData = data ? data.data : [];
 
@@ -62,15 +62,24 @@ const PanelGrid = ({ url, attributes }: PanelProps) => {
     return (
         <Box>
             <HStack p={1} gap={1}>
-                {attributes.map((attribute) => (
-                    <FormField
-                        key={`${attribute}-${formKey}`}
-                        attribute={attribute}
-                        value={payload}
-                        setValue={setPayload}
-                    />
-                ))}
-                <Button mt={6} disabled={isButtonDisabled} onClick={handleAdd}>
+                {attributes ? (
+                    attributes.map((attribute) => (
+                        <FormField
+                            key={`${attribute}-${formKey}`}
+                            attribute={attribute}
+                            value={payload}
+                            setValue={setPayload}
+                        />
+                    ))
+                ) : (
+                    <></>
+                )}
+                <Button
+                    mt={6}
+                    visibility={attributes ? "visible" : "hidden"}
+                    disabled={isButtonDisabled}
+                    onClick={handleAdd}
+                >
                     <Icon>
                         <BsPlus />
                     </Icon>

@@ -4,6 +4,7 @@ import useRequireRoleAndRedirect from "../../shared/hooks/requireRole";
 import PanelGrid from "./PanelGrid";
 import { Role } from "../../interfaces/roles";
 import SystemVariablesPanel from "./SystemVariablesPanel";
+import CategoryGrid from "./CategoryGrid/CategoryGrid";
 
 const AdminPage = () => {
     useRequireRoleAndRedirect([Role.ADMIN], "/no-access-permission");
@@ -21,6 +22,9 @@ const AdminPage = () => {
                             Tipo de Ocorrências
                         </Tabs.Trigger>
                         <Tabs.Trigger value="tab-6">
+                            Categoria de Ocorrência
+                        </Tabs.Trigger>
+                        <Tabs.Trigger value="tab-7">
                             Variáveis de Sistema
                         </Tabs.Trigger>
                     </Tabs.List>
@@ -55,12 +59,15 @@ const AdminPage = () => {
                         />
                     </Tabs.Content>
                     <Tabs.Content value="tab-5">
-                        <PanelGrid
-                            url="/api/occurrenceTypes"
-                            attributes={["description", "points"]}
-                        />
+                        <CategoryGrid />
                     </Tabs.Content>
                     <Tabs.Content value="tab-6">
+                        <PanelGrid
+                            url="/api/occurrenceCategories"
+                            attributes={["name", "points"]}
+                        />
+                    </Tabs.Content>
+                    <Tabs.Content value="tab-7">
                         <SystemVariablesPanel />
                     </Tabs.Content>
                 </Tabs.Root>

@@ -12,7 +12,7 @@ const getRequestAuthor = async (req) => {
         if (!verified) {
             return null;
         }
-        const user = await UserModel.findById(verified._id).all();
+        const user = await UserModel.findById(verified._id);
         return user;
     } catch (error) {
         return null;

@@ -5,6 +5,7 @@ const {
     authenticateUserWithAdminRole,
 } = require("../middlewares/verifyAdminRole");
 const { getRequestAuthor } = require("../utils/requestAuthor");
+const { logAction } = require("../utils/logAction");
 
 router.get("/", authenticateUser, async (req, res) => {
     try {
@@ -30,6 +31,11 @@ router.post("/", authenticateUserWithAdminRole, async (req, res) => {
         const newDriver = new Driver({ ...req.body });
 
         const addDriver = await newDriver.save();
+        await logAction(
+            req,
+            "CREATE_DRIVER",
+            `Driver created: ${addDriver._id}`
+        );
         res.status(201).json({
             message: "Driver Added Successfully",
             addedDriver: addDriver,
@@ -53,7 +59,7 @@ router.put("/:id", authenticateUserWithAdminRole, async (req, res) => {
         if (!updatedDriver) {
             return res.status(404).json({ message: "Driver not found" });
         }
-
+        await logAction(req, "UPDATE_DRIVER", `Driver updated: ${productId}`);
         res.json({
             message: "Driver updated successfully",
             updatedDriver,
@@ -83,7 +89,7 @@ router.patch("/:id", authenticateUserWithAdminRole, async (req, res) => {
         const data = await Driver.findByIdAndUpdate(productId, updatedData, {
             new: true,
         });
-
+        await logAction(req, "PATCH_DRIVER", `Driver patched: ${productId}`);
         res.json({
             message: "Driver updated successfully",
             data,
@@ -102,7 +108,7 @@ router.delete("/:id", authenticateUserWithAdminRole, async (req, res) => {
         if (!deletedDriver) {
             return res.status(404).json({ message: "Driver not found" });
         }
-
+        await logAction(req, "DELETE_DRIVER", `Driver deleted: ${productId}`);
         res.json({
             message: "Driver deleted successfully",
             deletedDriver,

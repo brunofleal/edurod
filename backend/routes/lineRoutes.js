@@ -5,6 +5,7 @@ const {
     authenticateUserWithAdminRole,
 } = require("../middlewares/verifyAdminRole");
 const { getRequestAuthor } = require("../utils/requestAuthor");
+const { logAction } = require("../utils/logAction");
 
 router.get("/", authenticateUser, async (req, res) => {
     try {
@@ -30,6 +31,7 @@ router.post("/", authenticateUserWithAdminRole, async (req, res) => {
         const newLine = new Line({ ...req.body });
 
         const data = await newLine.save();
+        await logAction(req, "CREATE_LINE", `Line created: ${data._id}`);
         res.status(201).json({
             message: "Line Added Successfully",
             data,
@@ -51,7 +53,7 @@ router.put("/:id", authenticateUserWithAdminRole, async (req, res) => {
         if (!data) {
             return res.status(404).json({ message: "Line not found" });
         }
-
+        await logAction(req, "UPDATE_LINE", `Line updated: ${productId}`);
         res.json({
             message: "Line updated successfully",
             data,
@@ -81,7 +83,7 @@ router.patch("/:id", authenticateUserWithAdminRole, async (req, res) => {
         const data = await Line.findByIdAndUpdate(productId, updatedData, {
             new: true,
         });
-
+        await logAction(req, "PATCH_LINE", `Line patched: ${productId}`);
         res.json({
             message: "Line updated successfully",
             data,
@@ -100,7 +102,7 @@ router.delete("/:id", authenticateUserWithAdminRole, async (req, res) => {
         if (!data) {
             return res.status(404).json({ message: "Line not found" });
         }
-
+        await logAction(req, "DELETE_LINE", `Line deleted: ${productId}`);
         res.json({
             message: "Line deleted successfully",
             data,

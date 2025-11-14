@@ -5,6 +5,7 @@ const {
     authenticateUserWithAdminRole,
 } = require("../middlewares/verifyAdminRole");
 const { getRequestAuthor } = require("../utils/requestAuthor");
+const { logAction } = require("../utils/logAction");
 
 router.get("/", authenticateUser, async (req, res) => {
     try {
@@ -37,6 +38,11 @@ router.post("/", authenticateUserWithAdminRole, async (req, res) => {
         const newOccurrenceType = new OccurrenceType({ ...req.body });
 
         const data = await newOccurrenceType.save();
+        await logAction(
+            req,
+            "CREATE_OCCURRENCE_TYPE",
+            `OccurrenceType created: ${data._id}`
+        );
         res.status(201).json({
             message: "OccurrenceType Added Successfully",
             data,
@@ -62,7 +68,11 @@ router.put("/:id", authenticateUserWithAdminRole, async (req, res) => {
                 .status(404)
                 .json({ message: "OccurrenceType not found" });
         }
-
+        await logAction(
+            req,
+            "UPDATE_OCCURRENCE_TYPE",
+            `OccurrenceType updated: ${productId}`
+        );
         res.json({
             message: "OccurrenceType updated successfully",
             data,
@@ -98,7 +108,11 @@ router.patch("/:id", authenticateUserWithAdminRole, async (req, res) => {
                 new: true,
             }
         );
-
+        await logAction(
+            req,
+            "PATCH_OCCURRENCE_TYPE",
+            `OccurrenceType patched: ${productId}`
+        );
         res.json({
             message: "OccurrenceType updated successfully",
             data,
@@ -119,7 +133,11 @@ router.delete("/:id", authenticateUserWithAdminRole, async (req, res) => {
                 .status(404)
                 .json({ message: "OccurrenceType not found" });
         }
-
+        await logAction(
+            req,
+            "DELETE_OCCURRENCE_TYPE",
+            `OccurrenceType deleted: ${productId}`
+        );
         res.json({
             message: "OccurrenceType deleted successfully",
             data,

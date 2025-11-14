@@ -5,6 +5,7 @@ const {
     authenticateUserWithAdminRole,
 } = require("../middlewares/verifyAdminRole");
 const { getRequestAuthor } = require("../utils/requestAuthor");
+const { logAction } = require("../utils/logAction");
 
 // GET all vehicles with optional pagination
 router.get("/", authenticateUser, async (req, res) => {
@@ -38,6 +39,7 @@ router.post("/", authenticateUserWithAdminRole, async (req, res) => {
         }
         const newVehicle = new Vehicle({ ...req.body });
         const data = await newVehicle.save();
+        await logAction(req, "CREATE_VEHICLE", `Vehicle created: ${data._id}`);
         res.status(201).json({
             message: "Vehicle Added Successfully",
             data,
@@ -58,6 +60,7 @@ router.put("/:id", authenticateUserWithAdminRole, async (req, res) => {
         if (!data) {
             return res.status(404).json({ message: "Vehicle not found" });
         }
+        await logAction(req, "UPDATE_VEHICLE", `Vehicle updated: ${vehicleId}`);
         res.json({
             message: "Vehicle updated successfully",
             data,
@@ -86,6 +89,7 @@ router.patch("/:id", authenticateUserWithAdminRole, async (req, res) => {
         const data = await Vehicle.findByIdAndUpdate(vehicleId, updatedData, {
             new: true,
         });
+        await logAction(req, "PATCH_VEHICLE", `Vehicle patched: ${vehicleId}`);
         res.json({
             message: "Vehicle updated successfully",
             data,
@@ -104,6 +108,7 @@ router.delete("/:id", authenticateUserWithAdminRole, async (req, res) => {
         if (!data) {
             return res.status(404).json({ message: "Vehicle not found" });
         }
+        await logAction(req, "DELETE_VEHICLE", `Vehicle deleted: ${vehicleId}`);
         res.json({
             message: "Vehicle deleted successfully",
             data,

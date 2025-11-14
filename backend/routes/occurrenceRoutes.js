@@ -7,6 +7,7 @@ const {
     authenticateUserWithCloserOpenerRole,
 } = require("../middlewares/verifyAdminRole");
 const { getRequestAuthor } = require("../utils/requestAuthor");
+const { logAction } = require("../utils/logAction");
 
 router.get("/", authenticateUser, async (req, res) => {
     try {
@@ -60,6 +61,11 @@ router.post("/", authenticateUserWithOpenerRole, async (req, res) => {
         const newOccurrence = new Occurrence({ ...req.body, createdBy: user });
 
         const data = await newOccurrence.save();
+        await logAction(
+            req,
+            "CREATE_OCCURRENCE",
+            `Occurrence created: ${data._id}`
+        );
         res.status(201).json({
             message: "Occurrence Added Successfully",
             data,
@@ -81,7 +87,11 @@ router.put("/:id", authenticateUserWithCloserOpenerRole, async (req, res) => {
         if (!data) {
             return res.status(404).json({ message: "Occurrence not found" });
         }
-
+        await logAction(
+            req,
+            "UPDATE_OCCURRENCE",
+            `Occurrence updated: ${productId}`
+        );
         res.json({
             message: "Occurrence updated successfully",
             data,
@@ -115,7 +125,11 @@ router.patch("/:id", authenticateUserWithCloserOpenerRole, async (req, res) => {
                 new: true,
             }
         );
-
+        await logAction(
+            req,
+            "PATCH_OCCURRENCE",
+            `Occurrence patched: ${productId}`
+        );
         res.json({
             message: "Occurrence updated successfully",
             data,
@@ -134,7 +148,11 @@ router.delete("/:id", authenticateUserWithAdminRole, async (req, res) => {
         if (!data) {
             return res.status(404).json({ message: "Occurrence not found" });
         }
-
+        await logAction(
+            req,
+            "DELETE_OCCURRENCE",
+            `Occurrence deleted: ${productId}`
+        );
         res.json({
             message: "Occurrence deleted successfully",
             data,

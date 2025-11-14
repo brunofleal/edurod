@@ -24,7 +24,8 @@ const AdminPage = () => {
                         <Tabs.Trigger value="tab-6">
                             Categoria de Ocorrência
                         </Tabs.Trigger>
-                        <Tabs.Trigger value="tab-7">
+                        <Tabs.Trigger value="tab-7">Log de Ações</Tabs.Trigger>
+                        <Tabs.Trigger value="tab-8">
                             Variáveis de Sistema
                         </Tabs.Trigger>
                     </Tabs.List>
@@ -68,6 +69,9 @@ const AdminPage = () => {
                         />
                     </Tabs.Content>
                     <Tabs.Content value="tab-7">
+                        <PanelGrid url="/api/logActions" noActions={true} />
+                    </Tabs.Content>
+                    <Tabs.Content value="tab-8">
                         <SystemVariablesPanel />
                     </Tabs.Content>
                 </Tabs.Root>

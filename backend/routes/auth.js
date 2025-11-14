@@ -7,6 +7,7 @@ const authenticateUser = require("../middlewares/verifyToken");
 const {
     authenticateUserWithAdminRole,
 } = require("../middlewares/verifyAdminRole");
+const { logAction } = require("../utils/logAction");
 
 // Routers
 router.post("/register", async (req, res) => {
@@ -94,6 +95,7 @@ router.post("/", authenticateUserWithAdminRole, async (req, res) => {
 
         const user = new User(newData);
         const newUser = await user.save();
+        await logAction(req, "CREATE_USER", `User created: ${newUser._id}`);
         return res.status(201).json({
             message: "User created successfully",
             data: { id: newUser._id, email: newUser.email, name: newUser.name },
@@ -131,7 +133,7 @@ router.patch("/:id", authenticateUserWithAdminRole, async (req, res) => {
         const data = await User.findByIdAndUpdate(productId, updatedData, {
             new: true,
         }).select("-password");
-
+        await logAction(req, "PATCH_USER", `User patched: ${productId}`);
         return res.status(200).json({
             message: "User updated successfully",
             data,
@@ -154,7 +156,7 @@ router.delete("/:id", authenticateUserWithAdminRole, async (req, res) => {
         if (!deletedUser) {
             return res.status(404).json({ message: "User not found" });
         }
-
+        await logAction(req, "DELETE_USER", `User deleted: ${userId}`);
         return res.status(200).json({
             message: "User deleted successfully",
             data: deletedUser,

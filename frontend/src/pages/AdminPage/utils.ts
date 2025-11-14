@@ -1,9 +1,15 @@
 import type { ColDef } from "ag-grid-community";
 import { formatDateToLocalTime } from "../../shared/utils/formatDate";
 
-export const createColDefsFromData = (data: any) => {
+export const createColDefsFromData = (data: any, parentKey = "") => {
     const ignoredProperties = ["password", "_id", "__v"];
-    const dateProperties = ["date", "Date", "createdAt", "updateAt"];
+    const dateProperties = [
+        "date",
+        "Date",
+        "createdAt",
+        "updateAt",
+        "timestamp",
+    ];
     if (!data) {
         return [];
     }
@@ -17,21 +23,39 @@ export const createColDefsFromData = (data: any) => {
     };
     for (const property of Object.keys(data)) {
         if (!ignoredProperties.includes(property)) {
-            if (property.includes("Date")) {
+            const value = data[property];
+            const fieldName = parentKey ? `${parentKey}.${property}` : property;
+            if (
+                value &&
+                typeof value === "object" &&
+                !Array.isArray(value) &&
+                value !== null
+            ) {
+                // Recursively add sub-properties
+                colDefs.push(...createColDefsFromData(value, fieldName));
+            } else {
+                const colDef: ColDef = {
+                    ...defaultColDef,
+                    field: fieldName,
+                    ...(dateProperties.some((dateP) =>
+                        fieldName.includes(dateP)
+                    )
+                        ? {
+                              valueGetter: ({ data }) =>
+                                  formatDateToLocalTime(
+                                      fieldName
+                                          .split(".")
+                                          .reduce(
+                                              (acc, key) => acc && acc[key],
+                                              data
+                                          ),
+                                      { onlyDate: false }
+                                  ),
+                          }
+                        : {}),
+                };
+                colDefs.push(colDef);
             }
-            const colDef: ColDef = {
-                ...defaultColDef,
-                field: property,
-                ...(dateProperties.some((dateP) => property.includes(dateP))
-                    ? {
-                          valueGetter: ({ data }) =>
-                              formatDateToLocalTime(data[property], {
-                                  onlyDate: false,
-                              }),
-                      }
-                    : {}),
-            };
-            colDefs.push(colDef);
         }
     }
     return colDefs;

@@ -12,8 +12,9 @@ import { BsPlus } from "react-icons/bs";
 interface PanelProps {
     url: string;
     attributes?: string[];
+    noActions?: boolean;
 }
-const PanelGrid = ({ url, attributes }: PanelProps) => {
+const PanelGrid = ({ url, attributes, noActions = false }: PanelProps) => {
     const { data, loading, refetch } = useFetch<any>(url);
     const [payload, setPayload] = useState({});
     const [formKey, setFormKey] = useState(0);
@@ -90,7 +91,7 @@ const PanelGrid = ({ url, attributes }: PanelProps) => {
                 width={"90vw"}
                 height={"75vh"}
                 rowData={rowData}
-                columnDefs={[...colDefs, editDeleteColDef]}
+                columnDefs={[...colDefs, !noActions ? editDeleteColDef : {}]}
                 loading={loading}
             />
         </Box>

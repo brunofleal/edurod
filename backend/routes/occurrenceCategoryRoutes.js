@@ -5,6 +5,7 @@ const {
     authenticateUserWithAdminRole,
 } = require("../middlewares/verifyAdminRole");
 const { getRequestAuthor } = require("../utils/requestAuthor");
+const { logAction } = require("../utils/logAction");
 
 // GET all categories
 router.get("/", authenticateUser, async (req, res) => {
@@ -25,6 +26,11 @@ router.post("/", authenticateUserWithAdminRole, async (req, res) => {
         }
         const newCategory = new OccurrenceCategory({ ...req.body });
         const data = await newCategory.save();
+        await logAction(
+            req,
+            "CREATE_OCCURRENCE_CATEGORY",
+            `OccurrenceCategory created: ${data._id}`
+        );
         res.status(201).json({
             message: "OccurrenceCategory Added Successfully",
             data,
@@ -51,6 +57,11 @@ router.put("/:id", authenticateUserWithAdminRole, async (req, res) => {
                 .status(404)
                 .json({ message: "OccurrenceCategory not found" });
         }
+        await logAction(
+            req,
+            "UPDATE_OCCURRENCE_CATEGORY",
+            `OccurrenceCategory updated: ${categoryId}`
+        );
         res.json({
             message: "OccurrenceCategory updated successfully",
             data,
@@ -85,6 +96,11 @@ router.patch("/:id", authenticateUserWithAdminRole, async (req, res) => {
                 new: true,
             }
         );
+        await logAction(
+            req,
+            "PATCH_OCCURRENCE_CATEGORY",
+            `OccurrenceCategory patched: ${categoryId}`
+        );
         res.json({
             message: "OccurrenceCategory updated successfully",
             data,
@@ -105,6 +121,11 @@ router.delete("/:id", authenticateUserWithAdminRole, async (req, res) => {
                 .status(404)
                 .json({ message: "OccurrenceCategory not found" });
         }
+        await logAction(
+            req,
+            "DELETE_OCCURRENCE_CATEGORY",
+            `OccurrenceCategory deleted: ${categoryId}`
+        );
         res.json({
             message: "OccurrenceCategory deleted successfully",
             data,

@@ -21,6 +21,7 @@ const lineRoutes = require("./routes/lineRoutes");
 const vehicleRoutes = require("./routes/vehicleRoutes");
 
 const systemVariablesRoutes = require("./routes/systemVariablesRoute");
+const logActionRoutes = require("./routes/logActionRoute");
 
 const limiter = require("./middlewares/rateLimiter");
 const errorHandler = require("./middlewares/errorHandler");
@@ -66,6 +67,7 @@ app.use("/api/driversReport", driverReportRoutes);
 app.use("/api/lines", lineRoutes);
 app.use("/api/vehicles", vehicleRoutes);
 
+app.use("/api/logActions", logActionRoutes);
 app.use("/api/systemVariables", systemVariablesRoutes);
 
 // Global error handling middleware (must be AFTER all routes)

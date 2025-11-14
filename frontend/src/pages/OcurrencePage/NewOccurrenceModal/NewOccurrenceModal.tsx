@@ -53,7 +53,11 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
     const occurrenceTypeOptions = dataOccurrenceTypes
         ? fromDataArrayToOption(
               dataOccurrenceTypes.data,
-              ["description", "points"],
+              [
+                  "description",
+                  "occurrenceCategory.name",
+                  "occurrenceCategory.points",
+              ],
               "_id"
           )
         : [];

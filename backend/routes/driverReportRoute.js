@@ -37,11 +37,18 @@ router.get("/", authenticateUser, async (req, res) => {
             const occurrencesForDriver = await Occurrence.find({
                 ...dateFilter,
                 ...driverFilter,
-            }).populate("occurrenceType");
+            }).populate({
+                path: "occurrenceType",
+                populate: { path: "occurrenceCategory" },
+            });
 
-            const topOccurrence = occurrencesForDriver.sort((a, b) =>
-                a.occurrenceType.points > b.occurrenceType.points ? 1 : -1
-            )[0];
+            const topOccurrence = occurrencesForDriver.sort((a, b) => {
+                const aPoints =
+                    a.occurrenceType?.occurrenceCategory?.points || 0;
+                const bPoints =
+                    b.occurrenceType?.occurrenceCategory?.points || 0;
+                return aPoints > bPoints ? 1 : -1;
+            })[0];
 
             const systemVariables = await SystemVariables.find();
             const pointsPerDriver =
@@ -51,7 +58,10 @@ router.get("/", authenticateUser, async (req, res) => {
             const points = Math.max(
                 pointsPerDriver * monthsInPeriod +
                     occurrencesForDriver.reduce(
-                        (acc, curr) => acc + curr.occurrenceType.points,
+                        (acc, curr) =>
+                            acc +
+                            (curr.occurrenceType?.occurrenceCategory?.points ||
+                                0),
                         0
                     ),
                 0

@@ -13,7 +13,10 @@ router.get("/", authenticateUser, async (req, res) => {
 
         const skip = (page - 1) * limit;
 
-        const data = await OccurrenceType.find().limit(limit).skip(skip);
+        const data = await OccurrenceType.find()
+            .limit(limit)
+            .skip(skip)
+            .populate("occurrenceCategory");
         res.status(200).json({
             page: page,
             limit: limit,

@@ -8,12 +8,17 @@ import {
     Icon,
     Text,
     VStack,
+    useDisclosure,
+    Select,
+    Portal,
+    createListCollection,
 } from "@chakra-ui/react";
 import { axiosApi } from "../../../shared/axiosApi";
 import { toast } from "react-toastify";
-import ComboBox from "../../../components/ComboBox/ComboBox";
 import { BsPlus } from "react-icons/bs";
-import { useState as useReactState } from "react";
+import EditOccurrenceTypeModal from "./EditOccurrenceTypeModal";
+import { ConfirmDialog } from "../../../components/ConfirmDialog/ConfirmDialog";
+import Option from "../../../interfaces/option";
 
 interface OccurrenceCategory {
     _id: string;
@@ -33,18 +38,19 @@ const CategoryGrid = () => {
     );
     const [categories, setCategories] = useState<OccurrenceCategory[]>([]);
     const [loading, setLoading] = useState(false);
-    const [form, setForm] = useState<{
-        description: string;
-        occurrenceCategory: any;
-    }>({ description: "", occurrenceCategory: null });
+    const [form, setForm] = useState<any | null>(null);
     const [formKey, setFormKey] = useState(0);
-    const [editRowId, setEditRowId] = useReactState<string | null>(null);
-    const [editForm, setEditForm] = useReactState<{
-        description: string;
-        occurrenceCategory: any;
-    }>({
-        description: "",
-        occurrenceCategory: null,
+    const { open, onOpen, onClose } = useDisclosure();
+    const [selectedOccurrenceType, setSelectedOccurrenceType] =
+        useState<OccurrenceType | null>(null);
+
+    const categoriesOptions: Option[] = categories.map((cat) => ({
+        value: cat._id,
+        label: `${cat.name} (${cat.points})`,
+    }));
+
+    const categoriesCollection = createListCollection({
+        items: categoriesOptions,
     });
 
     const fetchData = async () => {
@@ -67,15 +73,15 @@ const CategoryGrid = () => {
     }, []);
 
     const handleAdd = async () => {
-        if (!form.description || !form.occurrenceCategory) {
+        if (!form?.description || !form?.occurrenceCategory) {
             toast.error("Preencha todos os campos");
             return;
         }
         setLoading(true);
         try {
             const payload = {
-                description: form.description,
-                occurrenceCategory: form.occurrenceCategory.value,
+                description: form?.description,
+                occurrenceCategory: form?.occurrenceCategory?.value,
             };
             await axiosApi.post("/api/occurrenceTypes", payload);
             toast.success("Tipo de ocorrência adicionado com sucesso!");
@@ -123,105 +129,41 @@ const CategoryGrid = () => {
         { field: "description", headerName: "Descrição", editable: true },
         {
             field: "occurrenceCategory",
+            filter: true,
             headerName: "Categoria",
             valueGetter: (params: any) =>
-                params.data.occurrenceCategory?.name || "",
+                params.data.occurrenceCategory
+                    ? `${params.data.occurrenceCategory?.name}(${params.data.occurrenceCategory?.points})`
+                    : "-",
         },
         {
             headerName: "Ações",
-            cellRenderer: (params: any) => {
-                const isEditing = editRowId === params.data._id;
-                return isEditing ? (
-                    <HStack>
-                        <Input
-                            w="120px"
-                            value={editForm.description}
-                            onChange={(e) =>
-                                setEditForm({
-                                    ...editForm,
-                                    description: e.target.value,
-                                })
-                            }
-                        />
-                        <ComboBox
-                            label="Categoria"
-                            placeholder="Categoria"
-                            options={categories.map((cat) => ({
-                                value: cat._id,
-                                label: `${cat.name} (${cat.points})`,
-                            }))}
-                            value={editForm.occurrenceCategory?.value || ""}
-                            setValue={(val: string) => {
-                                const option =
-                                    categories
-                                        .map((cat) => ({
-                                            value: cat._id,
-                                            label: `${cat.name} (${cat.points})`,
-                                        }))
-                                        .find((opt) => opt.value === val) ||
-                                    null;
-                                setEditForm({
-                                    ...editForm,
-                                    occurrenceCategory: option,
-                                });
-                            }}
-                            loading={loading}
-                        />
-                        <Button
-                            colorScheme="green"
-                            size="sm"
-                            onClick={async () => {
-                                await handleEdit(params.data._id, {
-                                    description: editForm.description,
-                                    occurrenceCategory:
-                                        editForm.occurrenceCategory.value,
-                                });
-                                setEditRowId(null);
-                            }}
-                        >
-                            Salvar
-                        </Button>
-                        <Button
-                            colorScheme="gray"
-                            size="sm"
-                            onClick={() => setEditRowId(null)}
-                        >
-                            Cancelar
-                        </Button>
-                    </HStack>
-                ) : (
-                    <HStack>
-                        <Button
-                            colorScheme="blue"
-                            size="sm"
-                            onClick={() => {
-                                setEditRowId(params.data._id);
-                                setEditForm({
-                                    description: params.data.description,
-                                    occurrenceCategory: {
-                                        value:
-                                            params.data.occurrenceCategory
-                                                ?._id ||
-                                            params.data.occurrenceCategory,
-                                        label:
-                                            params.data.occurrenceCategory
-                                                ?.name || "",
-                                    },
-                                });
-                            }}
-                        >
-                            Editar
-                        </Button>
-                        <Button
-                            colorScheme="red"
-                            size="sm"
-                            onClick={() => handleDelete(params.data._id)}
-                        >
-                            Excluir
-                        </Button>
-                    </HStack>
-                );
-            },
+            filter: true,
+            cellRenderer: (params: any) => (
+                <HStack>
+                    <Button
+                        size="sm"
+                        onClick={() => {
+                            setSelectedOccurrenceType(params.data);
+                            onOpen();
+                        }}
+                    >
+                        Editar
+                    </Button>
+                    <ConfirmDialog
+                        onConfirm={() => handleDelete(params.data._id)}
+                        openButton={{
+                            label: "Deletar",
+                            type: "delete",
+                        }}
+                        title={"Deletar Ocorrência"}
+                        description={
+                            "Tem certeza que deseja deletar esta ocorrência?"
+                        }
+                        saveLabel={"Deletar"}
+                    />
+                </HStack>
+            ),
         },
     ];
 
@@ -234,38 +176,49 @@ const CategoryGrid = () => {
                         w="150px"
                         key={`desc-${formKey}`}
                         placeholder="Descrição"
-                        value={form.description}
+                        value={form?.description ?? ""}
                         onChange={(e) =>
                             setForm({ ...form, description: e.target.value })
                         }
                     />
                 </VStack>
                 <Box minW={200}>
-                    <ComboBox
-                        key={`cat-${formKey}`}
-                        label="Categoria"
-                        placeholder="Categoria"
-                        options={categories.map((cat) => ({
-                            value: cat._id,
-                            label: `${cat.name} (${cat.points})`,
-                        }))}
-                        value={form.occurrenceCategory?.value || ""}
-                        setValue={(val: string) => {
-                            const option =
-                                categories
-                                    .map((cat) => ({
-                                        value: cat._id,
-                                        label: `${cat.name} (${cat.points})`,
-                                    }))
-                                    .find((opt) => opt.value === val) || null;
-                            setForm({ ...form, occurrenceCategory: option });
-                        }}
-                        loading={loading}
-                    />
+                    <Text>Categoria</Text>
+                    <Select.Root
+                        collection={categoriesCollection}
+                        onChange={(e) =>
+                            setForm({ ...form, occurrenceCategory: e.target })
+                        }
+                    >
+                        <Select.HiddenSelect />
+                        <Select.Control>
+                            <Select.Trigger>
+                                <Select.ValueText placeholder="Selecione a Categoria" />
+                            </Select.Trigger>
+                            <Select.IndicatorGroup>
+                                <Select.Indicator />
+                            </Select.IndicatorGroup>
+                        </Select.Control>
+                        <Portal>
+                            <Select.Positioner>
+                                <Select.Content>
+                                    {categoriesOptions.map((cat) => (
+                                        <Select.Item
+                                            item={cat.value}
+                                            key={cat.value}
+                                        >
+                                            {cat.label}
+                                            <Select.ItemIndicator />
+                                        </Select.Item>
+                                    ))}
+                                </Select.Content>
+                            </Select.Positioner>
+                        </Portal>
+                    </Select.Root>
                 </Box>
                 <Button
                     mt={6}
-                    disabled={!form.description || !form.occurrenceCategory}
+                    disabled={!form?.description || !form?.occurrenceCategory}
                     onClick={handleAdd}
                     loading={loading}
                 >
@@ -281,11 +234,14 @@ const CategoryGrid = () => {
                 rowData={occurrenceTypes}
                 columnDefs={colDefs}
                 loading={loading}
-                onCellValueChanged={(params: any) => {
-                    if (params.data._id) {
-                        handleEdit(params.data._id, params.data);
-                    }
-                }}
+            />
+            <EditOccurrenceTypeModal
+                isOpen={open}
+                onClose={onClose}
+                occurrenceType={selectedOccurrenceType}
+                categories={categories}
+                loading={loading}
+                onSave={handleEdit}
             />
         </Box>
     );

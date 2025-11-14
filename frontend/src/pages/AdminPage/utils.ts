@@ -3,6 +3,7 @@ import { formatDateToLocalTime } from "../../shared/utils/formatDate";
 
 export const createColDefsFromData = (data: any) => {
     const ignoredProperties = ["password", "_id", "__v"];
+    const dateProperties = ["date", "Date", "createdAt", "updateAt"];
     if (!data) {
         return [];
     }
@@ -21,7 +22,7 @@ export const createColDefsFromData = (data: any) => {
             const colDef: ColDef = {
                 ...defaultColDef,
                 field: property,
-                ...(property.includes("Date") || property.includes("date")
+                ...(dateProperties.some((dateP) => property.includes(dateP))
                     ? {
                           valueGetter: ({ data }) =>
                               formatDateToLocalTime(data[property], {

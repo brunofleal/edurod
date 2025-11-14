@@ -48,17 +48,21 @@ export const colDefs: ColDef[] = [
         width: 220,
     },
     {
-        headerName: "Pontos",
-        field: "occurrenceType.points",
-        width: 80,
+        headerName: "Categoria",
+        field: "occurrenceType.occurrenceCategory.points",
+        width: 160,
         valueGetter: ({ data }) =>
-            data?.occurrenceType ? data.occurrenceType.points : "-",
+            data?.occurrenceType?.occurrenceCategory
+                ? `${data.occurrenceType.occurrenceCategory.name}(${data.occurrenceType.occurrenceCategory.points})`
+                : "-",
         cellRenderer: ({
             data,
         }: CustomCellRendererProps<OccurrenceRegistry>) => {
             return (
                 <Badge variant="solid">
-                    {data?.occurrenceType ? data?.occurrenceType.points : 0}
+                    {data?.occurrenceType?.occurrenceCategory
+                        ? `${data.occurrenceType.occurrenceCategory.name}(${data.occurrenceType.occurrenceCategory.points})`
+                        : "-"}
                 </Badge>
             );
         },

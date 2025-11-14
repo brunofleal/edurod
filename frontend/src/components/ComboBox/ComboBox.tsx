@@ -30,14 +30,16 @@ const ComboBox = ({
     const { contains } = useFilter({ sensitivity: "base" });
 
     const { collection, filter } = useListCollection<Option>({
-        initialItems: options,
+        initialItems: options??[],
         filter: contains,
     });
 
     // Update collection when options change
     useEffect(() => {
-        collection.setItems(options);
-    }, [options, collection]);
+        collection.setItems([{label:"aaa", value:"lal"}]);
+        console.log("setCollection")
+        console.log({options, collection:collection.items})
+    }, [options]);
 
     // Find the selected option object based on the value
     const selectedOption = options.find((option) => option.value === value);
@@ -47,7 +49,7 @@ const ComboBox = ({
         <ChakraComboBox.Root
             collection={collection}
             onInputValueChange={(e) => filter(e.inputValue)}
-            defaultValue={selectedValue}
+            value={selectedValue}
             onValueChange={(e) => setValue(e.value?.[0] || "")}
             positioning={{ strategy: "fixed", hideWhenDetached: true }}
             openOnClick

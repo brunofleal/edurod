@@ -29,6 +29,68 @@ const AgGrid = ({
         theme: themeAlpine,
     };
 
+    const localeText = {
+        // General
+        page: "Página",
+        more: "Mais",
+        to: "até",
+        of: "de",
+        next: "Próximo",
+        last: "Último",
+        first: "Primeiro",
+        previous: "Anterior",
+        loadingOoo: "Carregando...",
+        // Set Filter
+        selectAll: "Selecionar Todos",
+        searchOoo: "Procurar...",
+        blanks: "Em branco",
+        // Number Filter & Text Filter
+        filterOoo: "Filtrar...",
+        applyFilter: "Aplicar",
+        equals: "Igual",
+        notEqual: "Diferente",
+        lessThan: "Menor que",
+        greaterThan: "Maior que",
+        lessThanOrEqual: "Menor ou igual",
+        greaterThanOrEqual: "Maior ou igual",
+        inRange: "No intervalo",
+        contains: "Contém",
+        notContains: "Não contém",
+        startsWith: "Começa com",
+        endsWith: "Termina com",
+        // Filter Conditions
+        andCondition: "E",
+        orCondition: "Ou",
+        // Filter Buttons
+        resetFilter: "Redefinir",
+        clearFilter: "Limpar",
+        cancelFilter: "Cancelar",
+        // Columns Tool Panel
+        columns: "Colunas",
+        filters: "Filtros",
+        // Side Bar
+        noRowsToShow: "Nenhuma linha para mostrar",
+        // Menu
+        pinColumn: "Fixar Coluna",
+        valueAggregation: "Agregação de Valor",
+        autosizeThiscolumn: "Ajustar esta coluna",
+        autosizeAllColumns: "Ajustar todas as colunas",
+        groupBy: "Agrupar por",
+        ungroupBy: "Desagrupar",
+        resetColumns: "Redefinir colunas",
+        expandAll: "Expandir tudo",
+        collapseAll: "Recolher tudo",
+        toolPanel: "Painel de Ferramentas",
+        export: "Exportar",
+        csvExport: "Exportar CSV",
+        excelExport: "Exportar Excel",
+        // Others
+        copy: "Copiar",
+        copyWithHeaders: "Copiar com cabeçalhos",
+        paste: "Colar",
+        // Add more as needed
+    };
+
     return (
         <Box
             bgColor="gray.200"
@@ -48,6 +110,7 @@ const AgGrid = ({
             <AgGridReact
                 {...defaultAgGridProps}
                 {...agGridProps}
+                localeText={localeText}
                 onGridReady={(event) => {
                     //event.api.autoSizeAllColumns();
                     if (agGridProps.onGridReady) {

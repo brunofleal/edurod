@@ -34,7 +34,10 @@ router.get("/", authenticateUser, async (req, res) => {
             .limit(limit)
             .skip(skip)
             .populate("vehicle")
-            .populate("occurrenceType")
+            .populate({
+                path: "occurrenceType",
+                populate: { path: "occurrenceCategory" },
+            })
             .populate("driver")
             .populate("line")
             .populate("createdBy", "-password")

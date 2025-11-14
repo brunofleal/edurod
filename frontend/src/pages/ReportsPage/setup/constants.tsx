@@ -53,7 +53,7 @@ export const colDefs: ColDef[] = [
             if (!data.topOccurrence) {
                 return "-";
             }
-            return `${data.topOccurrence.description}(${data.topOccurrence.points})`;
+            return `${data.topOccurrence.description}(${data.topOccurrence.occurrenceCategory.points})`;
         },
     },
     {

@@ -1,5 +1,14 @@
 import type Option from "../../../interfaces/option";
 
+const getNestedValue = (obj: any, path: string) => {
+    return path
+        .split(".")
+        .reduce(
+            (acc, part) => (acc && acc[part] !== undefined ? acc[part] : ""),
+            obj
+        );
+};
+
 export const fromDataToOption = (
     data: any,
     labelKeys: string[],
@@ -8,13 +17,14 @@ export const fromDataToOption = (
     const SEPARATOR = " | ";
     let label = "";
     for (const labelKey of labelKeys) {
+        const value = getNestedValue(data, labelKey);
         if (label === "") {
-            label = data[labelKey];
+            label = value;
         } else {
-            label += SEPARATOR + data[labelKey];
+            label += SEPARATOR + value;
         }
     }
-    return { label, value: data[valueKey] };
+    return { label, value: getNestedValue(data, valueKey) };
 };
 
 export const fromDataArrayToOption = (

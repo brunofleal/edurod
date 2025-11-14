@@ -14,20 +14,41 @@ interface PanelProps {
     attributes?: string[];
     noActions?: boolean;
 }
+const propertyLabels: Record<string, string> = {
+    name: "Nome",
+    email: "Email",
+    password: "Senha",
+    roles: "Funções",
+    code: "Código",
+    plate: "Placa",
+    nChassi: "Chassi",
+    date: "Data",
+    matricula: "Matrícula",
+    description: "Descrição",
+    points: "Pontos",
+    occurrenceCategory: "Categoria de Ocorrência",
+    createdAt: "Criado em",
+    updatedAt: "Atualizado em",
+    // Add more as needed
+};
+
 const PanelGrid = ({ url, attributes, noActions = false }: PanelProps) => {
     const { data, loading, refetch } = useFetch<any>(url);
     const [payload, setPayload] = useState({});
     const [formKey, setFormKey] = useState(0);
 
-    const isButtonDisabled =
-        Object.values(payload).length !== attributes?.length;
-
     const rowData = data ? data.data : [];
 
     const colDefs: ColDef[] = createColDefsFromData(
         rowData ? rowData[0] : undefined
-    );
+    ).map((col) => ({
+        ...col,
+        headerName: propertyLabels[col.field as string] || col.field,
+    }));
     const editDeleteColDef = getEditDeleteActionsColDef(url, refetch);
+
+    const isButtonDisabled =
+        Object.values(payload).length !== attributes?.length;
 
     const handleAdd = async () => {
         try {
@@ -55,7 +76,7 @@ const PanelGrid = ({ url, attributes, noActions = false }: PanelProps) => {
             if (errorStatus) {
                 toast.error(`Erro ${errorStatus}: ${errorMessage}`);
             } else {
-                toast.error("Falha ao adicionar Usuario!");
+                toast.error("Falha ao adicionar entidade!");
             }
         }
     };
@@ -106,7 +127,7 @@ interface FormProps {
 const FormField = ({ attribute, value, setValue }: FormProps) => {
     return (
         <Box>
-            <Text>{attribute}</Text>
+            <Text>{propertyLabels[attribute] || attribute}</Text>
             <Input
                 value={value[attribute] || ""}
                 onChange={(event) =>

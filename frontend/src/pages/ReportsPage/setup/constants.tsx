@@ -50,7 +50,10 @@ export const colDefs: ColDef[] = [
         headerName: "Ocorrência mais grave",
         width: 250,
         valueGetter: ({ data }) => {
-            if (!data.topOccurrence) {
+            if (
+                !data.topOccurrence ||
+                !data?.topOccurrence?.occurrenceCategory
+            ) {
                 return "-";
             }
             return `${data.topOccurrence.description}(${data.topOccurrence.occurrenceCategory.points})`;

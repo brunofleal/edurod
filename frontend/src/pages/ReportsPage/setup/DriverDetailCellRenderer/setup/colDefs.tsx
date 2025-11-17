@@ -15,7 +15,11 @@ export const colDefs: ColDef[] = [
         cellRenderer: ({
             data,
         }: CustomCellRendererProps<OccurrenceRegistry>) => {
-            return <Badge variant="solid">{data?.occurrenceType.points}</Badge>;
+            return (
+                <Badge variant="solid">
+                    {data?.occurrenceType?.occurrenceCategory?.points}
+                </Badge>
+            );
         },
     },
     {

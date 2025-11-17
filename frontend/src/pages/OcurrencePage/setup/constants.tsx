@@ -115,7 +115,7 @@ export const colDefs: ColDef[] = [
         headerName: "Status",
         field: "isResolved",
         valueGetter: ({ data }) =>
-            data.occurrenceType.isResolved ? "Fechado" : "Em Aberto",
+            data?.occurrenceType?.isResolved ? "Fechado" : "Em Aberto",
         pinned: "right",
         width: 150,
         cellRenderer: ({ data }: CustomCellRendererProps) => {

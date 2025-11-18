@@ -81,11 +81,11 @@ const CategoryGrid = () => {
         try {
             const payload = {
                 description: form?.description,
-                occurrenceCategory: form?.occurrenceCategory?.value,
+                occurrenceCategory: form?.occurrenceCategory.value,
             };
             await axiosApi.post("/api/occurrenceTypes", payload);
             toast.success("Tipo de ocorrência adicionado com sucesso!");
-            setForm({ description: "", occurrenceCategory: null });
+            setForm(null);
             setFormKey((k) => k + 1);
             fetchData();
         } catch (err) {
@@ -109,18 +109,17 @@ const CategoryGrid = () => {
     const handleEdit = async (id: string, updated: OccurrenceType) => {
         setLoading(true);
         try {
-            await axiosApi.put(`/api/occurrenceTypes/${id}`, {
+            const payload = {
                 description: updated.description,
-                occurrenceCategory:
-                    typeof updated.occurrenceCategory === "string"
-                        ? updated.occurrenceCategory
-                        : (updated.occurrenceCategory as OccurrenceCategory)
-                              ._id,
-            });
+                occurrenceCategory: updated.occurrenceCategory,
+            };
+            await axiosApi.put(`/api/occurrenceTypes/${id}`, payload);
             toast.success("Tipo de ocorrência atualizado");
             fetchData();
+            onClose();
         } catch (err) {
             toast.error("Erro ao atualizar tipo de ocorrência");
+            console.error("Edit error:", err);
         }
         setLoading(false);
     };
@@ -185,9 +184,28 @@ const CategoryGrid = () => {
                 <Box minW={200}>
                     <Text>Categoria</Text>
                     <Select.Root
+                        key={`cat-${formKey}`}
                         collection={categoriesCollection}
-                        onChange={(e) =>
-                            setForm({ ...form, occurrenceCategory: e.target })
+                        value={
+                            form?.occurrenceCategory
+                                ? [form.occurrenceCategory.value]
+                                : []
+                        }
+                        onValueChange={(details) =>
+                            setForm({
+                                ...form,
+                                occurrenceCategory: details.value[0]
+                                    ? {
+                                          value: details.value[0],
+                                          label:
+                                              categoriesOptions.find(
+                                                  (c) =>
+                                                      c.value ===
+                                                      details.value[0]
+                                              )?.label || "",
+                                      }
+                                    : null,
+                            })
                         }
                     >
                         <Select.HiddenSelect />

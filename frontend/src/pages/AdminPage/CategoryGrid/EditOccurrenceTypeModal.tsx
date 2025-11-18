@@ -45,12 +45,14 @@ const EditOccurrenceTypeModal = ({
 
     useEffect(() => {
         if (occurrenceType) {
+            const categoryId =
+                typeof occurrenceType.occurrenceCategory === "string"
+                    ? occurrenceType.occurrenceCategory
+                    : occurrenceType.occurrenceCategory?._id || "";
+
             setForm({
                 description: occurrenceType.description,
-                occurrenceCategory:
-                    typeof occurrenceType.occurrenceCategory === "object"
-                        ? occurrenceType.occurrenceCategory._id
-                        : occurrenceType.occurrenceCategory || "",
+                occurrenceCategory: categoryId,
             });
         }
     }, [occurrenceType]);
@@ -91,11 +93,16 @@ const EditOccurrenceTypeModal = ({
                                 <Text mb={1}>Categoria</Text>
                                 <Select.Root
                                     collection={categoriesCollection}
-                                    value={form?.occurrenceCategory || ""}
+                                    value={
+                                        form?.occurrenceCategory
+                                            ? [form.occurrenceCategory]
+                                            : []
+                                    }
                                     onValueChange={(details) =>
                                         setForm({
                                             ...form,
-                                            occurrenceCategory: details.value,
+                                            occurrenceCategory:
+                                                details.value[0],
                                         })
                                     }
                                 >

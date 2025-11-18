@@ -37,16 +37,18 @@ const ComboBox = ({
     // Update collection when options change
     useEffect(() => {
         collection.setItems(options);
-    }, [options]);
+    }, [options, collection]);
 
     // Find the selected option object based on the value
     const selectedOption = options.find((option) => option.value === value);
     const selectedValue = selectedOption ? [selectedOption.value] : [];
+    const inputValue = selectedOption ? selectedOption.label : "";
 
     return !loading ? (
         <ChakraComboBox.Root
             collection={collection}
             onInputValueChange={(e) => filter(e.inputValue)}
+            inputValue={inputValue}
             value={selectedValue}
             onValueChange={(e) => setValue(e.value?.[0] || "")}
             positioning={{ strategy: "fixed", hideWhenDetached: true }}

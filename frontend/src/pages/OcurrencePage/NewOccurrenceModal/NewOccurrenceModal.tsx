@@ -165,7 +165,11 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
         !driver || !occurrenceType || !line || !vehicle || !source || !date;
 
     return (
-        <Dialog.Root size={"full"} closeOnInteractOutside={false}>
+        <Dialog.Root
+            size={"full"}
+            closeOnInteractOutside={false}
+            key={editData?._id || "new"}
+        >
             <Dialog.Trigger asChild>
                 <Button variant="solid" size={mode == "create" ? "md" : "xs"}>
                     <Icon>

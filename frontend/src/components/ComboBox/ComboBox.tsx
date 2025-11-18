@@ -30,15 +30,13 @@ const ComboBox = ({
     const { contains } = useFilter({ sensitivity: "base" });
 
     const { collection, filter } = useListCollection<Option>({
-        initialItems: options??[],
+        initialItems: options ?? [],
         filter: contains,
     });
 
     // Update collection when options change
     useEffect(() => {
-        collection.setItems([{label:"aaa", value:"lal"}]);
-        console.log("setCollection")
-        console.log({options, collection:collection.items})
+        collection.setItems(options);
     }, [options]);
 
     // Find the selected option object based on the value

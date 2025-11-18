@@ -10,7 +10,7 @@ export interface OccurrenceRegistry {
     driver: Driver;
     line: Line;
     vehicle: Vehicle;
-    source: string;
+    source: { description: string; _id: string };
     description: string;
     isResolved: boolean;
     occurrenceDate: string;

@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { BsPen, BsPlusCircle } from "react-icons/bs";
 import ComboBox from "../../../components/ComboBox/ComboBox";
-import { MenuLabels, sourceOptions } from "./constants";
+import { MenuLabels } from "./constants";
 import { useFetch } from "../../../shared/hooks/useFetch";
 import { fromDataArrayToOption } from "./utils";
 import DatePicker from "react-datepicker";
@@ -75,6 +75,13 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
               ["code", "plate", "nChassi"],
               "_id"
           )
+        : [];
+
+    const { data: dataSources, loading: loadingSources } = useFetch(
+        "/api/occurrenceSources"
+    );
+    const sourceOptions = dataSources
+        ? fromDataArrayToOption(dataSources.data, ["description"], "_id")
         : [];
 
     // States
@@ -147,7 +154,7 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
             setOccurrenceType(editData.occurrenceType?._id);
             setLine(editData.line?._id);
             setVehicle(editData.vehicle?._id);
-            setSource(editData.source || "");
+            setSource(editData.source?._id || "");
 
             setDate(new Date(editData.occurrenceDate));
             setDescription(editData.description || "");
@@ -270,7 +277,7 @@ const NewOccurrenceModal = ({ mode = "create", editData }: Props) => {
                                             options={sourceOptions}
                                             value={source}
                                             setValue={setSource}
-                                            loading={false}
+                                            loading={loadingSources}
                                         />
                                     </GridItem>
 

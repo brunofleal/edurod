@@ -24,7 +24,10 @@ const OccurrenceSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Line",
         },
-        source: { type: String },
+        source: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "OccurrenceSource",
+        },
         isResolved: {
             type: Boolean,
             default: false,

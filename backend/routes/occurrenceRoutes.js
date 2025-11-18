@@ -41,6 +41,7 @@ router.get("/", authenticateUser, async (req, res) => {
             })
             .populate("driver")
             .populate("line")
+            .populate("source")
             .populate("createdBy", "-password")
             .populate("modifiedBy", "-password")
             .sort({ occurrenceDate: -1 });

@@ -15,6 +15,7 @@ const authRoutes = require("./routes/auth");
 const occurrenceRoutes = require("./routes/occurrenceRoutes");
 const occurrenceCategoryRoutes = require("./routes/occurrenceCategoryRoutes");
 const occurrenceTypesRoutes = require("./routes/occurrenceTypeRoutes");
+const occurrenceSourceRoutes = require("./routes/occurrenceSourceRoutes");
 const driverRoutes = require("./routes/driverRoutes");
 const driverReportRoutes = require("./routes/driverReportRoute");
 const lineRoutes = require("./routes/lineRoutes");
@@ -62,6 +63,7 @@ app.use("/api/user", authRoutes);
 app.use("/api/occurrences", occurrenceRoutes);
 app.use("/api/occurrenceCategories", occurrenceCategoryRoutes);
 app.use("/api/occurrenceTypes", occurrenceTypesRoutes);
+app.use("/api/occurrenceSources", occurrenceSourceRoutes);
 app.use("/api/drivers", driverRoutes);
 app.use("/api/driversReport", driverReportRoutes);
 app.use("/api/lines", lineRoutes);
@@ -81,12 +83,17 @@ app.use((req, res) => {
 
 // Connect to Database
 mongoose
-    .connect(process.env.DB_URL)
+    .connect(process.env.DB_URL, {
+        serverSelectionTimeoutMS: 5000,
+    })
     .then(() => {
         console.log("Connected to Database successfully");
+        console.log("Database URL:", process.env.DB_URL);
     })
     .catch((err) => {
-        console.error("Database connection error:", err);
+        console.error("Database connection error:", err.message);
+        console.error("Full error:", err);
+        process.exit(1); // Exit if cannot connect to DB
     });
 
 // Mongoose error handling

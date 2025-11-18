@@ -4,6 +4,7 @@ import type { CustomCellRendererProps } from "ag-grid-react";
 import { Badge } from "@chakra-ui/react";
 import type { OccurrenceRegistry } from "../../../interfaces/occurrenceRegistry";
 import ActionsCellRenderer from "./ActionsCellRenderer";
+import ExpandableTextCellRenderer from "./ExpandableTextCellRenderer";
 
 export const colDefs: ColDef[] = [
     {
@@ -70,6 +71,8 @@ export const colDefs: ColDef[] = [
     {
         headerName: "Descrição de Abertura",
         field: "description",
+        cellRenderer: ({ data }: CustomCellRendererProps<OccurrenceRegistry>) =>
+            ExpandableTextCellRenderer(data?.description || ""),
         width: 400,
         wrapText: true,
         autoHeight: true,
@@ -77,6 +80,8 @@ export const colDefs: ColDef[] = [
     {
         headerName: "Comentário de Fechamento",
         field: "closingCommentary",
+        cellRenderer: ({ data }: CustomCellRendererProps<OccurrenceRegistry>) =>
+            ExpandableTextCellRenderer(data?.closingCommentary || ""),
         width: 400,
         wrapText: true,
         autoHeight: true,
@@ -110,6 +115,14 @@ export const colDefs: ColDef[] = [
         headerName: "Último Modicador",
         field: "modifiedBy.name",
         width: 200,
+    },
+    {
+        headerName: "Fonte Ocorrência",
+        field: "source.description",
+        valueGetter: ({ data }) =>
+            data?.source?.description ? data.source.description : "-",
+
+        width: 140,
     },
     {
         headerName: "Status",

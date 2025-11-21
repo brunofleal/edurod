@@ -11,6 +11,11 @@ export const colDefs: ColDef[] = [
         field: "driver",
         valueGetter: ({ data }) =>
             data.driver ? `${data.driver.matricula}` : "-",
+        comparator: (valueA, valueB) => {
+            const numA = parseFloat(valueA) || 0;
+            const numB = parseFloat(valueB) || 0;
+            return numA - numB;
+        },
         width: 120,
         pinned: "left",
     },
@@ -25,11 +30,17 @@ export const colDefs: ColDef[] = [
         headerName: "Pontos",
         field: "points",
         width: 100,
+        comparator: (valueA, valueB) => {
+            return (valueA || 0) - (valueB || 0);
+        },
     },
     {
         headerName: "Bônus",
         field: "bonus",
         width: 100,
+        comparator: (valueA, valueB) => {
+            return (valueA || 0) - (valueB || 0);
+        },
         cellRenderer: ({ data }: CustomCellRendererProps<DriverReport>) => {
             return (
                 <Tag.Root bgColor="green.300" mt={3}>

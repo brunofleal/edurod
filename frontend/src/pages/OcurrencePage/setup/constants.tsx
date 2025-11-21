@@ -17,6 +17,9 @@ export const colDefs: ColDef[] = [
     },
     {
         headerName: "Linha",
+        comparator: (valueA, valueB) => {
+            return (valueA || 0) - (valueB || 0);
+        },
         field: "line",
         valueGetter: ({ data }) =>
             data?.line ? `${data.line.code} | ${data.line.description}` : "-",

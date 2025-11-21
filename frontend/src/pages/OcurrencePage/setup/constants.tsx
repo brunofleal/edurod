@@ -32,13 +32,19 @@ export const colDefs: ColDef[] = [
         width: 260,
     },
     {
+        headerName: "Matrícula Motorista",
+        field: "driver.matricula",
+        valueGetter: ({ data }) =>
+            data?.driver ? `${data?.driver.matricula}` : "-",
+        width: 120,
+        pinned: "left",
+    },
+    {
         headerName: "Motorista",
         field: "driver.name",
         valueGetter: ({ data }) =>
-            data?.driver
-                ? `${data.driver.matricula} | ${data.driver.name}`
-                : "-",
-        width: 350,
+            data?.driver ? `${data?.driver.name}` : "-",
+        width: 250,
         pinned: "left",
     },
     {

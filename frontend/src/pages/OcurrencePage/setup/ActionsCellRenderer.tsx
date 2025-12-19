@@ -147,7 +147,7 @@ const ActionsCellRenderer = ({
                 <></>
             )}
 
-            {canViewClose && data ? (
+            {canViewClose && data && !data.isResolved ? (
                 <EditVehicleModal occurrence={data} refetch={refetch} />
             ) : (
                 <></>

@@ -1,5 +1,6 @@
 export interface Driver {
     _id: string;
+    matricula: string;
     name: string;
     code: string;
 }

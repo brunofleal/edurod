@@ -17,6 +17,7 @@ import { Role } from "../../../interfaces/roles";
 import { toast } from "react-toastify";
 import { useOccurrenceContext } from "../OccurrenceContext";
 import NewOccurrenceModal from "../NewOccurrenceModal/NewOccurrenceModal";
+import EditVehicleModal from "../EditVehicleModal/EditVehicleModal";
 
 const ActionsCellRenderer = ({
     data,
@@ -142,6 +143,12 @@ const ActionsCellRenderer = ({
             />
             {canViewEdit ? (
                 <NewOccurrenceModal mode="edit" editData={data} />
+            ) : (
+                <></>
+            )}
+
+            {canViewClose && data ? (
+                <EditVehicleModal occurrence={data} refetch={refetch} />
             ) : (
                 <></>
             )}

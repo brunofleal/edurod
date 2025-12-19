@@ -155,6 +155,29 @@ export const colDefs: ColDef[] = [
         },
     },
     {
+        headerName: "Procedência",
+        field: "isValid",
+        pinned: "right",
+        width: 150,
+        valueGetter: ({ data }) => {
+            if (!data?.isResolved) return "-";
+            return data?.isValid ? "Procedente" : "Improcedente";
+        },
+        cellRenderer: ({
+            data,
+        }: CustomCellRendererProps<OccurrenceRegistry>) => {
+            if (!data?.isResolved) {
+                return <span>-</span>;
+            }
+            const isValid = data?.isValid ?? true;
+            return (
+                <Badge variant={"solid"} bgColor={isValid ? "green" : "red"}>
+                    {isValid ? "Procedente" : "Improcedente"}
+                </Badge>
+            );
+        },
+    },
+    {
         headerName: "Ações",
         field: "actions",
         pinned: "right",

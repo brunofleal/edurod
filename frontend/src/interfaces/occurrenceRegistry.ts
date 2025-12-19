@@ -13,6 +13,7 @@ export interface OccurrenceRegistry {
     source: { description: string; _id: string };
     description: string;
     isResolved: boolean;
+    isValid: boolean;
     occurrenceDate: string;
     creationDate: string;
     resolvedDate: string;

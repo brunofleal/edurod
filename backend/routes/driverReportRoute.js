@@ -42,7 +42,11 @@ router.get("/", authenticateUser, async (req, res) => {
                 populate: { path: "occurrenceCategory" },
             });
 
-            const topOccurrence = occurrencesForDriver.sort((a, b) => {
+            const validOccurrencesForDriver = occurrencesForDriver.filter(
+                (occurrence) => occurrence.isValid !== false
+            );
+
+            const topOccurrence = validOccurrencesForDriver.sort((a, b) => {
                 const aPoints =
                     a.occurrenceType?.occurrenceCategory?.points || 0;
                 const bPoints =
@@ -55,9 +59,10 @@ router.get("/", authenticateUser, async (req, res) => {
                 systemVariables && systemVariables[0]
                     ? systemVariables[0].pointsPerDriver
                     : 100;
+
             const points = Math.max(
                 pointsPerDriver * monthsInPeriod +
-                    occurrencesForDriver.reduce(
+                    validOccurrencesForDriver.reduce(
                         (acc, curr) =>
                             acc +
                             (curr.occurrenceType?.occurrenceCategory?.points ||
@@ -79,8 +84,8 @@ router.get("/", authenticateUser, async (req, res) => {
 
             const driverReport = {
                 driver,
-                totalOccurrences: occurrencesForDriver.length,
-                totalUnresolvedOccurrences: occurrencesForDriver.filter(
+                totalOccurrences: validOccurrencesForDriver.length,
+                totalUnresolvedOccurrences: validOccurrencesForDriver.filter(
                     (occurence) => occurence.isResolved == false
                 ).length,
                 topOccurrence: topOccurrence

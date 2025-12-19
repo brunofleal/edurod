@@ -1,6 +1,13 @@
 import type { CustomCellRendererProps } from "ag-grid-react";
 import type { OccurrenceRegistry } from "../../../interfaces/occurrenceRegistry";
-import { ButtonGroup, Icon, Textarea, Field } from "@chakra-ui/react";
+import {
+    ButtonGroup,
+    Icon,
+    Textarea,
+    Field,
+    VStack,
+    Checkbox,
+} from "@chakra-ui/react";
 import { BsArchive, BsTrash } from "react-icons/bs";
 import { ConfirmDialog } from "../../../components/ConfirmDialog/ConfirmDialog";
 import { useState } from "react";
@@ -16,6 +23,7 @@ const ActionsCellRenderer = ({
 }: CustomCellRendererProps<OccurrenceRegistry>) => {
     const { refetch } = useOccurrenceContext();
     const [closingCommentary, setClosingCommentary] = useState("");
+    const [isValid, setIsValid] = useState(true);
 
     const canViewClose = useHasRequiredRole([Role.ADMIN, Role.CLOSER])();
     const canViewEdit = useHasRequiredRole([Role.ADMIN, Role.OPENER])();
@@ -30,6 +38,7 @@ const ActionsCellRenderer = ({
             isResolved: true,
             resolvedDate: Date.now(),
             closingCommentary,
+            isValid,
         };
         axiosApi
             .patch(`/api/occurrences/${data._id}`, payload)
@@ -84,15 +93,46 @@ const ActionsCellRenderer = ({
                 isConfirmDisabled={closingCommentary.length < 3}
                 isHidden={!canViewClose || data?.isResolved}
                 extraField={
-                    <Field.Root>
-                        <Field.Label>Detalhamento ocorrência</Field.Label>
-                        <Textarea
-                            placeholder="Descreva a ação tomada para encerramento da ocorrência"
-                            onChange={(e) =>
-                                setClosingCommentary(e.target.value)
-                            }
-                        />
-                    </Field.Root>
+                    <VStack align="start" gap={3}>
+                        <Field.Root>
+                            <Field.Label>Detalhamento ocorrência</Field.Label>
+                            <Textarea
+                                key={`textarea-${data?._id}`}
+                                placeholder="Descreva a ação tomada para encerramento da ocorrência"
+                                onChange={(e) =>
+                                    setClosingCommentary(e.target.value)
+                                }
+                            />
+                        </Field.Root>
+                        <Field.Root>
+                            <label
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "8px",
+                                    cursor: "pointer",
+                                }}
+                            >
+                                <span>Procedente?</span>
+                                <input
+                                    type="checkbox"
+                                    checked={isValid}
+                                    onChange={(e) => {
+                                        console.log(
+                                            "Checkbox clicked:",
+                                            e.target.checked
+                                        );
+                                        setIsValid(e.target.checked);
+                                    }}
+                                    style={{
+                                        width: "16px",
+                                        height: "16px",
+                                        cursor: "pointer",
+                                    }}
+                                />
+                            </label>
+                        </Field.Root>
+                    </VStack>
                 }
                 icon={
                     <Icon mr={2}>

@@ -32,6 +32,10 @@ const OccurrenceSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        isValid: {
+            type: Boolean,
+            default: true,
+        },
         occurrenceDate: {
             type: Date,
         },

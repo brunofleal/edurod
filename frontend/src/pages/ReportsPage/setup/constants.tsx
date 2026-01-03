@@ -30,6 +30,7 @@ export const colDefs: ColDef[] = [
         headerName: "Pontos",
         field: "points",
         width: 100,
+        valueGetter: ({ data }) => Math.round(data?.points || 0),
         comparator: (valueA, valueB) => {
             return (valueA || 0) - (valueB || 0);
         },
@@ -38,6 +39,7 @@ export const colDefs: ColDef[] = [
         headerName: "Bônus",
         field: "bonus",
         width: 100,
+        valueGetter: ({ data }) => Math.round(data?.bonus || 0),
         comparator: (valueA, valueB) => {
             return (valueA || 0) - (valueB || 0);
         },
@@ -48,7 +50,7 @@ export const colDefs: ColDef[] = [
                         <Icon mb={1} mr={1}>
                             <BsCash />
                         </Icon>
-                        {data?.bonus}
+                        {Math.round(data?.bonus || 0)}
                     </Tag.Label>
                 </Tag.Root>
             );

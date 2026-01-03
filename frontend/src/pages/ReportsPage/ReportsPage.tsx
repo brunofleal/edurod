@@ -5,6 +5,7 @@ import { Box, Flex, HStack, Text } from "@chakra-ui/react";
 import DateScroller, {
     type Period,
 } from "../../components/DateScroller/DateScroller";
+import { formatDateDDMMYY } from "../../shared/utils/formatDate";
 import { useFetch } from "../../shared/hooks/useFetch";
 import { useNavigate, useSearchParams } from "react-router";
 import ExportXLSX from "../../components/ExportXLSX/ExportXLSX";
@@ -25,6 +26,15 @@ const ReportsPage = () => {
     );
     const rowData = data ? data.data : [];
 
+    // Report constants
+    const REPORT_TITLE = "Relatório de Premiação de Motoristas";
+    const getReportSubtitle = () =>
+        `Gerado em: ${new Date().toLocaleString("pt-BR")}`;
+    const getExcelFileName = () =>
+        `Relatorio_Premiação_Motoristas_${period?.start ? formatDateDDMMYY(period.start) : ""}--${period?.end ? formatDateDDMMYY(period.end) : ""}.xlsx`;
+    const getPdfFileName = () =>
+        `Relatorio_Premiação_Motoristas_${period?.start ? formatDateDDMMYY(period.start) : ""}--${period?.end ? formatDateDDMMYY(period.end) : ""}.pdf`;
+
     useEffect(() => {
         if (startDate && endDate) {
             setPeriod({ start: startDate, end: endDate });
@@ -44,7 +54,8 @@ const ReportsPage = () => {
             return 0;
         } else {
             return rowData.reduce(
-                (total: number, row: DriverReport) => total + (row.bonus || 0),
+                (total: number, row: DriverReport) =>
+                    total + (Math.round(row.bonus) || 0),
                 0
             );
         }
@@ -101,16 +112,16 @@ const ReportsPage = () => {
                                 `Total de Ocorrências: ${getTotalOccurrences()}`,
                                 `Total de Ocorrências em aberto: ${getTotalOpenOccurrences()}`,
                             ]}
-                            title="Relatório de Motoristas"
-                            subtitle="Ocorrências acumuladas por motorista"
-                            fileName={`Relatorio_Motoristas_${period?.start}_${period?.end || "registros"}.xlsx`}
+                            title={REPORT_TITLE}
+                            subtitle={getReportSubtitle()}
+                            fileName={getExcelFileName()}
                         />
                         <ExportPDF
                             gridApi={gridApi}
                             period={period}
-                            fileName={`Relatorio_Motoristas_${period?.start}_${period?.end || "registros"}.pdf`}
-                            title="Relatório de Motoristas"
-                            subtitle="Ocorrências acumuladas por motorista"
+                            fileName={getPdfFileName()}
+                            title={REPORT_TITLE}
+                            subtitle={getReportSubtitle()}
                         />
                     </HStack>
                 }

@@ -1,6 +1,6 @@
 import { HStack, Button, Text, Box, Menu, Portal } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { formatDateToLocalTime } from "../../shared/utils/formatDate";
+import { formatDateDDMMYY } from "../../shared/utils/formatDate";
 import { BsCalendarDate, BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import { MdOutlineUpdate } from "react-icons/md";
 

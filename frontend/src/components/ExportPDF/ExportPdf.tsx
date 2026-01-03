@@ -2,7 +2,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { Button } from "@chakra-ui/react";
 import type { GridApi } from "ag-grid-community";
-import { formatDateToLocalTime } from "../../shared/utils/formatDate";
+import { formatDateDDMMYY } from "../../shared/utils/formatDate";
 import { BsFilePdf } from "react-icons/bs";
 
 interface Period {
@@ -43,7 +43,7 @@ const ExportPDF = ({
         y += 10;
         const dateRange =
             period?.start && period?.end
-                ? `Período: ${formatDateToLocalTime(period.start, { onlyDate: true })} até ${formatDateToLocalTime(period.end, { onlyDate: true })}`
+                ? `Período: ${formatDateDDMMYY(period.start)} até ${formatDateDDMMYY(period.end)}`
                 : "Período: Todos os registros";
         doc.text(dateRange, 14, y);
 
@@ -102,6 +102,34 @@ const ExportPDF = ({
             tableRows.push(row);
         });
 
+        // Calculate totals row
+        const columnTotals = visibleColumns.map((col, colIndex) => {
+            const colId = col.getColId();
+            let total = 0;
+            let hasNumericValues = false;
+
+            gridApi.forEachNodeAfterFilterAndSort((node) => {
+                const cellValue = node.data[colId];
+                const numValue = parseFloat(cellValue);
+
+                if (!isNaN(numValue) && typeof cellValue === "number") {
+                    total += numValue;
+                    hasNumericValues = true;
+                }
+            });
+
+            // First column shows "TOTAL" label
+            if (colIndex === 0) {
+                return "TOTAL";
+            }
+
+            return hasNumericValues ? Math.round(total).toString() : "-";
+        });
+
+        // Add totals row to the end of body rows
+        tableRows.push(columnTotals);
+        const totalsRowIndex = tableRows.length - 1;
+
         // Add table
         autoTable(doc, {
             head: [tableColumns],
@@ -109,6 +137,25 @@ const ExportPDF = ({
             startY: y + 8,
             styles: { fontSize: 6, overflow: "linebreak", cellPadding: 1 },
             headStyles: { fillColor: [64, 133, 126] },
+            didParseCell: (data) => {
+                // Apply zebra striping to body rows (excluding totals row)
+                if (
+                    data.section === "body" &&
+                    data.row.index !== totalsRowIndex &&
+                    data.row.index % 2 === 1
+                ) {
+                    data.cell.styles.fillColor = [225, 225, 225];
+                }
+                // Style the totals row
+                if (
+                    data.section === "body" &&
+                    data.row.index === totalsRowIndex
+                ) {
+                    data.cell.styles.fillColor = [200, 200, 200];
+                    data.cell.styles.fontStyle = "bold";
+                    data.cell.styles.fontSize = 8;
+                }
+            },
             margin: { left: 14, right: 14 },
             tableWidth: "auto",
             horizontalPageBreak: true,

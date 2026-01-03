@@ -20,6 +20,14 @@ export const formatDateToLocalTime = (
     });
 };
 
+export const formatDateDDMMYY = (dateString: string): string => {
+    return new Date(dateString + "T00:00:00").toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+    });
+};
+
 export const getCurrentMonthRange = () => {
     moment.locale("pt-Br");
     const startOfMonth = moment().startOf("month");

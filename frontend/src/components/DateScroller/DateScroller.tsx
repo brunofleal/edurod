@@ -18,6 +18,7 @@ const DateScroller = ({ value, setValue }: Props) => {
     const [monthsPeriod, setMonthsPeriod] = useState(1);
     const items = [
         { label: "1 mês", value: 1 },
+        { label: "2 meses", value: 2 },
         { label: "3 meses", value: 3 },
     ];
 
@@ -111,7 +112,7 @@ const DateScroller = ({ value, setValue }: Props) => {
             <Box textAlign="center" minW="200px">
                 {value && (
                     <Text fontSize="md" fontWeight="medium">
-                        {`${formatDateToLocalTime(value.start, { onlyDate: true })} - ${formatDateToLocalTime(value.end, { onlyDate: true })} (${new Date(value.end).toLocaleDateString("pt-BR", { month: "long" })}/${new Date(value.end).getFullYear()})`}
+                        {`${new Date(value.start + "T00:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" })} - ${new Date(value.end + "T00:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" })} (${new Date(value.end + "T00:00:00").toLocaleDateString("pt-BR", { month: "long" })}/${new Date(value.end + "T00:00:00").getFullYear()})`}
                     </Text>
                 )}
             </Box>

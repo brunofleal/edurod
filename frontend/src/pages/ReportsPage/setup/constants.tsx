@@ -59,10 +59,12 @@ export const colDefs: ColDef[] = [
     {
         headerName: "Ocorrências",
         field: "totalOccurrences",
+        valueGetter: ({ data }) => data?.totalOccurrences || 0,
     },
     {
         headerName: "Ocorrências abertas",
         field: "totalUnresolvedOccurrences",
+        valueGetter: ({ data }) => data?.totalUnresolvedOccurrences || 0,
     },
     {
         headerName: "Ocorrência mais grave",

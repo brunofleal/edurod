@@ -159,19 +159,6 @@ const ExportXLSX = ({
                 const colDef = col.getColDef();
                 const cellValue = node.data[colId];
 
-                // For columns with cell renderers, try to get the underlying value
-                if (colDef.cellRenderer) {
-                    // If it's a detail/action column, skip it
-                    if (
-                        colId === "detail" ||
-                        colDef.headerName === "Detalhes"
-                    ) {
-                        return "";
-                    }
-                    // For other cell renderer columns, return the raw value
-                    return cellValue || "";
-                }
-
                 // Apply value getter first (this handles computed values like driver info)
                 if (
                     colDef.valueGetter &&
@@ -186,7 +173,22 @@ const ExportXLSX = ({
                         context: undefined,
                         getValue: (field: string) => node.data[field],
                     });
-                    return getterValue || "";
+                    return getterValue ?? "";
+                }
+
+                // For columns with cell renderers but no valueGetter
+                if (colDef.cellRenderer) {
+                    // If it's a detail/action column, skip it
+                    if (
+                        colId === "detail" ||
+                        colId === "actions" ||
+                        colDef.headerName === "Detalhes" ||
+                        colDef.headerName === "Ações"
+                    ) {
+                        return "";
+                    }
+                    // For other cell renderer columns, return the raw value
+                    return cellValue ?? "";
                 }
 
                 // Apply value formatter if it exists and is a function
@@ -203,10 +205,10 @@ const ExportXLSX = ({
                         api: gridApi,
                         context: undefined,
                     });
-                    return formattedValue || "";
+                    return formattedValue ?? "";
                 }
 
-                return cellValue || "";
+                return cellValue ?? "";
             });
 
             const dataRow = worksheet.addRow(rowData);

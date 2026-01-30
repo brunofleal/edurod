@@ -77,7 +77,9 @@ const ExportPDF = ({
                         api: gridApi,
                         context: undefined,
                     });
-                    return formattedValue?.toString() || "";
+                    return formattedValue != null
+                        ? formattedValue.toString()
+                        : "";
                 }
 
                 // Apply value getter if it exists and is a function
@@ -94,10 +96,10 @@ const ExportPDF = ({
                         context: undefined,
                         getValue: (field: string) => node.data[field],
                     });
-                    return getterValue?.toString() || "";
+                    return getterValue != null ? getterValue.toString() : "";
                 }
 
-                return cellValue?.toString() || "";
+                return cellValue != null ? cellValue.toString() : "";
             });
             tableRows.push(row);
         });

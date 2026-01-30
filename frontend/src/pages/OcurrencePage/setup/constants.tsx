@@ -80,6 +80,7 @@ export const colDefs: ColDef[] = [
     {
         headerName: "Descrição de Abertura",
         field: "description",
+        valueGetter: ({ data }) => data?.description || "",
         cellRenderer: ({ data }: CustomCellRendererProps<OccurrenceRegistry>) =>
             ExpandableTextCellRenderer(data?.description || ""),
         width: 400,
@@ -89,6 +90,7 @@ export const colDefs: ColDef[] = [
     {
         headerName: "Comentário de Fechamento",
         field: "closingCommentary",
+        valueGetter: ({ data }) => data?.closingCommentary || "",
         cellRenderer: ({ data }: CustomCellRendererProps<OccurrenceRegistry>) =>
             ExpandableTextCellRenderer(data?.closingCommentary || ""),
         width: 400,
@@ -118,11 +120,13 @@ export const colDefs: ColDef[] = [
     {
         headerName: "Criador",
         field: "createdBy.name",
+        valueGetter: ({ data }) => data?.createdBy?.name || "-",
         width: 200,
     },
     {
         headerName: "Último Modicador",
         field: "modifiedBy.name",
+        valueGetter: ({ data }) => data?.modifiedBy?.name || "-",
         width: 200,
     },
     {
@@ -136,8 +140,10 @@ export const colDefs: ColDef[] = [
     {
         headerName: "Status",
         field: "isResolved",
-        valueGetter: ({ data }) =>
-            data?.occurrenceType?.isResolved ? "Fechado" : "Em Aberto",
+        valueGetter: (params) => {
+            const isResolved = params.data?.isResolved;
+            return isResolved ? "Fechado" : "Em Aberto";
+        },
         pinned: "right",
         width: 150,
         cellRenderer: ({ data }: CustomCellRendererProps) => {
@@ -159,9 +165,10 @@ export const colDefs: ColDef[] = [
         field: "isValid",
         pinned: "right",
         width: 150,
-        valueGetter: ({ data }) => {
-            if (!data?.isResolved) return "-";
-            return data?.isValid ? "Procedente" : "Improcedente";
+        valueGetter: (params) => {
+            if (!params.data?.isResolved) return "-";
+            const isValid = params.data?.isValid;
+            return isValid ? "Procedente" : "Improcedente";
         },
         cellRenderer: ({
             data,

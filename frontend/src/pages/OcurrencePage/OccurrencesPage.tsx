@@ -27,7 +27,8 @@ const OccurrencesPages = () => {
         `/api/occurrences?startDate=${startDate ?? ""}&endDate=${endDate ?? ""}`
     );
 
-    const rowData = data ? data.data : [];
+    const rowData = data && data.data ? data.data : [];
+    console.log(rowData);
 
     useEffect(() => {
         if (startDate && endDate) {
@@ -46,7 +47,7 @@ const OccurrencesPages = () => {
                 `/occurrences?startDate=${period?.start}&endDate=${period?.end}&driver=${driver ?? ""}`
             );
         }
-    }, [period?.start, period?.end]);
+    }, [period?.start, period?.end, startDate, endDate, driver, navigate]);
 
     useEffect(() => {
         if (driver && gridApi) {

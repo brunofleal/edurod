@@ -21,14 +21,14 @@ router.get("/", authenticateUser, async (req, res) => {
         // Build date filter
         let dateFilter = {};
         if (startDate && endDate) {
-            dateFilter.creationDate = {
+            dateFilter.occurrenceDate = {
                 $gte: new Date(startDate),
                 $lte: new Date(endDate),
             };
         } else if (startDate) {
-            dateFilter.creationDate = { $gte: new Date(startDate) };
+            dateFilter.occurrenceDate = { $gte: new Date(startDate) };
         } else if (endDate) {
-            dateFilter.creationDate = { $lte: new Date(endDate) };
+            dateFilter.occurrenceDate = { $lte: new Date(endDate) };
         }
 
         const data = await Occurrence.find(dateFilter)
@@ -65,7 +65,7 @@ router.post("/", authenticateUserWithOpenerRole, async (req, res) => {
         await logAction(
             req,
             "CREATE_OCCURRENCE",
-            `Occurrence created: ${data._id}`
+            `Occurrence created: ${data._id}`,
         );
         res.status(201).json({
             message: "Occurrence Added Successfully",
@@ -91,7 +91,7 @@ router.put("/:id", authenticateUserWithCloserOpenerRole, async (req, res) => {
         await logAction(
             req,
             "UPDATE_OCCURRENCE",
-            `Occurrence updated: ${productId}`
+            `Occurrence updated: ${productId}`,
         );
         res.json({
             message: "Occurrence updated successfully",
@@ -124,12 +124,12 @@ router.patch("/:id", authenticateUserWithCloserOpenerRole, async (req, res) => {
             updatedData,
             {
                 new: true,
-            }
+            },
         );
         await logAction(
             req,
             "PATCH_OCCURRENCE",
-            `Occurrence patched: ${productId}`
+            `Occurrence patched: ${productId}`,
         );
         res.json({
             message: "Occurrence updated successfully",
@@ -152,7 +152,7 @@ router.delete("/:id", authenticateUserWithAdminRole, async (req, res) => {
         await logAction(
             req,
             "DELETE_OCCURRENCE",
-            `Occurrence deleted: ${productId}`
+            `Occurrence deleted: ${productId}`,
         );
         res.json({
             message: "Occurrence deleted successfully",

@@ -29,14 +29,17 @@ export function useFetch<T = any>(
 
     const { skip = false, ...axiosOptions } = options;
 
-    const fetchData = async () => {
+    const fetchData = async (signal?: AbortSignal) => {
         if (skip) return;
 
         setState((prev) => ({ ...prev, loading: true, error: null }));
 
         try {
-            const response = await axiosApi(url, axiosOptions);
-            if (response) {
+            const response = await axiosApi(url, {
+                ...axiosOptions,
+                signal,
+            });
+            if (response && !signal?.aborted) {
                 setState({
                     data: response.data,
                     loading: false,
@@ -44,6 +47,11 @@ export function useFetch<T = any>(
                 });
             }
         } catch (err) {
+            // Ignore aborted requests
+            if ((err as any)?.code === "ERR_CANCELED" || signal?.aborted) {
+                return;
+            }
+
             console.error(err);
             const error = err as AxiosError;
             let errorMessage = "Um erro inesperado ocorreu";
@@ -70,16 +78,24 @@ export function useFetch<T = any>(
             // Show toast notification for the error
             toast.error(errorMessage);
         } finally {
-            setState((prev) => ({ ...prev, loading: false }));
+            if (!signal?.aborted) {
+                setState((prev) => ({ ...prev, loading: false }));
+            }
         }
     };
 
     useEffect(() => {
-        fetchData();
+        const abortController = new AbortController();
+
+        fetchData(abortController.signal);
+
+        return () => {
+            abortController.abort();
+        };
     }, [url, skip, JSON.stringify(axiosOptions)]);
 
     return {
         ...state,
-        refetch: fetchData,
+        refetch: () => fetchData(),
     };
 }

@@ -21,7 +21,7 @@ export const formatDateToLocalTime = (
 };
 
 export const formatDateDDMMYY = (dateString: string): string => {
-    return new Date(dateString + "T00:00:00").toLocaleDateString("pt-BR", {
+    return new Date(dateString).toLocaleDateString("pt-BR", {
         day: "2-digit",
         month: "2-digit",
         year: "2-digit",

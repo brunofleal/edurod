@@ -17,18 +17,22 @@ router.get("/", authenticateUser, async (req, res) => {
             monthsInPeriod =
                 (end.getFullYear() - start.getFullYear()) * 12 +
                 (end.getMonth() - start.getMonth());
+            if (monthsInPeriod == 0) {
+                // 1 month period
+                monthsInPeriod = 1;
+            }
         }
 
         let dateFilter = {};
         if (startDate && endDate) {
-            dateFilter.creationDate = {
+            dateFilter.occurrenceDate = {
                 $gte: new Date(startDate),
                 $lte: new Date(endDate),
             };
         } else if (startDate) {
-            dateFilter.creationDate = { $gte: new Date(startDate) };
+            dateFilter.occurrenceDate = { $gte: new Date(startDate) };
         } else if (endDate) {
-            dateFilter.creationDate = { $lte: new Date(endDate) };
+            dateFilter.occurrenceDate = { $lte: new Date(endDate) };
         }
         const drivers = await Driver.find({ inactive: { $ne: true } });
         const data = [];
@@ -43,7 +47,7 @@ router.get("/", authenticateUser, async (req, res) => {
             });
 
             const validOccurrencesForDriver = occurrencesForDriver.filter(
-                (occurrence) => occurrence.isValid !== false
+                (occurrence) => occurrence.isValid !== false,
             );
 
             const topOccurrence = validOccurrencesForDriver.sort((a, b) => {
@@ -67,9 +71,9 @@ router.get("/", authenticateUser, async (req, res) => {
                             acc +
                             (curr.occurrenceType?.occurrenceCategory?.points ||
                                 0),
-                        0
+                        0,
                     ),
-                0
+                0,
             );
             const maxPayAmoutPerDriver =
                 (systemVariables && systemVariables[0]
@@ -79,14 +83,14 @@ router.get("/", authenticateUser, async (req, res) => {
             const bonus = Math.min(
                 maxPayAmoutPerDriver * monthsInPeriod,
                 (points / (pointsPerDriver * monthsInPeriod)) *
-                    maxPayAmoutPerDriver
+                    maxPayAmoutPerDriver,
             );
 
             const driverReport = {
                 driver,
                 totalOccurrences: validOccurrencesForDriver.length,
                 totalUnresolvedOccurrences: validOccurrencesForDriver.filter(
-                    (occurence) => occurence.isResolved == false
+                    (occurence) => occurence.isResolved == false,
                 ).length,
                 topOccurrence: topOccurrence
                     ? topOccurrence.occurrenceType

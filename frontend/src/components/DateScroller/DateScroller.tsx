@@ -27,10 +27,13 @@ const DateScroller = ({ value, setValue }: Props) => {
         const year = now.getFullYear();
         const month = now.getMonth();
 
-        const start = new Date(year, month + 1 - monthsPeriod, 1)
-            .toISOString()
-            .split("T")[0];
-        const end = new Date(year, month + 1, 1).toISOString().split("T")[0];
+        // Start: First day of the start month at 00:00:00
+        const startDate = new Date(year, month + 1 - monthsPeriod, 1, 0, 0, 0);
+        const start = startDate.toISOString();
+
+        // End: Last day of the end month at 23:59:59
+        const endDate = new Date(year, month + 1, 0, 23, 59, 59, 999);
+        const end = endDate.toISOString();
 
         return { start, end };
     };
@@ -39,24 +42,31 @@ const DateScroller = ({ value, setValue }: Props) => {
         if (!value) return;
 
         const startDate = new Date(value.start);
-        const monthOffset = direction === "right" ? 2 : 0;
+        const monthOffset = direction === "right" ? 1 : -1;
 
         // Calculate new start date (always move by 1 month)
         const newStartDate = new Date(
             startDate.getFullYear(),
             startDate.getMonth() + monthOffset,
-            1
+            1,
+            0,
+            0,
+            0
         );
 
-        const start = newStartDate.toISOString().split("T")[0];
-        // End date is the last day of the period (monthsPeriod months from start)
-        const end = new Date(
+        const start = newStartDate.toISOString();
+
+        // End date is the last day of the period (monthsPeriod months from start) at 23:59:59
+        const endDate = new Date(
             newStartDate.getFullYear(),
             newStartDate.getMonth() + monthsPeriod,
-            1
-        )
-            .toISOString()
-            .split("T")[0];
+            0,
+            23,
+            59,
+            59,
+            999
+        );
+        const end = endDate.toISOString();
 
         setValue({ start, end });
     };
@@ -71,20 +81,27 @@ const DateScroller = ({ value, setValue }: Props) => {
         // When monthsPeriod changes, update the period based on current start date
         if (value) {
             const startDate = new Date(value.start);
+            // Start: First day of the month at 00:00:00
             const start = new Date(
                 startDate.getFullYear(),
                 startDate.getMonth(),
-                1
-            )
-                .toISOString()
-                .split("T")[0];
+                1,
+                0,
+                0,
+                0
+            ).toISOString();
+
+            // End: Last day of the period at 23:59:59
             const end = new Date(
                 startDate.getFullYear(),
                 startDate.getMonth() + monthsPeriod,
-                1
-            )
-                .toISOString()
-                .split("T")[0];
+                0,
+                23,
+                59,
+                59,
+                999
+            ).toISOString();
+
             setValue({ start, end });
         } else {
             setValue(getCurrentMonthPeriod());
@@ -112,7 +129,7 @@ const DateScroller = ({ value, setValue }: Props) => {
             <Box textAlign="center" minW="200px">
                 {value && (
                     <Text fontSize="md" fontWeight="medium">
-                        {`${new Date(value.start + "T00:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" })} - ${new Date(value.end + "T00:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" })} (${new Date(value.end + "T00:00:00").toLocaleDateString("pt-BR", { month: "long" })}/${new Date(value.end + "T00:00:00").getFullYear()})`}
+                        {`${new Date(value.start).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" })} - ${new Date(value.end).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" })} (${new Date(value.end).toLocaleDateString("pt-BR", { month: "long" })}/${new Date(value.end).getFullYear()})`}
                     </Text>
                 )}
             </Box>

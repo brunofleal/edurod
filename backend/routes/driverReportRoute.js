@@ -14,13 +14,8 @@ router.get("/", authenticateUser, async (req, res) => {
         if (startDate && endDate) {
             const start = new Date(startDate);
             const end = new Date(endDate);
-            monthsInPeriod =
-                (end.getFullYear() - start.getFullYear()) * 12 +
-                (end.getMonth() - start.getMonth());
-            if (monthsInPeriod == 0) {
-                // 1 month period
-                monthsInPeriod = 1;
-            }
+            const diffInDays = (end - start) / (1000 * 60 * 60 * 24);
+            monthsInPeriod = Math.max(Math.round(diffInDays / 28), 1);
         }
 
         let dateFilter = {};

@@ -14,8 +14,12 @@ const DriverSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        admissionDate: {
+            type: Date,
+            default: null,
+        },
     },
-    { timestamps: true }
+    { timestamps: true },
 );
 
 module.exports = mongoose.model("Driver", DriverSchema);

@@ -47,7 +47,7 @@ const AdminPage = () => {
                     <Tabs.Content value="tab-2">
                         <PanelGrid
                             url="/api/drivers"
-                            attributes={["matricula", "name"]}
+                            attributes={["matricula", "name", "admissionDate"]}
                         />
                     </Tabs.Content>
                     <Tabs.Content value="tab-3">

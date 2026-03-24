@@ -27,6 +27,8 @@ const propertyLabels: Record<string, string> = {
     description: "Descrição",
     points: "Pontos",
     occurrenceCategory: "Categoria de Ocorrência",
+    inactive: "Inativo",
+    admissionDate: "Data de Admissão",
     createdAt: "Criado em",
     updatedAt: "Atualizado em",
     // Add more as needed
@@ -124,11 +126,15 @@ interface FormProps {
     value: any;
     setValue: Function;
 }
+const dateAttributes = ["date", "admissionDate"];
+
 const FormField = ({ attribute, value, setValue }: FormProps) => {
+    const isDate = dateAttributes.includes(attribute);
     return (
         <Box>
             <Text>{propertyLabels[attribute] || attribute}</Text>
             <Input
+                type={isDate ? "date" : "text"}
                 value={value[attribute] || ""}
                 onChange={(event) =>
                     setValue({ ...value, [attribute]: event.target.value })

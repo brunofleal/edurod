@@ -3,6 +3,7 @@ export interface Driver {
     matricula: string;
     name: string;
     code: string;
+    admissionDate: string | null;
 }
 
 export interface DriverReport {

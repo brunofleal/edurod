@@ -9,6 +9,7 @@ export const createColDefsFromData = (data: any, parentKey = "") => {
         "createdAt",
         "updateAt",
         "timestamp",
+        "admissionDate",
     ];
     if (!data) {
         return [];
@@ -41,16 +42,18 @@ export const createColDefsFromData = (data: any, parentKey = "") => {
                         fieldName.includes(dateP)
                     )
                         ? {
-                              valueGetter: ({ data }) =>
-                                  formatDateToLocalTime(
-                                      fieldName
-                                          .split(".")
-                                          .reduce(
-                                              (acc, key) => acc && acc[key],
-                                              data
-                                          ),
-                                      { onlyDate: false }
-                                  ),
+                              valueGetter: ({ data }) => {
+                                  const value = fieldName
+                                      .split(".")
+                                      .reduce(
+                                          (acc, key) => acc && acc[key],
+                                          data
+                                      );
+                                  if (!value) return "-";
+                                  return formatDateToLocalTime(value, {
+                                      onlyDate: false,
+                                  });
+                              },
                           }
                         : {}),
                 };

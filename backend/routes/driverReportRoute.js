@@ -75,13 +75,33 @@ router.get("/", authenticateUser, async (req, res) => {
                     ),
                 0,
             );
-            const maxPayAmoutPerDriver =
-                (systemVariables && systemVariables[0]
+            const baseMaxPayPerDriver =
+                systemVariables && systemVariables[0]
                     ? systemVariables[0].maxPayAmoutPerDriver
-                    : 300) * monthsInPeriod;
+                    : 300;
+
+            // If the driver has an admission date within the evaluated period,
+            // ignore the first month (the one containing the admission date)
+            let eligibleMonths = monthsInPeriod;
+            if (startDate && endDate && driver.admissionDate) {
+                const periodStart = new Date(startDate);
+                const periodEnd = new Date(endDate);
+                const admissionDate = new Date(driver.admissionDate);
+                if (admissionDate >= periodStart) {
+                    // Calculate how many full months remain after the admission month
+                    const monthsAfterAdmission =
+                        (periodEnd.getFullYear() -
+                            admissionDate.getFullYear()) *
+                            12 +
+                        (periodEnd.getMonth() - admissionDate.getMonth());
+                    eligibleMonths = Math.max(monthsAfterAdmission, 0);
+                }
+            }
+
+            const maxPayAmoutPerDriver = baseMaxPayPerDriver * eligibleMonths;
 
             const bonus = Math.min(
-                maxPayAmoutPerDriver * monthsInPeriod,
+                maxPayAmoutPerDriver,
                 (points / (pointsPerDriver * monthsInPeriod)) *
                     maxPayAmoutPerDriver,
             );

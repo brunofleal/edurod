@@ -27,6 +27,8 @@ const AgGrid = ({
     const defaultAgGridProps: AgGridReactProps = {
         containerStyle: { width: "100%", height: "90%", color: "white" },
         theme: themeAlpine,
+        enableCellTextSelection: true,
+        ensureDomOrder: true,
     };
 
     const localeText = {

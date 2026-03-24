@@ -78,18 +78,17 @@ router.get("/", authenticateUser, async (req, res) => {
             // If the driver has an admission date within the evaluated period,
             // ignore the first month (the one containing the admission date)
             let eligibleMonths = monthsInPeriod;
+            let admittedDuringPeriod = false;
             if (startDate && endDate && driver.admissionDate) {
                 const periodStart = new Date(startDate);
                 const periodEnd = new Date(endDate);
                 const admissionDate = new Date(driver.admissionDate);
                 if (admissionDate >= periodStart) {
-                    // Calculate how many full months remain after the admission month
-                    const monthsAfterAdmission =
-                        (periodEnd.getFullYear() -
-                            admissionDate.getFullYear()) *
-                            12 +
-                        (periodEnd.getMonth() - admissionDate.getMonth());
-                    eligibleMonths = Math.max(monthsAfterAdmission, 0);
+                    admittedDuringPeriod = true;
+                    // Calculate how many full months (28-day periods) remain after admission
+                    const diffInDays =
+                        (periodEnd - admissionDate) / (1000 * 60 * 60 * 24);
+                    eligibleMonths = Math.max(Math.round(diffInDays / 28), 0);
                 }
             }
 
@@ -112,6 +111,11 @@ router.get("/", authenticateUser, async (req, res) => {
                     : null,
                 points,
                 bonus,
+                ...(admittedDuringPeriod
+                    ? {
+                          tooltip: `Motorista admitido durante o período de premiação(${new Date(driver.admissionDate).toLocaleDateString("pt-BR")})`,
+                      }
+                    : {}),
             };
             data.push(driverReport);
         }

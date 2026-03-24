@@ -1,9 +1,9 @@
 import type { ColDef } from "ag-grid-community";
 import DriverDetailCellRenderer from "./DriverDetailCellRenderer/DriverDetailCellRenderer";
 import type { CustomCellRendererProps } from "ag-grid-react";
-import { Icon, Tag } from "@chakra-ui/react";
+import { HStack, Icon, Tag, Text, Tooltip } from "@chakra-ui/react";
 import type { DriverReport } from "../../../interfaces/driver";
-import { BsCash } from "react-icons/bs";
+import { BsCash, BsInfoCircleFill } from "react-icons/bs";
 
 export const colDefs: ColDef[] = [
     {
@@ -25,6 +25,31 @@ export const colDefs: ColDef[] = [
         valueGetter: ({ data }) => (data.driver ? `${data.driver.name}` : "-"),
         width: 250,
         pinned: "left",
+        cellRenderer: ({ data }: CustomCellRendererProps<DriverReport>) => {
+            const name = data?.driver ? data.driver.name : "-";
+            if (data?.tooltip) {
+                return (
+                    <HStack gap={1}>
+                        <Text>{name}</Text>
+                        <Tooltip.Root>
+                            <Tooltip.Trigger asChild>
+                                <span>
+                                    <Icon color="blue.500" cursor="pointer">
+                                        <BsInfoCircleFill />
+                                    </Icon>
+                                </span>
+                            </Tooltip.Trigger>
+                            <Tooltip.Positioner>
+                                <Tooltip.Content>
+                                    {data.tooltip}
+                                </Tooltip.Content>
+                            </Tooltip.Positioner>
+                        </Tooltip.Root>
+                    </HStack>
+                );
+            }
+            return <Text>{name}</Text>;
+        },
     },
     {
         headerName: "Pontos",

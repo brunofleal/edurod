@@ -14,4 +14,5 @@ export interface DriverReport {
     totalUnresolvedOccurrences: number;
     topOccurrence: string;
     occurrenceSource: string;
+    tooltip?: string;
 }

@@ -22,12 +22,12 @@ All commands assume a Linux server with a POSIX shell, run from the repository r
 | ---------- | ------------------ | -------------------- | ---------------------- | ------------------------------------------------------------ |
 | `mongodb`  | `edurodmongolocal` | `database/` (mongo:8) | `27017`                | Data lives in the named volume `mongodb_data`                |
 | `backend`  | `edurod-backend`   | `backend/` (node:18) | `${BACKEND_PORT}` → 8000 | Express REST API under `/api/...`                           |
-| `frontend` | `edurod-frontend`  | `frontend/` (node build → nginx) | `80`, `443`   | Static React build; certificates mounted from `./ssl`        |
+| `frontend` | `edurod-frontend`  | `frontend/` (node build → nginx) | `${FRONTEND_PORT}` → 80, `${FRONTEND_HTTPS_PORT}` → 443 (default 80, 443) | Static React build; certificates mounted from `./ssl`        |
 
 How requests flow:
 
 ```
-Browser ──(80/443)──▶ nginx (frontend container): serves the React app
+Browser ──(FRONTEND_PORT / FRONTEND_HTTPS_PORT)──▶ nginx (frontend container): serves the React app
 Browser ──(VITE_BASE_URL, e.g. :8000)──▶ backend container ──▶ mongodb:27017 (database "edurod")
 ```
 
@@ -42,7 +42,7 @@ The browser calls the backend directly, at the URL in `VITE_BASE_URL`. nginx doe
 - Docker Engine 24+ with the Compose plugin (`docker compose version` should work).
 - Git.
 - `openssl`, for generating secrets and, optionally, a self-signed certificate.
-- Open ports: `80` and `443` (frontend) and `8000`, or whatever `BACKEND_PORT` you choose, for the API. **Keep `27017` closed to the internet** (see [2.7](#27-hardening-recommended)).
+- Open ports: `80` and `443` for the frontend (or the ports set in `FRONTEND_PORT`/`FRONTEND_HTTPS_PORT`) and `8000`, or whatever `BACKEND_PORT` you choose, for the API. **Keep `27017` closed to the internet** (see [2.7](#27-hardening-recommended)).
 
 ### 2.2 Get the code
 
@@ -69,7 +69,8 @@ Edit `.env`:
 | `JWT_SECRET`                 | Long random string: `openssl rand -hex 32`. Login tokens never expire, so changing this secret is what logs everyone out. |
 | `MONGODB_URI`                | `mongodb://<user>:<password>@mongodb:27017/edurod?authSource=admin`, using the same credentials as above. `mongodb` is the Compose service name. URL-encode special characters in the password (`@` → `%40`, `:` → `%3A`, `/` → `%2F`). |
 | `BACKEND_PORT`               | Host port for the API, usually `8000`.                                                                                     |
-| `FRONTEND_PORT`              | Not used by `docker-compose.yml`. The frontend always listens on 80/443.                                                   |
+| `FRONTEND_PORT`              | Host port for the frontend over HTTP (default `80`). Change it if port 80 is already taken, e.g. `8081`. Prefix it with an IP to listen on one interface only, e.g. `127.0.0.1:8081` behind a reverse proxy on the same machine. |
+| `FRONTEND_HTTPS_PORT`        | Host port for the frontend over HTTPS (default `443`). Same format as `FRONTEND_PORT`.                                     |
 | `VITE_BASE_URL`              | The URL **browsers** use to reach the API, e.g. `http://edurod.example.com:8000`. Do not use `localhost` on a remote server: it would point to each user's own machine. |
 
 Example:
@@ -81,7 +82,8 @@ NODE_ENV=production
 JWT_SECRET=3f6c...64-hex-chars...
 MONGODB_URI=mongodb://edurodadmin:S0me-Long-Random-Password@mongodb:27017/edurod?authSource=admin
 BACKEND_PORT=8000
-FRONTEND_PORT=3000
+FRONTEND_PORT=80
+FRONTEND_HTTPS_PORT=443
 VITE_BASE_URL=http://edurod.example.com:8000
 ```
 
@@ -420,6 +422,7 @@ Steps:
 
 | Symptom                                                         | Cause / fix                                                                                                                                                                  |
 | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `failed to bind host port 0.0.0.0:80/tcp: address already in use` | Another program (often a system nginx or Apache) already uses that port. Find it with `sudo ss -ltnp '( sport = :80 or sport = :443 )'`, then either stop it or set `FRONTEND_PORT`/`FRONTEND_HTTPS_PORT` to free ports and run `docker compose up -d frontend`. |
 | Frontend container keeps restarting; logs mention `cannot load certificate` | `ssl/cert.pem` or `ssl/key.pem` is missing. See [2.4](#24-ssl-certificates).                                                                                    |
 | Frontend image build fails in `npm run build` (e.g. `crypto.hash is not a function`) | `frontend/Dockerfile` uses `node:18-alpine`, but Vite 7 needs Node 20.19+. Change the build stage to `FROM node:22-alpine AS build`.                      |
 | Backend logs `Database connection error: Authentication failed` | `MONGODB_URI` credentials don't match the root user. Remember that `MONGO_INITDB_ROOT_*` only applies to a **new, empty** volume, so an old volume keeps its original password. |

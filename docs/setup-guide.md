@@ -306,7 +306,7 @@ Run this on the **new** server once its stack is up (6.2). It connects to the ol
 bash tools/db/migrate-server.sh --source-uri "mongodb://<user>:<pass>@<old-host>:27017/?authSource=admin"
 ```
 
-If `--source-uri` is omitted, the script asks for it without showing the input. The script:
+If `--source-uri` is omitted, the script asks for it. The script:
 
 - only reads from the old server and never writes to it;
 - refuses if the URI points to this server's own MongoDB, or if both connections reach the same instance;

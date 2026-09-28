@@ -21,8 +21,7 @@
 # Options:
 #   --source-uri URI    Connection string of the OLD server's MongoDB, e.g.
 #                       mongodb://user:pass@old-host:27017/?authSource=admin
-#                       (default: $SOURCE_URI; otherwise you are prompted and
-#                       the input is not echoed)
+#                       (default: $SOURCE_URI; otherwise you are prompted)
 #   --source-db NAME    Database to copy from (default: edurod)
 #   --target-db NAME    Database to copy into (default: edurod)
 #   --force-overwrite   Allow replacing a target database that already holds
@@ -224,8 +223,7 @@ esac
 
 if [ -z "$SOURCE_URI" ]; then
     echo
-    read -r -s -p "  MongoDB URI of the OLD server (input hidden): " SOURCE_URI || true
-    echo
+    read -r -p "  MongoDB URI of the OLD server: " SOURCE_URI || true
 fi
 [[ "$SOURCE_URI" =~ ^mongodb(\+srv)?:// ]] || die "The source URI must start with mongodb:// or mongodb+srv://"
 REDACTED_URI="$(printf '%s' "$SOURCE_URI" | sed -E 's#(://)[^@/]*@#\1***@#')"
